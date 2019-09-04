@@ -19,11 +19,14 @@
         <guice.version>4.1.0</guice.version>
         <yaml.config.version>1.25</yaml.config.version>
         <disruptor.version>3.4.2</disruptor.version>
+        <curator.version>4.2.0</curator.version>
+        <metrics.version>4.1.0</metrics.version>
+        <netty-all.version>4.0.49.Final</netty-all.version>
+        <snappy-java.version>1.1.7.3</snappy-java.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>etrace.io</groupId>
                 <artifactId>etrace-agent</artifactId>
@@ -46,9 +49,24 @@
             </dependency>
 
             <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.1.7.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>${guice.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.inject.extensions</groupId>
@@ -61,7 +79,7 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${yaml.config.version}</version>
             </dependency>
-<!--            A "bill of materials" POM for Jackson dependencies. https://github.com/FasterXML/jackson-bom-->
+            <!--            A "bill of materials" POM for Jackson dependencies. https://github.com/FasterXML/jackson-bom-->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -81,6 +99,32 @@
                 <version>0.12.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty-all.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>${snappy-java.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
