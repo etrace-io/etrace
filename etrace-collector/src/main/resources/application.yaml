@@ -1,0 +1,24 @@
+network.thread.num: 32
+network:
+  epoll_lever: false
+  thrift:
+    port: 2891
+
+  tcp:
+    thread:
+      num: 32
+
+    port: 2700
+
+  max:
+    frame:
+      size: 10485760
+
+zookeeper:
+  address: 10.101.90.201:2181,10.101.90.202:2181,10.101.90.203:2181
+
+##特殊的集群需要在/etc/eleme/env.yml定义，不在该列表中默认注册为etrace集群
+collector.clusters:
+  - esm
+  - dal
+  - statsd

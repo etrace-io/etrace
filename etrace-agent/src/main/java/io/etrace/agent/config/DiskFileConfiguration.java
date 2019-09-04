@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class DiskFileConfiguration {
 
+    // todo: move to non-open-source project
     private final static String ENV_PATH = "/etc/eleme/env.yaml"; //default env path
     private final static String APP_SPEC = "/appspec.yml";
     private final static String AONE_ENV_PATH = "/home/admin/env.yaml";
