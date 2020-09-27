@@ -1,73 +1,47 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.collector;
 
-import io.etrace.agent.Trace;
 import io.etrace.agent.config.AgentConfiguration;
-import io.etrace.collector.register.CollectorRegister;
-import io.etrace.common.util.NetworkInterfaceHelper;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryNTimes;
+import io.etrace.collector.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication
+@EnableWebMvc
 public class CollectorApplication {
+    @Autowired
+    private Config config;
 
     public static void main(String[] args) {
         SpringApplication.run(CollectorApplication.class, args);
     }
 
     @PostConstruct
-    public void postConstruct() {
-        try {
-            initEtraceAgent();
-            registerCollector();
-            Trace.logEvent("Collector", "Start");
-            System.out.print("Collector started!");
-        } catch (Throwable e) {
-            System.out.print("Start collector error: ");
-            e.printStackTrace();
-            System.exit(0);
-        }
+    public void startup() {
+        initAgentConfig();
     }
 
-    private static void initEtraceAgent() {
-        AgentConfiguration.setInstance("instance-" + NetworkInterfaceHelper.INSTANCE.getLocalHostName());
-        AgentConfiguration.setAppId("me.ele.arch.etrace.collector");
-        AgentConfiguration.setTeam("etrace");
-    }
-
-    @Value("${zookeeper.address}")
-    private String zookeeperAddress;
-
-    @Value("${zookeeper.namespace}")
-    private String zookeeperNamespace;
-
-    @Value("${network.thrift.port}")
-    private int thriftPort;
-    @Value("${network.tcp.port}")
-    private int tcpPort;
-    @Autowired
-    CollectorRegister register;
-
-    private void registerCollector() throws Exception {
-        CuratorFramework client = CuratorFrameworkFactory.builder()
-            .connectString(zookeeperAddress).namespace(zookeeperNamespace)
-            .retryPolicy(new RetryNTimes(Integer.MAX_VALUE, 1000))
-            .connectionTimeoutMs(5000)
-            .build();
-        client.start();
-
-        register.startup(client);
-
-        //register thrift port
-        register.register(NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(), thriftPort);
-        //register tcp port
-        register.register(NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(), tcpPort);
-
+    private void initAgentConfig() {
+        AgentConfiguration.setAppId(config.getAppId());
+        AgentConfiguration.setCollectorIp(config.getBackendAddress());
     }
 }

@@ -10,9 +10,9 @@
 .idea/**/shelf
 
 # Sensitive or high-churn files
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
+.idea/**/metricDataSources/
+.idea/**/metricDataSources.ids
+.idea/**/metricDataSources.local.xml
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
@@ -27,7 +27,7 @@ cmake-build-debug/
 cmake-build-release/
 
 # Mongo Explorer plugin
-.idea/**/mongoSettings.xml
+.idea/
 
 # File-based project format
 *.iws
@@ -43,6 +43,21 @@ atlassian-ide-plugin.xml
 
 # Cursive Clojure plugin
 .idea/replstate.xml
+etrace-agent/etrace-agent.iml
+etrace-collector/etrace-collector.iml
+etrace-consumer/etrace-consumer.iml
+etrace-common/etrace-common.iml
+etrace-plugins/etrace-plugins.iml
+etrace-plugins/etrace-kafka-0.8.2.2-impl/etrace-kafka-0.8.2.2-impl.iml
+etrace.iml
+
+target/
+etrace-collector/target
+etrace-agent/target
+etrace-consumer/target
+etrace-common/target
+etrace-plugins/etrace-kafka-0.8.2.2-impl/target
+
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
@@ -77,3 +92,5 @@ fabric.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+temp/
+*.iml

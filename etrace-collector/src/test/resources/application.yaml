@@ -1,0 +1,14 @@
+collector:
+  # Service registration and discovery
+  register:
+    zkAddress: 127.0.0.1:2181
+    namespace: open-source/collector
+    cluster: "default"
+  servers:
+    THRIFT:
+      port: 2891
+      workers: 32
+      maxFrameSize: 10485760
+    TCP:
+      port: 2892
+      workers: 32

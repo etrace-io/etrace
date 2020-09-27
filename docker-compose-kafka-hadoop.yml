@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  kafka:
+    image: "ches/kafka:0.8.2.2"
+    container_name: etrace_kafka
+    environment:
+      - ZOOKEEPER_IP=zookeeper
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+    volumes:
+      - ./temp/kafka/data:/data
+      - ./temp/kafka/logs:/logs
+    ports:
+      - 9092:9092
+      - 7203:7203
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+
+  zookeeper:
+    image: "zookeeper"
+    container_name: etrace_zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - backend
+
+  kafka-manager:
+    image: "sheepkiller/kafka-manager:1.3.0.4"
+    container_name: etrace_kafka_manager
+    environment:
+      - ZK_HOSTS=zookeeper:2181
+    ports:
+      - 9000:9000
+    depends_on:
+      - zookeeper
+      - kafka
+    networks:
+      - backend
+
+  hbase:
+    image: dajobe/hbase
+    container_name: etrace_hbase
+    hostname: hbase
+#        volumes:
+#          - ./temp/hbase/data:/data
+    ports:
+      - 16000:16000
+      - 16010:16010  # UI port
+      - 16020:16020
+      - 16030:16030
+      - 9090:9090
+      - 9095:9095
+      - 8085:8085
+      - 2888:2888
+      - 3888:3888
+      - 2182:2181
+    networks:
+      backend:
+        aliases:
+          #          - zookeeper
+          - hzk
+
+  hdfs:
+    image: "pravega/hdfs"
+    container_name: etrace_hdfs
+    hostname: hdfs
+    ports:
+      - 8020:8020
+      - 50010:50010
+      - 50020:50020
+      - 50070:50070  # UI port
+      - 50075:50075
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

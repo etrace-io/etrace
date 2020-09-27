@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+
+  collector:
+    build:
+      context: ./etrace-collector
+      dockerfile: Dockerfile
+    image: etrace-collector:local
+    container_name: etrace_collector
+    ports:
+      - 2890:2890
+    networks:
+      - backend
+
+  consumer:
+    build:
+      context: ./etrace-consumer
+      dockerfile: Dockerfile
+    image: etrace-consumer:local
+    container_name: etrace_consumer
+    ports:
+      - 8082:8082
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

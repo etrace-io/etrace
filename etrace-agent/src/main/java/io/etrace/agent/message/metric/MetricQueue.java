@@ -1,8 +1,25 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent.message.metric;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.lmax.disruptor.EventHandler;
@@ -10,28 +27,34 @@ import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.EventTranslatorTwoArg;
 import com.lmax.disruptor.TimeoutException;
 import io.etrace.agent.config.AgentConfiguration;
-import io.etrace.agent.message.ProducerContext;
+import io.etrace.agent.io.MessageSender;
+import io.etrace.agent.io.TcpMessageSender;
+import io.etrace.agent.message.QueueContext;
+import io.etrace.agent.message.event.MatricPackageEvent;
 import io.etrace.agent.message.event.MetricEvent;
-import io.etrace.agent.message.event.PackageEvent;
-import io.etrace.agent.message.io.MessageSender;
 import io.etrace.agent.stat.MetricStats;
 import io.etrace.common.histogram.BucketFunction;
 import io.etrace.common.histogram.DistAlgorithmBucket;
 import io.etrace.common.histogram.DistributionType;
-import io.etrace.common.message.ConfigManger;
-import io.etrace.common.modal.metric.Metric;
-import io.etrace.common.modal.metric.MetricKey;
+import io.etrace.common.message.agentconfig.ConfigManger;
+import io.etrace.common.message.metric.MetricInTraceApi;
+import io.etrace.common.message.metric.field.MetricKey;
+import io.etrace.common.message.trace.codec.JSONCodecV1;
 import io.etrace.common.util.ThreadUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static io.etrace.agent.message.callstack.CallstackQueue.PULL_INTERVAL_IN_MILLISECOND;
 
 public class MetricQueue {
     private final static String SPLIT_STR = "##";
-    protected ProducerContext<MetricEvent> context;
-    protected ProducerContext<PackageEvent> packageContext;
+    protected QueueContext<MetricEvent> context;
+    protected QueueContext<MatricPackageEvent> packageContext;
     @Inject
     protected ConfigManger configManger;
     @Inject
@@ -39,59 +62,53 @@ public class MetricQueue {
     private MetricProducer metricProducer;
     private PackageProducer packageProducer;
     private BucketFunction bucketFunction;
-    private Timer timer;
+    private ScheduledExecutorService executorService;
     @Inject
-    @Named("metricTCPMessageSender")
+    @Named(TcpMessageSender.METRIC_TCP_MESSAGE_SENDER)
     private MessageSender messageSender;
 
     public MetricQueue() {
-        context = new ProducerContext<>();
+        context = new QueueContext<>();
         // Specify the size of the ring buffer, must be power of 2.
         int bufferSize = 1024 * 4;
         metricProducer = new MetricQueue.MetricProducer();
         // The factory for the event
         MetricEvent.MetricEventFactory factory = new MetricEvent.MetricEventFactory();
-        EventConsumer comsumer = new EventConsumer();
-        context.build("Metric-Producer", bufferSize, comsumer, factory);
+        EventConsumer consumer = new EventConsumer();
+        context.build("Metric-Producer", bufferSize, consumer, factory);
 
-        packageContext = new ProducerContext<>();
+        packageContext = new QueueContext<>();
         // Specify the size of the ring buffer, must be power of 2.
         int packageBufferSize = 16;
         packageProducer = new MetricQueue.PackageProducer();
         // The factory for the event
-        PackageEvent.PackageEventFactory packageFactory = new PackageEvent.PackageEventFactory();
+        MatricPackageEvent.PackageEventFactory packageFactory = new MatricPackageEvent.PackageEventFactory();
         packageContext.build("Metric-Package-Producer", packageBufferSize, new MetricQueue.PackageConsumer(),
             packageFactory);
 
-        timer = new Timer("MetricQueue-Timer-" + System.currentTimeMillis());
-        int pullIntervalSeconds = 2;
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (context.getRingBuffer() != null) {
-                    context.getRingBuffer().tryPublishEvent(metricProducer, null);//heartbeat
-                }
+        executorService = new ScheduledThreadPoolExecutor(1,
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("MetricQueue-Timer-%d").build());
+
+        executorService.scheduleAtFixedRate(() -> {
+            if (context.getRingBuffer() != null) {
+                context.getRingBuffer().tryPublishEvent(metricProducer, null);//heartbeat
             }
-        }, 0, pullIntervalSeconds * 1000);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                shutdown();
-            }
-        });
+            //do something
+        }, 0, PULL_INTERVAL_IN_MILLISECOND, TimeUnit.MILLISECONDS);
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
-    public void produce(Metric metric) {
+    public void produce(MetricInTraceApi metricInTraceApi) {
         if (!context.isActive()) {
             return;
         }
         stats.incTotalCount();
-        boolean success = context.getRingBuffer().tryPublishEvent(metricProducer, metric);
+        boolean success = context.getRingBuffer().tryPublishEvent(metricProducer, metricInTraceApi);
         if (!success) {
             int tryAgainCount = 0;
             while (!success && tryAgainCount < 2) {
                 tryAgainCount++;
-                success = context.getRingBuffer().tryPublishEvent(metricProducer, metric);
+                success = context.getRingBuffer().tryPublishEvent(metricProducer, metricInTraceApi);
             }
         }
         if (!success) {
@@ -107,7 +124,7 @@ public class MetricQueue {
             context.getDisruptor().shutdown(2, TimeUnit.SECONDS);
         } catch (TimeoutException ignore) {
         }
-        timer.cancel();
+        executorService.shutdown();
     }
 
     public int getQueueSize() {
@@ -118,10 +135,10 @@ public class MetricQueue {
         return packageContext.getQueueSize();
     }
 
-    class MetricProducer implements EventTranslatorOneArg<MetricEvent, Metric> {
+    class MetricProducer implements EventTranslatorOneArg<MetricEvent, MetricInTraceApi> {
         @Override
-        public void translateTo(MetricEvent event, long sequence, Metric metric) {
-            event.reset(metric);
+        public void translateTo(MetricEvent event, long sequence, MetricInTraceApi metricInTraceApi) {
+            event.reset(metricInTraceApi);
         }
     }
 
@@ -139,9 +156,9 @@ public class MetricQueue {
         @Override
         public void onEvent(MetricEvent event, long sequence, boolean endOfBatch) throws Exception {
             try {
-                Metric metric = event.getMetric();
-                if (metric != null) {
-                    String name = metric.getName();
+                MetricInTraceApi metricInTraceApi = event.getMetric();
+                if (metricInTraceApi != null) {
+                    String name = metricInTraceApi.getName();
                     Map<MetricKey, PackageMetric> oldMetrics = metrics.get(name);
                     if (oldMetrics == null) {
                         if (metrics.size() >= configManger.getMetricConfig().getMaxMetric()) {
@@ -150,16 +167,16 @@ public class MetricQueue {
                         oldMetrics = new HashMap<>();
                         metrics.put(name, oldMetrics);
                     }
-                    PackageMetric oldMetric = oldMetrics.get(metric.getKey());
+                    PackageMetric oldMetric = oldMetrics.get(metricInTraceApi.getKey());
                     if (oldMetric == null) {
                         if (oldMetrics.size() > maxType) {
                             return;
                         }
-                        PackageMetric packageMetric = new PackageMetric(configManger, this, metric);
-                        packageMetric.merge(metric);
-                        oldMetrics.put(metric.getKey(), packageMetric);
+                        PackageMetric packageMetric = new PackageMetric(configManger, this, metricInTraceApi);
+                        packageMetric.merge(metricInTraceApi);
+                        oldMetrics.put(metricInTraceApi.getKey(), packageMetric);
                     } else {
-                        oldMetric.merge(metric);
+                        oldMetric.merge(metricInTraceApi);
                     }
                 }
                 long endTime = System.currentTimeMillis();
@@ -192,15 +209,16 @@ public class MetricQueue {
     }
 
     class PackageProducer implements
-        EventTranslatorTwoArg<PackageEvent, Map<String, Map<MetricKey, PackageMetric>>, Integer> {
+        EventTranslatorTwoArg<MatricPackageEvent, Map<String, Map<MetricKey, PackageMetric>>, Integer> {
         @Override
-        public void translateTo(PackageEvent event, long sequence, Map<String, Map<MetricKey, PackageMetric>> metrics,
+        public void translateTo(MatricPackageEvent event, long sequence,
+                                Map<String, Map<MetricKey, PackageMetric>> metrics,
                                 Integer sendCount) {
             event.reset(metrics, sendCount == null ? 0 : sendCount);
         }
     }
 
-    class PackageConsumer implements EventHandler<PackageEvent> {
+    class PackageConsumer implements EventHandler<MatricPackageEvent> {
         private int maxSize = 1024 * 1024 * 1;
         private JsonFactory jsonFactory;
         private ByteArrayOutputStream baos;
@@ -216,7 +234,7 @@ public class MetricQueue {
         }
 
         @Override
-        public void onEvent(PackageEvent event, long sequence, boolean endOfBatch) throws Exception {
+        public void onEvent(MatricPackageEvent event, long sequence, boolean endOfBatch) throws Exception {
             if (event.getMetrics() == null || event.getSendCount() <= 0) {
                 event.clear();
                 return;
@@ -235,11 +253,7 @@ public class MetricQueue {
                         continue;
                     }
                     String key = packageMetric.getTopic() + SPLIT_STR + name;
-                    List<PackageMetric> packageMetrics = sendMetrics.get(key);
-                    if (packageMetrics == null) {
-                        packageMetrics = new ArrayList<>();
-                        sendMetrics.put(key, packageMetrics);
-                    }
+                    List<PackageMetric> packageMetrics = sendMetrics.computeIfAbsent(key, k -> new ArrayList<>());
                     packageMetrics.add(packageMetric);
                 }
             }
@@ -296,20 +310,19 @@ public class MetricQueue {
             flush(sendCount, key);
         }
 
+        /*
+        这里的逻辑难以拆分。因为原始设计，为了精准控制发送数据大小，在遍历中处理是否超限。
+         */
         private int write(PackageMetric packageMetric, int sendCount) throws IOException {
             generator.writeStartArray();
-            generator.writeString(packageMetric.getTopic());
-            generator.writeString(AgentConfiguration.getServiceName());
+            generator.writeString(JSONCodecV1.METRIC_PREFIX_V1);
+            generator.writeString(AgentConfiguration.getTenant());
+            generator.writeString(AgentConfiguration.getAppId());
             generator.writeString(context.getHostIp());
             generator.writeString(context.getHostName());
 
-            generator.writeString(context.getCluster());
-            generator.writeString(context.getEzone());
-            generator.writeString(context.getIdc());
+            generator.writeObject(context.getExtraProperties());
 
-            generator.writeString(context.getMesosTaskId());
-            generator.writeString(context.getEleapposLabel());
-            generator.writeString(context.getEleapposSlaveFqdn());
             generator.writeStartArray();
             if (packageMetric.defaultMetric != null) {
                 generator.writeStartArray();
@@ -319,15 +332,15 @@ public class MetricQueue {
                 sendCount++;
             }
             if (packageMetric.metrics != null && packageMetric.metrics.size() > 0) {
-                Iterator<Metric> metricIterator = packageMetric.metrics.values().iterator();
+                Iterator<MetricInTraceApi<?>> metricIterator = packageMetric.metrics.values().iterator();
                 while (metricIterator.hasNext()) {
-                    Metric metric = metricIterator.next();
-                    if (metric == null) {
+                    MetricInTraceApi<?> metricInTraceApi = metricIterator.next();
+                    if (metricInTraceApi == null) {
                         metricIterator.remove();
                         continue;
                     }
                     generator.writeStartArray();
-                    metric.write(generator);
+                    metricInTraceApi.write(generator);
                     generator.writeEndArray();
                     metricIterator.remove();
                     sendCount++;
@@ -337,12 +350,13 @@ public class MetricQueue {
                 }
             }
             generator.writeEndArray();
+
             generator.writeEndArray();
             return sendCount;
         }
 
         protected void send(byte[] data, int sendCount, String key) {
-            messageSender.send(baos.toByteArray(), sendCount, key);
+            messageSender.send(data, sendCount);
         }
 
     }

@@ -1,10 +1,27 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent.config;
 
 import com.google.common.base.Strings;
-import io.etrace.common.message.ConfigManger;
-import io.etrace.common.modal.AgentConfig;
-import io.etrace.common.modal.CollectorItem;
-import io.etrace.common.modal.metric.MetricConfig;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.etrace.common.message.agentconfig.CollectorItem;
+import io.etrace.common.message.agentconfig.ConfigManger;
+import io.etrace.common.message.agentconfig.MetricConfig;
+import io.etrace.common.message.agentconfig.TraceConfig;
 import io.etrace.common.util.JSONUtil;
 import io.etrace.common.util.NetworkInterfaceHelper;
 
@@ -14,31 +31,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class DefaultConfigManager implements ConfigManger {
+    public static final long PULL_CONFIG_INTERVAL_IN_MILLISECOND = TimeUnit.MINUTES.toMillis(1);
     /**
      * default is 12 tags for callstack
      **/
-    private volatile AgentConfig agentConfig = new AgentConfig(true, true, 12, 256, 2 * 1024, true);
+    private volatile TraceConfig traceConfig = DEFAULT_AGENT_CONFIOG;
     /**
      * default is 8 tags for metrics
      */
-    private volatile MetricConfig metricConfig = new MetricConfig(true, 8, 256, 1000, 100, 10000, 1000, 1000);
-
-    private Timer timer;
+    private volatile MetricConfig metricConfig = DEFAULT_METRIC_CONFIG;
+    private ScheduledExecutorService executorService;
 
     public DefaultConfigManager() {
-        //after timer -- get config per interval
-        timer = new Timer("Config-Fetch-Timer", true);
-        int pullIntervalSeconds = 60;
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                init();
-            }
-        }, 0, pullIntervalSeconds * 1000);
+        executorService = new ScheduledThreadPoolExecutor(1,
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Config-Fetch-Timer-%d").build());
+
+        executorService.scheduleAtFixedRate(this::init, 0, PULL_CONFIG_INTERVAL_IN_MILLISECOND, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -50,9 +63,7 @@ public class DefaultConfigManager implements ConfigManger {
 
     @Override
     public void shutdown() {
-        if (timer != null) {
-            timer.cancel();
-        }
+        executorService.shutdown();
     }
 
     @Override
@@ -61,46 +72,47 @@ public class DefaultConfigManager implements ConfigManger {
     }
 
     @Override
+    public TraceConfig getAgentConfig() {
+        return this.traceConfig;
+    }
+
+    @Override
     public boolean isEnabled() {
-        return agentConfig.isEnabled() && !Strings.isNullOrEmpty(AgentConfiguration.getCollectorIp())
+        return traceConfig.isEnabled() && !Strings.isNullOrEmpty(AgentConfiguration.getCollectorIp())
             && CollectorRegistry.getInstance().isAvailable();
     }
 
     @Override
     public boolean isAopEnabled() {
-        return agentConfig.isAopEnabled();
+        return traceConfig.isAopEnabled();
     }
 
     @Override
     public int getTagCount() {
-        return agentConfig.getTagCount();
+        return traceConfig.getTagCount();
     }
 
     @Override
     public int getTagSize() {
-        return agentConfig.getTagSize();
+        return traceConfig.getTagSize();
     }
 
     @Override
     public int getDataSize() {
-        return agentConfig.getDataSize();
+        return traceConfig.getDataSize();
     }
 
     @Override
     public int getMessageCount() {
-        if (agentConfig.getMessageCount() <= 0) {
-            return 500;
-        } else {
-            return agentConfig.getMessageCount();
-        }
+        return traceConfig.getMessageCount();
     }
 
     @Override
     public int getRedisSize() {
-        if (agentConfig.getRedisSize() <= 0) {
+        if (traceConfig.getRedisSize() <= 0) {
             return 500;
         }
-        return agentConfig.getRedisSize();
+        return traceConfig.getRedisSize();
     }
 
     public void pullMetricConfig() {
@@ -109,7 +121,7 @@ public class DefaultConfigManager implements ConfigManger {
         }
         String url = getMetricConfigUrl();
         String configJson = getConfigFromHttp(url);
-        if (Strings.isNullOrEmpty(configJson)) {
+        if (!Strings.isNullOrEmpty(configJson)) {
             try {
                 metricConfig = JSONUtil.toObject(configJson, MetricConfig.class);
             } catch (IOException ignore) {
@@ -126,8 +138,8 @@ public class DefaultConfigManager implements ConfigManger {
             String configJson = getConfigFromHttp(collectorUrl);
             if (!Strings.isNullOrEmpty(configJson)) {
                 try {
-                    agentConfig = JSONUtil.toObject(configJson, AgentConfig.class);
-                    CollectorRegistry.getInstance().setLongConnection(agentConfig.isLongConnection());
+                    traceConfig = JSONUtil.toObject(configJson, TraceConfig.class);
+                    CollectorRegistry.getInstance().setLongConnection(traceConfig.isLongConnection());
                 } catch (IOException ignore) {
                 }
             }
@@ -143,7 +155,7 @@ public class DefaultConfigManager implements ConfigManger {
         try {
             String collectorUrl = getCollectorAddressUrl();
             String configJson = getConfigFromHttp(collectorUrl);
-            if (Strings.isNullOrEmpty(configJson)) {
+            if (!Strings.isNullOrEmpty(configJson)) {
                 CollectorItem item;
                 item = JSONUtil.toObject(configJson, CollectorItem.class);
                 CollectorRegistry.getInstance().setCollectorItem(item);
@@ -201,21 +213,21 @@ public class DefaultConfigManager implements ConfigManger {
     private String getCollectorHttpAgentConfigUrl() {
         return String.format("http://%s:%d/agent-config?appId=%s&host=%s&hostName=%s",
             AgentConfiguration.getCollectorIp(),
-            AgentConfiguration.getCollectorPort(), AgentConfiguration.getServiceName(),
+            AgentConfiguration.getCollectorPort(), AgentConfiguration.getAppId(),
             NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(), NetworkInterfaceHelper.INSTANCE.getLocalHostName());
     }
 
     private String getCollectorAddressUrl() {
         return String.format("http://%s:%d/collector/item?appId=%s&host=%s&hostName=%s",
             AgentConfiguration.getCollectorIp(), AgentConfiguration.getCollectorPort(),
-            AgentConfiguration.getServiceName(), NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(),
+            AgentConfiguration.getAppId(), NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(),
             NetworkInterfaceHelper.INSTANCE.getLocalHostName());
     }
 
     private String getMetricConfigUrl() {
         return String.format("http://%s:%d/metric-config?appId=%s&host=%s&hostName=%s",
             AgentConfiguration.getCollectorIp(), AgentConfiguration.getCollectorPort(),
-            AgentConfiguration.getServiceName(), NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(),
+            AgentConfiguration.getAppId(), NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(),
             NetworkInterfaceHelper.INSTANCE.getLocalHostName());
     }
 }

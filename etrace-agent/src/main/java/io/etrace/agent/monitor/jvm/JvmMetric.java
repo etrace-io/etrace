@@ -1,6 +1,22 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent.monitor.jvm;
 
-import io.etrace.agent.monitor.HBConstants;
+import io.etrace.agent.monitor.HeartBeatConstants;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,11 +33,11 @@ public class JvmMetric {
         return metrics;
     }
 
-    public void put(MetricType key, long value) {
+    public void put(JVMMetricType key, long value) {
         metrics.put(buildKey(key), String.valueOf(value));
     }
 
-    public void put(MetricType key, String subType, String name, long value) {
+    public void put(JVMMetricType key, String subType, String name, long value) {
         metrics.put(buildKey(key, subType, name), String.valueOf(value));
     }
 
@@ -29,22 +45,24 @@ public class JvmMetric {
         metrics.put(key, String.valueOf(value));
     }
 
-    public void put(MetricType key, double value) {
+    public void put(JVMMetricType key, double value) {
         metrics.put(buildKey(key), String.valueOf(value));
     }
 
-    private String buildKey(MetricType metricType) {
-        return type + HBConstants.TYPE_DELIMIT + metricType.toString().replace("_", HBConstants.TYPE_DELIMIT)
+    private String buildKey(JVMMetricType JVMMetricType) {
+        return type + HeartBeatConstants.TYPE_DELIMIT + JVMMetricType.toString().replace("_",
+            HeartBeatConstants.TYPE_DELIMIT)
             .toLowerCase();
     }
 
-    private String buildKey(MetricType metricType, String subType, String name) {
-        return type + HBConstants.TYPE_DELIMIT + metricType.toString().replace("_", HBConstants.TYPE_DELIMIT)
-            .toLowerCase() + HBConstants.TYPE_DELIMIT + subType
-            + HBConstants.TYPE_DELIMIT + name;
+    private String buildKey(JVMMetricType JVMMetricType, String subType, String name) {
+        return type + HeartBeatConstants.TYPE_DELIMIT + JVMMetricType.toString().replace("_",
+            HeartBeatConstants.TYPE_DELIMIT)
+            .toLowerCase() + HeartBeatConstants.TYPE_DELIMIT + subType
+            + HeartBeatConstants.TYPE_DELIMIT + name;
     }
 
-    public enum MetricType {
+    public enum JVMMetricType {
         GARBAGE_COUNT,
         GARBAGE_TIME,
         MEMORY_POOL,

@@ -1,24 +1,77 @@
-network.thread.num: 32
-network:
-  epoll_lever: false
-  thrift:
-    port: 2891
+# YAML node properties: http://yaml.org/spec/1.2/spec.html#id2785586
 
-  tcp:
-    thread:
-      num: 32
+MAIN_CLUSTER: &MAIN_CLUSTER main_cluster
+SECOND_CLUSTER: &SECOND_CLUSTER second_cluster
 
-    port: 2700
 
-  max:
-    frame:
-      size: 10485760
+TRACE_TOPIC: &TRACE_TOPIC callstack
+METRIC_TOPIC: &METRIC_TOPIC metric
 
-zookeeper:
-  address: 10.101.90.201:2181,10.101.90.202:2181,10.101.90.203:2181
+MAIN_KAFKA_TOPIC: &MAIN_KAFKA_TOPIC callstack,metric
+SECOND_KAFKA_TOPIC: &SECOND_KAFKA_TOPIC dal_application
 
-##特殊的集群需要在/etc/eleme/env.yml定义，不在该列表中默认注册为etrace集群
-collector.clusters:
-  - esm
-  - dal
-  - statsd
+# spring-web
+server:
+  port: 2890
+  connection-timeout: 5000
+  tomcat:
+    accept-count: 64
+    max-threads: 8
+    min-spare-threads: 4
+
+config:
+  appId: "etrace.collector"
+  backendAddress: "localhost:2890"
+  queue:
+    path: "temp/collector-queue"
+    maxFileSize: 128
+    memoryCapacity: 1024
+
+collector:
+  # cluster
+  cluster:
+    name: *MAIN_CLUSTER
+    defaultCluster: *MAIN_CLUSTER
+    register:
+      zkAddress: zookeeper:2181
+      namespace: etrace/collector
+    mapping:
+      - appId: one-equal-appId
+        type: EQUAL
+        cluster: *MAIN_CLUSTER
+      - appId: one-prefix-appId
+        type: PREFIX
+        cluster: *MAIN_CLUSTER
+  # sharding
+  sharding:
+    front:
+      interval: 5
+      enabled: true
+    backend:
+      interval: 30
+      enabled: true
+
+  resources:
+    - type: KAFKA
+      name: *MAIN_CLUSTER
+      props:
+        topics: *MAIN_KAFKA_TOPIC
+        bootstrap.servers: kafka:9092
+        key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+        value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+        max.request.size: 10485760
+        retries: 2147483640
+        send.buffer.bytes: 1048576
+        buffer.memory: 33554432
+
+    - type: KAFKA
+      name: *SECOND_CLUSTER
+      props:
+        topics: *SECOND_KAFKA_TOPIC
+        bootstrap.servers: kafka:9092
+        key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+        value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+        max.request.size: 10485760
+        retries: 2147483640
+        send.buffer.bytes: 1048576
+        buffer.memory: 33554432

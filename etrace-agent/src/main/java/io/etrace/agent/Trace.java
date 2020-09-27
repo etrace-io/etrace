@@ -1,23 +1,39 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent;
 
 import com.google.inject.Injector;
 import io.etrace.agent.config.AgentConfiguration;
-import io.etrace.agent.message.CallStackProducer;
-import io.etrace.agent.message.MessageProducer;
-import io.etrace.agent.message.io.MessageSender;
-import io.etrace.agent.message.io.SocketClientFactory;
+import io.etrace.agent.io.MessageSender;
+import io.etrace.agent.io.SocketClientFactory;
+import io.etrace.agent.message.callstack.CallstackProducer;
+import io.etrace.agent.message.callstack.CallstackQueue;
 import io.etrace.agent.message.metric.MetricProducer;
+import io.etrace.agent.module.InjectorFactory;
 import io.etrace.agent.monitor.HeartbeatUploadTask;
-import io.etrace.agent.stat.MessageStats;
-import io.etrace.common.Constants;
-import io.etrace.common.modal.Event;
-import io.etrace.common.modal.RedisResponse;
-import io.etrace.common.modal.TraceContext;
-import io.etrace.common.modal.Transaction;
-import io.etrace.common.modal.metric.Counter;
-import io.etrace.common.modal.metric.Gauge;
-import io.etrace.common.modal.metric.Payload;
-import io.etrace.common.modal.metric.Timer;
+import io.etrace.agent.stat.CallstackStats;
+import io.etrace.common.constant.Constants;
+import io.etrace.common.message.metric.Counter;
+import io.etrace.common.message.metric.Gauge;
+import io.etrace.common.message.metric.Payload;
+import io.etrace.common.message.metric.Timer;
+import io.etrace.common.message.trace.Event;
+import io.etrace.common.message.trace.TraceContext;
+import io.etrace.common.message.trace.Transaction;
 
 import java.util.Map;
 
@@ -49,16 +65,11 @@ import java.util.Map;
  * First, get the requestId ({@link Trace#getCurrentRequestId()} ) and rpcId ({@link Trace#nextLocalRpcId()}{@link
  * Trace#nextRemoteRpcId()}) after creating a new Transaction: Transaction t = Trace.newTransaction("Type", "Name");
  * String requestId = Trace.getCurrentRequestId(); String rpcId = Trace.nextLocalRpcId(); //local thread //String rpcId
- * = Trace.nextRemoteRpcId()  //remote server
- * <p>
- * <p>
- * Second, transfer the requestId and rpcId to next service or thread. Then, in the next service or thread, use {@link
- * Trace#continueTrace(String, String)} to bind it : Trace.continueTrace(requestId, rpcId);
- * <p>
- * It succeeds in creating a Transaction, and you can get the hierarchical relation information in ETrace.
- * <p>
+ * = Trace.nextRemoteRpcId()  //remote server Second, transfer the requestId and rpcId to next service or thread. Then,
+ * in the next service or thread, use {@link Trace#continueTrace(String, String)} to bind it :
+ * Trace.continueTrace(requestId, rpcId); It succeeds in creating a Transaction, and you can get the hierarchical
+ * relation information in ETrace.
  * ============================================================================================================
- * <p>
  * Redis stats: -- counter of redis calls = (succeedCount + failCount) -- cost time of redis calls = (durationSucceedSum
  * + durationFailSum) -- maxDuration, minDuration: the max(or min) cost time of redis calls
  * <p>
@@ -67,26 +78,25 @@ import java.util.Map;
  */
 public class Trace {
     private static Trace trace = new Trace();
-    private MessageProducer producer;
+    private CallstackProducer producer;
     private MetricProducer metricProducer;
-    private CallStackProducer callStackProducer;
+    private CallstackQueue callstackQueue;
     private MessageSender tcpMessageSender;
     private HeartbeatUploadTask task;
-    private MessageStats messageStats;
+    private CallstackStats callstackStats;
 
     private Trace() {
         Injector injector = InjectorFactory.getInjector();
-        producer = injector.getInstance(MessageProducer.class);
-        callStackProducer = injector.getInstance(CallStackProducer.class);
+        producer = injector.getInstance(CallstackProducer.class);
+        callstackQueue = injector.getInstance(CallstackQueue.class);
         metricProducer = injector.getInstance(MetricProducer.class);
         tcpMessageSender = injector.getInstance(MessageSender.class);
-        messageStats = injector.getInstance(MessageStats.class);
+        callstackStats = injector.getInstance(CallstackStats.class);
         task = injector.getInstance(HeartbeatUploadTask.class);
         task.startup();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            task.shutdown();
-            producer.shutdown();
+            shutdownTrace();
             SocketClientFactory.shutdown();
         }));
     }
@@ -96,12 +106,12 @@ public class Trace {
         trace.producer.shutdown();
     }
 
-    public static MessageStats getStats() {
-        return trace.messageStats;
+    public static CallstackStats getStats() {
+        return trace.callstackStats;
     }
 
     public static int getCallStackProducerQueueSize() {
-        return trace.callStackProducer.getQueueSize();
+        return trace.callstackQueue.getQueueSize();
     }
 
     public static int getTCPMessageSenderQueueSize() {
@@ -116,7 +126,10 @@ public class Trace {
      * @param type event type
      * @param name event name
      * @return me.ele.arch.etrace.common.modal.Event
+     * <p>
+     * 废弃。不如使用logEvent方便。
      */
+    @Deprecated
     public static Event newEvent(String type, String name) {
         return trace.producer.newEvent(type, name);
     }
@@ -188,7 +201,7 @@ public class Trace {
      * </p>
      *
      * @param message   the message to describe something
-     * @param throwable
+     * @param throwable exception
      */
 
     public static void logError(String message, Throwable throwable) {
@@ -244,8 +257,8 @@ public class Trace {
      * Bind the requestId and rpcId of previous service or thread to the present More details, please see the
      * Hierarchical Relation : {@link Trace}
      *
-     * @param requestId
-     * @param rpcId
+     * @param requestId requestId
+     * @param rpcId     rpcId
      */
     public static void continueTrace(String requestId, String rpcId) {
         trace.producer.continueTrace(requestId, rpcId);
@@ -253,12 +266,11 @@ public class Trace {
 
     /**
      * Get the current request id the rule of request id : {serviceName}^^{random long or uuid}|{timestamp} serviceName
-     * = serviceName (first) or appId (second) or unknown (last) such as : me.ele.arch
+     * = serviceName (first) or appId (second) or unknown (last) such as : arch
      * .etrace^^-1018579420457251359|1503388031849
-     * more detail about RpcId, refer to ：http://wiki.ele.to:8090/pages/viewpage.action?pageId=62202413
-     * "RequestId与RpcId说明"
+     * more detail about RpcId
      *
-     * @return
+     * @return {@link String}
      */
     public static String getCurrentRequestId() {
         return trace.producer.getCurrentRequestId();
@@ -267,23 +279,32 @@ public class Trace {
     /**
      * more detail about RpcId, refer to ：http://wiki.ele.to:8090/pages/viewpage.action?pageId=62202413
      * "RequestId与RpcId说明"
-     * <p>
-     * return rpcId
+     *
+     * @return {@link String}
      */
     public static String getRpcId() {
         return trace.producer.getRpcId();
     }
 
     /**
+     * 已修复成 getRpcId()
+     *
+     * @return {@link String}
+     */
+    public static String getCurrentRpcId() {
+        return trace.producer.getRpcId();
+    }
+
+    /**
      * return rpcId + "." + currentCall deprecated. use getRpcId() instead. more detail about RpcId, refer to
-     * ：http://wiki.ele.to:8090/pages/viewpage.action?pageId=62202413 "RequestId与RpcId说明"
      * <p>
      * 在某个场景：前文调用了nextRemoteRpcId()后，再调用getCurrentRpcId()返回的rpcId是下一层次的（即与Remote Call同级），实际上应是当前层次。
      * 可能会造成显式传递RpcId时，层次错误。 另一个api: getRpcId()修复了这个问题。
+     *
+     * @return {@link String}
      */
-    @Deprecated
-    public static String getCurrentRpcId() {
-        return trace.producer.getCurrentRpcId();
+    public static String getCurrentRpcIdAndCurrentCall() {
+        return trace.producer.getCurrentRpcIdAndCurrentCall();
     }
 
     /**
@@ -294,7 +315,7 @@ public class Trace {
     }
 
     public static String getCurrentRpcIdWithAppId() {
-        return AgentConfiguration.getServiceName() + "|" + getCurrentRpcId();
+        return AgentConfiguration.getAppId() + "|" + getCurrentRpcId();
     }
 
     /**
@@ -339,91 +360,6 @@ public class Trace {
 
     public static boolean isImportContext() {
         return trace.producer.isImportContext();
-    }
-
-    /**
-     * record the redis cost
-     *
-     * @param url      the redis url
-     * @param command  the redis command
-     * @param duration the cost time of redis calls
-     * @param succeed  whether succeed to call the redis
-     */
-    public static void redis(String url, String command, long duration, boolean succeed) {
-        trace.producer.redis(url, command, duration, succeed, null, null);
-    }
-
-    /**
-     * record the redis cost
-     *
-     * @param url       the redis url
-     * @param command   the redis command
-     * @param duration  the cost time of redis calls
-     * @param succeed   whether succeed to call the redis
-     * @param redisType whether RDB or Corvus
-     */
-    public static void redis(String url, String command, long duration, boolean succeed, String redisType) {
-        trace.producer.redis(url, command, duration, succeed, null, redisType);
-    }
-
-    /**
-     * record the redis cost and response
-     *
-     * @param url      the redis url
-     * @param command  the redis command
-     * @param duration the cost time of redis calls
-     * @param succeed  whether succeed to call the redis
-     * @param response me.ele.arch.etrace.common.modal.RedisResponse the redis response information(hit and response
-     *                 size)
-     */
-    public static void redis(String url, String command, long duration, boolean succeed, RedisResponse response) {
-        trace.producer.redis(url, command, duration, succeed, new RedisResponse[] {response}, null);
-    }
-
-    /**
-     * record the redis cost and response
-     *
-     * @param url       the redis url
-     * @param command   the redis command
-     * @param duration  the cost time of redis calls
-     * @param succeed   whether succeed to call the redis
-     * @param response  me.ele.arch.etrace.common.modal.RedisResponse the redis response information(hit and response
-     *                  size)
-     * @param redisType whether RDB or Corvus
-     */
-    public static void redis(String url, String command, long duration, boolean succeed, RedisResponse response,
-                             String redisType) {
-        trace.producer.redis(url, command, duration, succeed, new RedisResponse[] {response}, redisType);
-    }
-
-    /**
-     * record the redis cost and response
-     *
-     * @param url       the redis url
-     * @param command   the redis command
-     * @param duration  the cost time of redis calls
-     * @param succeed   whether succeed to call the redis
-     * @param responses me.ele.arch.etrace.common.modal.RedisResponse[] the redis responses information(hit and response
-     *                  size)
-     */
-    public static void redis(String url, String command, long duration, boolean succeed, RedisResponse[] responses) {
-        trace.producer.redis(url, command, duration, succeed, responses, null);
-    }
-
-    /**
-     * record the redis cost and response
-     *
-     * @param url       the redis url
-     * @param command   the redis command
-     * @param duration  the cost time of redis calls
-     * @param succeed   whether succeed to call the redis
-     * @param responses me.ele.arch.etrace.common.modal.RedisResponse[] the redis responses information(hit and response
-     *                  size)
-     * @param redisType whether RDB or Corvus
-     */
-    public static void redis(String url, String command, long duration, boolean succeed, RedisResponse[] responses,
-                             String redisType) {
-        trace.producer.redis(url, command, duration, succeed, responses, redisType);
     }
 
     public static void logHeartbeat(String type, String name, String status, String

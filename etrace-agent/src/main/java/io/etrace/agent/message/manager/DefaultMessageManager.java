@@ -1,101 +1,63 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent.message.manager;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import io.etrace.agent.config.AgentConfiguration;
-import io.etrace.agent.message.CallStackProducer;
-import io.etrace.agent.message.DefaultTraceContext;
-import io.etrace.agent.message.IdFactory;
-import io.etrace.common.Constants;
-import io.etrace.common.exception.TooManyRedisException;
-import io.etrace.common.message.ConfigManger;
-import io.etrace.common.message.MessageManager;
-import io.etrace.common.modal.*;
-import io.etrace.common.modal.impl.EventImpl;
-import io.etrace.common.modal.impl.TransactionImpl;
+import io.etrace.agent.message.RequestIdAndRpcIdFactory;
+import io.etrace.agent.message.callstack.CallstackQueue;
+import io.etrace.common.constant.Constants;
+import io.etrace.common.message.agentconfig.ConfigManger;
+import io.etrace.common.message.trace.*;
+import io.etrace.common.message.trace.impl.EventImpl;
+import io.etrace.common.message.trace.impl.TransactionImpl;
 
 import java.util.*;
 
-import static io.etrace.common.Constants.ROOT_RPC_ID;
+import static io.etrace.common.constant.Constants.ROOT_RPC_ID;
 
-public class DefaultMessageManager implements MessageManager {
+public class DefaultMessageManager implements TraceManager {
 
-    public static final Set<String> ignoreEagleTraceType = new HashSet<>();
-
-    /**
-     * 该集合存储了一些特殊中间件的transaction type,原因如下: eMonitor界面上如果出现了通过jdbc,amqp,jedis调用集团的组件的时候 需要添加一个链接到鹰眼的点击按钮
-     * 所以需要在tag里加上鹰眼id(如果存在的话),以此方便可以跳转
-     */
-    public static final Set<String> addEagleTraceIdType = new HashSet<>();
-
-    // 以下的transaction type自身替换成集团组件后会自行调用鹰眼
-    // 所以trace内部无需再调用鹰眼
-    static {
-
-        addEagleTraceIdType.add(Constants.SQL);
-        addEagleTraceIdType.add(Constants.RMQ_PRODUCE);
-        addEagleTraceIdType.add(Constants.RMQ_CONSUME);
-        addEagleTraceIdType.add(Constants.REDIS_TYPE);
-
-        ignoreEagleTraceType.add(Constants.SERVICE);
-        ignoreEagleTraceType.add(Constants.CALL);
-        ignoreEagleTraceType.add("System");// heartbeat
-        ignoreEagleTraceType.add("Platform");// heartbeat
-        // dal
-        ignoreEagleTraceType.add("SEQ");
-        ignoreEagleTraceType.add("GLOBALID");
-        ignoreEagleTraceType.add("DAL");
-        ignoreEagleTraceType.add("TRANS");
-        ignoreEagleTraceType.add(Constants.SQL);
-
-        /**
-         * url入口拦截
-         */
-        ignoreEagleTraceType.add(Constants.URL);
-
-        ignoreEagleTraceType.addAll(addEagleTraceIdType);
-    }
-
-    private CallStackProducer producer;
-    private IdFactory idFactory;
+    private CallstackQueue callstackQueue;
+    private RequestIdAndRpcIdFactory requestIdAndRpcIdFactory;
     private ConfigManger configManger;
-    private ThreadLocal<Context> context;
+    private ThreadLocal<Context> contextThreadLocal;
     private ThreadLocal<Boolean> isImport = new ThreadLocal<>();
+
     @Inject
-    public DefaultMessageManager(CallStackProducer callStackProducer, IdFactory idFactory, ConfigManger configManger) {
-        this(callStackProducer, idFactory, configManger, true);
+    public DefaultMessageManager(CallstackQueue callstackQueue, RequestIdAndRpcIdFactory requestIdAndRpcIdFactory,
+                                 ConfigManger configManger) {
+        this(callstackQueue, requestIdAndRpcIdFactory, configManger, true);
     }
 
-    DefaultMessageManager(CallStackProducer callStackProducer, IdFactory idFactory, ConfigManger configManger,
+    DefaultMessageManager(CallstackQueue callstackQueue, RequestIdAndRpcIdFactory requestIdAndRpcIdFactory,
+                          ConfigManger configManger,
                           boolean createNewContext) {
         this.configManger = configManger;
-        this.producer = callStackProducer;
-        this.idFactory = idFactory;
+        this.callstackQueue = callstackQueue;
+        this.requestIdAndRpcIdFactory = requestIdAndRpcIdFactory;
         if (createNewContext) {
-            this.context = new ThreadLocal<>();
-        }
-    }
-
-    private static boolean ignoreEagleType(Transaction transaction) {
-        return ignoreEagleTraceType.contains(transaction.getType());
-    }
-
-    @Override
-    public void addRedis(String url, String command, long duration, boolean succeed, String redisType,
-                         RedisResponse[] responses) {
-        Context ctx = getContext();
-        if (ctx == null) {
-            return;
-        }
-        try {
-            ctx.mergeRedisStats(url, command, duration, succeed, responses, redisType);
-        } catch (TooManyRedisException e) {
+            this.contextThreadLocal = new ThreadLocal<>();
         }
     }
 
     @Override
-    public void add(Message message) {
+    public void addNonTransaction(Message message) {
         Context ctx = getContext();
         if (ctx != null) {
             ctx.add(message);
@@ -103,7 +65,7 @@ public class DefaultMessageManager implements MessageManager {
     }
 
     @Override
-    public void end(Transaction transaction) {
+    public void endTransaction(Transaction transaction) {
         Context ctx = getContext();
         if (ctx != null) {
             if (ctx.end(transaction)) {
@@ -118,7 +80,7 @@ public class DefaultMessageManager implements MessageManager {
     }
 
     @Override
-    public void start(Transaction transaction) {
+    public void startTransaction(Transaction transaction) {
         Context ctx = getContext();
         if (ctx != null) {
             ctx.start(transaction);
@@ -128,12 +90,12 @@ public class DefaultMessageManager implements MessageManager {
     @Override
     public void shutdown() {
         configManger.shutdown();
-        producer.shutdown();
+        callstackQueue.shutdown();
     }
 
     @Override
     public boolean hasTransaction() {
-        Context ctx = context.get();
+        Context ctx = contextThreadLocal.get();
         if (ctx == null) {
             return false;
         }
@@ -142,12 +104,12 @@ public class DefaultMessageManager implements MessageManager {
 
     @Override
     public void setup() {
-        context.set(new Context());
+        contextThreadLocal.set(new Context());
     }
 
     @Override
     public void setup(String requestId, String rpcId) {
-        context.set(new Context(requestId, rpcId));
+        contextThreadLocal.set(new Context(requestId, rpcId));
     }
 
     @Override
@@ -162,7 +124,7 @@ public class DefaultMessageManager implements MessageManager {
     @Override
     public void importContext(TraceContext ctx) {
         if (ctx != null && ctx.getCtx() instanceof Context) {
-            context.set((Context)ctx.getCtx());
+            contextThreadLocal.set((Context)ctx.getCtx());
             isImport.set(true);
         }
     }
@@ -178,7 +140,7 @@ public class DefaultMessageManager implements MessageManager {
 
     @Override
     public boolean hasContext() {
-        return context != null && context.get() != null;
+        return contextThreadLocal != null && contextThreadLocal.get() != null;
     }
 
     @Override
@@ -202,8 +164,8 @@ public class DefaultMessageManager implements MessageManager {
 
     @Override
     public void removeContext() {
-        if (context != null) {
-            context.remove();
+        if (contextThreadLocal != null) {
+            contextThreadLocal.remove();
         }
         isImport.remove();
     }
@@ -220,20 +182,7 @@ public class DefaultMessageManager implements MessageManager {
     @Override
     public String nextLocalRpcId() {
         String currentRpcId = getContext().rpcId;
-        String nextRpcId;
-        List<String> levels = Splitter.on(".").splitToList(currentRpcId);
-        int size = levels.size();
-        if (size == 1) {
-            nextRpcId = nexLocalThreadId() + "^" + currentRpcId;
-        } else {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < size - 1; i++) {
-                sb.append(levels.get(i)).append(".");
-            }
-            sb.append(nexLocalThreadId()).append("^").append(levels.get(size - 1));
-            nextRpcId = sb.toString();
-        }
-        return nextRpcId;
+        return RequestIdAndRpcIdFactory.buildNextLocalRpcId(currentRpcId, nextLocalThreadId());
     }
 
     @Override
@@ -245,11 +194,11 @@ public class DefaultMessageManager implements MessageManager {
         return generateRequestId(null);
     }
 
-    public String nexLocalThreadId() {
+    public String nextLocalThreadId() {
         Context ctx = getContext();
         if (ctx != null) {
             int nexLocalThreadId = ++ctx.nexLocalThreadId;
-            return nexLocalThreadId + "";
+            return String.valueOf(nexLocalThreadId);
         }
         return String.valueOf(Thread.currentThread().getId());
     }
@@ -264,30 +213,31 @@ public class DefaultMessageManager implements MessageManager {
     }
 
     @Override
-    public String getCurrentRpcId() {
+    @Deprecated
+    public String getCurrentRpcIdAndCurrentCall() {
         Context ctx = getContext();
         if (ctx != null) {
-            return ctx.getCurrentRpcId();
+            return ctx.getCurrentRpcIdAndCurrentCall();
         }
         return ROOT_RPC_ID;
     }
 
     public boolean shouldLog(Throwable throwable) {
-        Context ctx = context == null ? null : context.get();
+        Context ctx = contextThreadLocal == null ? null : contextThreadLocal.get();
         return ctx == null || ctx.shouldLog(throwable);
     }
 
     private void flush(String requestId, String id, Message message) {
-        producer.produce(requestId, id, message);
+        callstackQueue.produce(requestId, id, message);
         //reset current thread local data
         reset();
     }
 
     protected Context getContext() {
-        Context ctx = context.get();
+        Context ctx = contextThreadLocal.get();
         if (ctx == null) {
             ctx = new Context();
-            context.set(ctx);
+            contextThreadLocal.set(ctx);
         }
         return ctx;
     }
@@ -299,24 +249,9 @@ public class DefaultMessageManager implements MessageManager {
      * @return new request id
      */
     private String generateRequestId(String requestId) {
-        String rid = requestId;
-        if (Strings.isNullOrEmpty(requestId)) {
-            rid = idFactory.getNextId();
-        }
-        int index = rid.indexOf("^^");
-        if (index < 0) {
-            int tsIndex = rid.lastIndexOf("|");
-            if (tsIndex > 0) {
-                return AgentConfiguration.getServiceName() + "^^" + rid;
-            }
-            return AgentConfiguration.getServiceName() + "^^" + rid + "|" + System.currentTimeMillis();
-        } else {
-            int tsIndex = rid.lastIndexOf("|");
-            if (tsIndex < 0) {
-                return rid + "|" + System.currentTimeMillis();
-            }
-        }
-        return requestId;
+        return RequestIdAndRpcIdFactory.buildRequestId(
+            Strings.isNullOrEmpty(requestId) ? requestIdAndRpcIdFactory.getNextId() : requestId,
+            AgentConfiguration.getAppId());
     }
 
     public class Context {
@@ -328,15 +263,14 @@ public class DefaultMessageManager implements MessageManager {
         protected long totalDuration;
         protected int nexLocalThreadId = 0;
         private Message root;
-        private Map<String, RedisStats> redisStatsMap;
-        private String redisType = null;
         private int currentCall = 0;
+        /**
+         * purely rpcId part, no "appId|" part
+         */
         private String rpcId;
-        private String id;
         private String requestId;
         private int next;
         private long totalChildren = 1;
-        private int redisSize = 0;
         private String clientAppId;
 
         /**
@@ -361,20 +295,13 @@ public class DefaultMessageManager implements MessageManager {
             if (Strings.isNullOrEmpty(rpcId)) {
                 rpcId = ROOT_RPC_ID;
             }
-            this.id = rpcId;
-            int index = rpcId.indexOf("|");
-            if (index > 0) {
-                this.clientAppId = rpcId.substring(0, index);
-                this.rpcId = rpcId.substring(index + 1, rpcId.length());
-            } else {
-                this.rpcId = rpcId;
-            }
+            this.clientAppId = RequestIdAndRpcIdFactory.parseClientAppIdFromOriginalRpcId(rpcId);
+            this.rpcId = RequestIdAndRpcIdFactory.parseRpcIdFromOriginalRpcId(rpcId);
         }
 
         public String nextRemoteRpcId() {
-            completeRedis();
             currentCall++;
-            return rpcId + "." + currentCall;
+            return RequestIdAndRpcIdFactory.buildNextRemoteRpcId(rpcId, currentCall);
         }
 
         public String getClientAppId() {
@@ -392,87 +319,11 @@ public class DefaultMessageManager implements MessageManager {
             return rpcId;
         }
 
-        public String getCurrentRpcId() {
+        public String getCurrentRpcIdAndCurrentCall() {
             if (currentCall == 0) {
                 return rpcId;
             }
-            return rpcId + "." + currentCall;
-        }
-
-        public void mergeRedisStats(String url, String command, long duration, boolean succeed,
-                                    RedisResponse[] responses, String redisType) {
-            if (url == null || stack.isEmpty()) {
-                return;
-            }
-            if (redisStatsMap == null) {
-                redisStatsMap = new HashMap<>();
-            }
-            if (redisType != null) {
-                if (this.redisType == null) {
-                    this.redisType = redisType;
-                } else if (!this.redisType.equals(redisType)) {
-                    this.redisType = Constants.REDIS_TYPE_MIXED;
-                }
-            }
-
-            RedisStats redisStats = redisStatsMap.get(url);
-            if (redisStats == null) {
-                if (redisSize >= configManger.getRedisSize()) {
-                    throw new TooManyRedisException("Too many redis, stop create RedisStats");
-                }
-                redisStats = new RedisStats(url);
-                redisStatsMap.put(url, redisStats);
-            }
-            int raiseCommand = redisStats.merge(url, command, duration, succeed, responses,
-                redisSize >= configManger.getRedisSize());
-            redisSize += raiseCommand;
-        }
-
-        public void completeRedis() {
-            try {
-                Transaction redis = resetRedis();
-                if (redis == null) {
-                    return;
-                }
-                add(redis);
-            } catch (Exception e) {
-            }
-        }
-
-        public void completeRedis(Transaction transaction) {
-            try {
-                if (transaction == null) {
-                    return;
-                }
-                Transaction redis = resetRedis();
-                if (redis == null) {
-                    return;
-                }
-                transaction.addChild(redis);
-            } catch (Exception e) {
-            }
-        }
-
-        public Transaction resetRedis() {
-            if (redisStatsMap == null || redisStatsMap.size() == 0) {
-                return null;
-            }
-            Transaction redis = new TransactionImpl(Constants.REDIS_TYPE, Constants.REDIS_NAME);
-            if (this.redisType == null) {
-                this.redisType = Constants.REDIS_TYPE_DEFAULT;
-            }
-            redis.addTag(Constants.REDIS_TYPE_KEY, this.redisType);
-            redis.complete();
-            long duration = 0;
-            for (RedisStats redisStats : redisStatsMap.values()) {
-                duration += redisStats.getAllDuration();
-                redis.addChild(redisStats);
-            }
-            redis.setDuration(duration);
-            redis.setStatus(Constants.SUCCESS);
-            redisStatsMap.clear();
-            this.redisType = null;
-            return redis;
+            return RequestIdAndRpcIdFactory.buildNextRemoteRpcId(rpcId, currentCall);
         }
 
         public void add(Message message) {
@@ -498,7 +349,6 @@ public class DefaultMessageManager implements MessageManager {
         }
 
         public void start(Transaction transaction) {
-
             if (stack.isEmpty()) {
                 root = transaction;
             } else {
@@ -509,7 +359,6 @@ public class DefaultMessageManager implements MessageManager {
         }
 
         public boolean end(Transaction transaction) {
-
             if (stack != null && !stack.isEmpty()) {
                 if (transaction.isBadTransaction() && transaction != root) {
                     return false;
@@ -531,9 +380,8 @@ public class DefaultMessageManager implements MessageManager {
                     if (totalDuration > 0) {
                         totalDuration = 0;
                     }
-                    completeRedis(transaction);
                     // flush会reset context, 所以一些线程上下文相关的逻辑需要写在前面
-                    flush(requestId, id, root);
+                    flush(requestId, rpcId, root);
                     return true;
                 }
             }
@@ -555,7 +403,7 @@ public class DefaultMessageManager implements MessageManager {
         }
 
         private void truncateAndFlush(Transaction parent) {
-            String childId = id + "~" + this.next;
+            String childId = RequestIdAndRpcIdFactory.buildTruncatedRpcId(rpcId, this.next);
             Transaction target = new TransactionImpl("Trace", Constants.NAME_TRUNCATE);
             target.setStatus(Message.SUCCESS);
 

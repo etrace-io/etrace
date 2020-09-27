@@ -1,0 +1,60 @@
+#!/bin/sh
+set -xv
+
+echo "### Welcome! Your can use this script to build your local development environment.
+Your should have cloned this git repository. Then your need:
+
+1. Java 8+
+2. Maven 3.5+
+3. Docker
+
+Run 'mvn clean install' first to compile all codes.
+"
+while true; do
+  read -p "#### choose the profile you want to build: [Input the number]
+
+[1]. All in One: whole etrace project (include front-end and back-end services) and related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
+[2]. Only front-end project
+[3]. all back-end projects (collector, consumer, computer, api) and related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
+[4]. All related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
+[5]. Only Mysql
+
+[7]. Prometheus and Grafana.
+[8]. Debug Etrace back-end services.
+[9]. Clean all orphan docker service (todo)
+
+[0]. exit
+
+Input number: " num
+  case $num in
+  [1]*) echo 1 ;;
+  [2]*)
+    echo "run yarn start"
+     ;;
+  [3]*)
+    docker-compose  -f docker-compose-etrace.yml build
+    docker-compose  -f docker-compose-etrace.yml -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml up
+    ;;
+  [4]*)
+    docker-compose -f docker-compose-kafka-hadoop.yml up
+    ;;
+  [5]*)
+    docker-compose -f docker-compose-mysql.yml up
+    ;;
+
+   [7]*)
+    echo "docker-compose  -f docker-compose-prometheus-grafana.yml up"
+    docker-compose -f docker-compose-prometheus-grafana.yml up
+    ;;
+  [8]*)
+    docker-compose  -f docker-compose-etrace.yml build
+    docker-compose -f docker-compose-etrace.yml  up
+    ;;
+  [9]*)
+    docker-compose  -f docker-compose-etrace.yml -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml -f docker-compose-prometheus-grafana.yml down --remove-orphans
+    docker image prune
+    ;;
+  [0]*) exit ;;
+  *) echo "Only number accepted!" ;;
+  esac
+done
