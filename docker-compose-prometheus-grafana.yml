@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  proemtheus:
+    image: "prom/prometheus:v2.20.1"
+    ports:
+      - 9090:9090
+    networks:
+      - backend
+
+  grafana:
+    image: "grafana/grafana"
+    ports:
+      - 3000:3000
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

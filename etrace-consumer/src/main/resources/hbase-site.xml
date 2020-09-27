@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"  href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>hbase.zookeeper.property.clientPort</name>
+        <value>2182</value>
+        <description>Property from ZooKeeper's config zoo.cfg.
+            The port at which the clients will connect.
+        </description>
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>hbase</value>
+    </property>
+    <property>
+        <name>zookeeper.znode.parent</name>
+        <value>/hbase</value>
+    </property>
+    <property>
+        <name>hbase.hconnection.threads.max</name>
+        <value>24</value>
+    </property>
+    <property>
+        <name>hbase.hconnection.threads.core</name>
+        <value>8</value>
+    </property>
+    <property>
+        <name>hbase.client.ipc.pool.size</name>
+        <value>2</value>
+    </property>
+</configuration>

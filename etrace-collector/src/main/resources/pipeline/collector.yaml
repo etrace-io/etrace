@@ -1,0 +1,122 @@
+receivers:
+  - name: thrift_receive
+    type: THRIFT
+    clazz: io.etrace.collector.component.receive.ThriftReceive
+    props:
+      port: 2891
+      workers: 32
+
+  - name: tcp_receive
+    type: TCP
+    clazz: io.etrace.collector.component.receive.TcpReceive
+    props:
+      port: 2892
+      workers: 32
+
+processors:
+  - name: message_processor
+    clazz: io.etrace.collector.component.processor.MessageProcessor
+
+  - name: metric_processor
+    clazz: io.etrace.collector.component.processor.MetricProcessor
+    props:
+      bufferSize: 128
+      taskSize: 2
+      flushThreshold: 64
+      topic: &METRIC_TOPIC metric
+
+  - name: dal_processor
+    clazz: io.etrace.collector.component.processor.TraceProcessor
+    props:
+      bufferSize: 128
+      taskSize: 2
+      flushThreshold: 64
+      topic: &TRACE_TOPIC callstack
+
+  - name: trace_processor
+    clazz: io.etrace.collector.component.processor.TraceProcessor
+    props:
+      bufferSize: 128
+      taskSize: 2
+      flushThreshold: 64
+      topic: *TRACE_TOPIC
+
+exporters:
+  - name: application_exporter
+    clazz: io.etrace.collector.component.exporter.KafkaExporter
+    props:
+      resourceId: &MAIN_CLUSTER main_cluster
+
+  - name: dal_exporter
+    clazz: io.etrace.collector.component.exporter.KafkaExporter
+    props:
+      resourceId: &SECOND_CLUSTER second_cluster
+
+filters:
+  - name: metric_filter
+    clazz: io.etrace.common.pipeline.impl.EqualFilter
+    props:
+      key: metric
+  - name: dal_filter
+    clazz: io.etrace.common.pipeline.impl.EqualFilter
+    props:
+      key: me.ele.arch.das.capricorn
+  - name: trace_filter
+    clazz: io.etrace.common.pipeline.impl.EqualFilter
+    props:
+      key: trace
+
+pipelines:
+  - name: tcp_receive
+    downstreams:
+      - filter: default
+        components:
+          - message_processor
+
+  - name: message_processor
+    downstreams:
+      - filter: metric_filter
+        components:
+          - metric_processor
+      - filter: dal_filter
+        components:
+          - dal_processor
+      - filter: trace_filter
+        components:
+          - trace_processor
+
+  - name: thrift_receive
+    downstreams:
+      - filter: default
+        components:
+          - message_processor
+
+  - name: message_processor
+    downstreams:
+      - filter: metric_filter
+        components:
+          - metric_processor
+      - filter: dal_filter
+        components:
+          - dal_processor
+      - filter: trace_filter
+        components:
+          - trace_processor
+
+  - name: metric_processor
+    downstreams:
+      - filter: default
+        components:
+          - application_exporter
+
+  - name: dal_processor
+    downstreams:
+      - filter: default
+        components:
+          - dal_exporter
+
+  - name: trace_processor
+    downstreams:
+      - filter: default
+        components:
+          - application_exporter

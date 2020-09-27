@@ -1,166 +1,158 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent.monitor;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import io.etrace.agent.Trace;
+import io.etrace.agent.Version;
 import io.etrace.agent.config.AgentConfiguration;
-import io.etrace.agent.config.DiskFileConfiguration;
-import io.etrace.agent.message.MessageProducer;
-import io.etrace.agent.message.io.Client;
-import io.etrace.agent.message.io.SocketClientFactory;
-import io.etrace.agent.monitor.jvm.EnvironmentConfig;
-import io.etrace.agent.monitor.jvm.JvmExecutor;
-import io.etrace.agent.monitor.jvm.JvmThreadExecutor;
+import io.etrace.agent.message.callstack.CallstackProducer;
+import io.etrace.agent.message.heartbeat.HeartbeatQueue;
+import io.etrace.agent.monitor.jvm.EnvironmentExecutor;
+import io.etrace.agent.monitor.jvm.JvmHeartBeatExecutor;
+import io.etrace.agent.monitor.jvm.JvmThreadHeartBeatExecutor;
 import io.etrace.agent.monitor.mbean.MBeanExecutor;
-import io.etrace.agent.stat.EsightStats;
+import io.etrace.agent.stat.CallstackStats;
 import io.etrace.agent.stat.HeartbeatStats;
-import io.etrace.agent.stat.MessageStats;
 import io.etrace.agent.stat.MetricStats;
-import io.etrace.common.Constants;
-import io.etrace.common.message.MessageManager;
-import io.etrace.common.modal.*;
-import io.etrace.common.modal.impl.TransactionImpl;
+import io.etrace.common.constant.Constants;
+import io.etrace.common.message.trace.*;
+import io.etrace.common.message.trace.impl.TransactionImpl;
 import io.etrace.common.util.JSONUtil;
 import io.etrace.common.util.NetworkInterfaceHelper;
-import io.etrace.common.util.ThreadUtil;
+import io.etrace.common.util.Pair;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-public class HeartbeatUploadTask implements Runnable {
-    private static final int SENDER_TIMEOUT = 5000;
-    // 由于etrace-agent可能同时存在于Xboot和直接用两种方式, 而这两种方式获取jar版本号的代码是不同的
-    // 所以简单起见, 直接在这里写上版本号, 未来collector/consumer添加一个功能
-    // 如果heartbeat status里没有这个值, 则表示是老版本etrace-agent
-    // 以此来追踪所有agent的版本信息
-    private static final String MIGRATION_ALI_VERSION = "3.0.0-ee-stable-SNAPSHOT";
-    private final String HOST_IP;
-    private final String HOST_NAME;
+public class HeartbeatUploadTask {
+    private final String HOST_IP = NetworkInterfaceHelper.INSTANCE.getLocalHostAddress();
     private final Map<String, String> monitorErrorInfo = new HashMap<>();
     @Inject
-    MessageManager messageManager;
-    private List<Executor> executors;
+    TraceManager traceManager;
+    private String INIT = "Init";
+    private String INTERNAL_SEND = "Send_to_collector";
+    private String CALLSTACK_TO_JSON = "CallStack_to_json";
+    private String CLOSE_GENERATOR = "Close_generator";
+    private String LOG_ENVIRONMENT = "Environment";
+    private String LOG_EXECUTOR = "Executors";
+    private String LOG_THREAD_EXECUTOR = "Thread-dump";
+    private String LOG_MBEAN_EXECUTOR = "Mbean";
+    private List<HeartBeatExecutor> heartBeatExecutors;
     @Inject
-    private MessageStats messageStats;
+    private CallstackStats callstackStats;
     @Inject
     private MetricStats metricStats;
-    @Inject
-    private EsightStats esightStats;
+
     private HeartbeatStats heartbeatStats;
     @Inject
-    private MessageProducer producer;
-    private volatile boolean active = true;
-    private Client client = SocketClientFactory.getClient(SENDER_TIMEOUT);
-    private JvmThreadExecutor jvmThreadExecutor;
-    private EnvironmentConfig environmentConfig;
-    private MessageHeader messageHeader;
+    private CallstackProducer producer;
+
+    @Inject
+    private HeartbeatQueue heartbeatQueue;
+
+    private JvmThreadHeartBeatExecutor jvmThreadExecutor;
+    private EnvironmentExecutor environmentExecutor;
     private MBeanExecutor mBeanExecutor;
+    private ScheduledExecutorService executorService;
+
+    /*
+    default initial delay = 10s
+     */
+    private Long heartbeatDelay = 10L;
+
+    /*
+    default upload interval = 60s
+     */
+    private Long heartbeatInterval = 60L;
+    private int count = 0;
+    private boolean rebootEventSent = false;
+
+    public HeartbeatUploadTask(Long heartbeatDelayInSecond, Long heartbeatIntervalInSecond) {
+        this.heartbeatDelay = heartbeatDelayInSecond;
+        this.heartbeatInterval = heartbeatIntervalInSecond;
+    }
 
     public HeartbeatUploadTask() {
-        HOST_IP = NetworkInterfaceHelper.INSTANCE.getLocalHostAddress();
-        HOST_NAME = NetworkInterfaceHelper.INSTANCE.getLocalHostName();
-        messageHeader = new MessageHeader();
-        messageHeader.setHostIp(HOST_IP);
-        messageHeader.setHostName(HOST_NAME);
     }
 
     public void startup() {
-        Thread t = new Thread(this, getName());
-        t.setDaemon(true);
-        t.start();
+        initExecutors();
+
+        executorService = new ScheduledThreadPoolExecutor(1,
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("HeartbeatUploadTask").build());
+
+        executorService.scheduleAtFixedRate(this::uploadStat, heartbeatDelay, heartbeatInterval, TimeUnit.SECONDS);
     }
 
-    private void init() {
-        heartbeatStats = messageStats.getHeartbeatStats();
+    private void logRebootEvent() {
+        Event event = Trace.newEvent("Reboot", HOST_IP);
+        event.setStatus(Constants.SUCCESS);
+        internalSend(event);
+    }
+
+    private void initExecutors() {
+        heartbeatStats = callstackStats.getHeartbeatStats();
         try {
-            jvmThreadExecutor = new JvmThreadExecutor(HBConstants.JVM_THREAD_PREFIX);
-            environmentConfig = new EnvironmentConfig(HBConstants.ENVIRONMENT);
-            executors = new ArrayList<>();
-            executors.add(new JvmExecutor(HBConstants.JAVA_PREFIX));
+            jvmThreadExecutor = new JvmThreadHeartBeatExecutor(HeartBeatConstants.JVM_THREAD_PREFIX);
+            environmentExecutor = new EnvironmentExecutor(HeartBeatConstants.ENVIRONMENT);
+            heartBeatExecutors = Lists.newArrayList(new JvmHeartBeatExecutor(HeartBeatConstants.JAVA_JVM));
             mBeanExecutor = new MBeanExecutor();
         } catch (Exception ignore) {
-            monitorErrorInfo.put(ErrorConstants.INIT, ignore.getMessage());
+            monitorErrorInfo.put(INIT, ignore.getMessage());
         }
-    }
-
-    public String getName() {
-        return "HeartbeatUploadTask";
     }
 
     public void shutdown() {
-        active = false;
+        executorService.shutdown();
     }
 
-    @Override
-    public void run() {
-        init();
-        long interval = 60 * 1000; // 60 seconds
-        // try to wait trace query init success
-        try {
-            Thread.sleep(10 * 1000);
-        } catch (InterruptedException e) {
-            return;
+    private void uploadStat() {
+        if (!rebootEventSent) {
+            logRebootEvent();
+            rebootEventSent = true;
         }
-
-        while (true) {
-            Calendar cal = Calendar.getInstance();
-            int second = cal.get(Calendar.SECOND);
-
-            // try to avoid send heartbeat at 59-01 second
-            if (second < 2 || second > 58) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore it
-                }
-            } else {
-                break;
-            }
+        //log env per one hour
+        if (count % 60 == 0) {
+            logEnvironment();
+            count = 0;
         }
-
-        Event event = Trace.newEvent("Reboot", HOST_IP);
-        internalSend(event);
-        int count = 0;
-        while (active) {
-            if (!client.openConnection()) {
-                if (!active) {
-                    break;
-                }
-                ThreadUtil.sleep(interval);
-                continue;
-            }
-            if (count % 60 == 0) {
-                //log env per one hour
-                logEnvironment();
-            }
-            long start = System.currentTimeMillis();
-            logStatus();
-            logMBeanInfo();
-            long elapsed = System.currentTimeMillis() - start;
-            if (elapsed < interval) {
-                try {
-                    Thread.sleep(interval - elapsed);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-            count++;
-        }
+        logMBeanInfo();
+        logStatus();
+        count++;
     }
 
     public void logEnvironment() {
         Heartbeat h = producer.newHeartbeat("Environment", HOST_IP);
         try {
-            Map<String, String> values = environmentConfig.execute();
+            Map<String, String> values = environmentExecutor.execute();
+            // ignore tht tag limit
             if (values != null && values.size() > 0) {
                 h.addTags(values);
             }
             h.setStatus(Message.SUCCESS);
         } catch (Throwable e) {
-            monitorErrorInfo.put(ErrorConstants.LOG_ENVIRONMENT, e.getMessage());
+            monitorErrorInfo.put(LOG_ENVIRONMENT, e.getMessage());
             h.setStatus(e);
         } finally {
             internalSend(h);
@@ -169,33 +161,37 @@ public class HeartbeatUploadTask implements Runnable {
 
     private void logStatus() {
         long step1 = System.currentTimeMillis();
-        Transaction t = Trace.newTransaction("System", "Status");
+        Transaction statusTransaction = Trace.newTransaction("System", "Status");
         try {
             logExecutor();
-            t.setStatus(Message.SUCCESS);
+            statusTransaction.setStatus(Message.SUCCESS);
         } finally {
-            t.setDuration(System.currentTimeMillis() - step1);
-            internalSend(t);
+            statusTransaction.setDuration(System.currentTimeMillis() - step1);
+            internalSend(statusTransaction);
         }
 
         long step2 = System.currentTimeMillis();
-        Transaction t2 = Trace.newTransaction("System", "Thread-Dump");
-        if (t2 instanceof TransactionImpl) {
-            ((TransactionImpl)t2).setTimestamp(t.getTimestamp());
+        Transaction threadDumpTransaction = Trace.newTransaction("System", "Thread-Dump");
+        if (threadDumpTransaction instanceof TransactionImpl) {
+            ((TransactionImpl)threadDumpTransaction).setTimestamp(statusTransaction.getTimestamp());
         }
-        MessageStats nowStats = messageStats.copyStats();
+        CallstackStats nowStats = callstackStats.copyStats();
         MetricStats nowMetricStats = metricStats.copyStats();
         try {
             logThreadExecutor();
             logMessageStats(nowStats, nowMetricStats);
-            t2.setStatus(Message.SUCCESS);
+            threadDumpTransaction.setStatus(Message.SUCCESS);
         } finally {
-            t2.setDuration(System.currentTimeMillis() - step2);
-            boolean success = internalSend(t2);
+            threadDumpTransaction.setDuration(System.currentTimeMillis() - step2);
+            // todo： 这里不能简单调用  threadDumpTransaction.complete(); 否则会多flush一条数据出去
+            // 但是问题是，这里不complete，就是未complete的数据了
+            // threadDumpTransaction.complete();
+
+            boolean success = internalSend(threadDumpTransaction);
             if (success) {
                 monitorErrorInfo.clear();
                 metricStats.resetToHistory(nowMetricStats);
-                messageStats.resetToHistory(nowStats);
+                callstackStats.resetToHistory(nowStats);
             }
         }
 
@@ -215,7 +211,7 @@ public class HeartbeatUploadTask implements Runnable {
             mbeanInfos.forEach(this::mbeanInfo);
             t.setStatus(Message.SUCCESS);
         } catch (Throwable e) {
-            monitorErrorInfo.put(ErrorConstants.LOG_MBEAN_EXECUTOR, e.getMessage());
+            monitorErrorInfo.put(LOG_MBEAN_EXECUTOR, e.getMessage());
         } finally {
             t.setDuration(System.currentTimeMillis() - start);
             internalSend(t);
@@ -225,40 +221,42 @@ public class HeartbeatUploadTask implements Runnable {
     public void logExecutor() {
         Heartbeat h = producer.newHeartbeat(Constants.HEART_BEAT, HOST_IP);
         try {
-            for (Executor executor : executors) {
+            for (HeartBeatExecutor heartBeatExecutor : heartBeatExecutors) {
                 try {
-                    Map<String, String> values = executor.execute();
+                    Map<String, String> values = heartBeatExecutor.execute();
                     if (values != null && values.size() > 0) {
                         h.addTags(values);
                     }
                 } catch (Exception e) {
-                    monitorErrorInfo.put(executor.type, e.getMessage());
+                    monitorErrorInfo.put(heartBeatExecutor.type, e.getMessage());
                 }
             }
             h.setStatus(Message.SUCCESS);
         } catch (Throwable e) {
-            monitorErrorInfo.put(ErrorConstants.LOG_EXECUTOR, e.getMessage());
+            monitorErrorInfo.put(LOG_EXECUTOR, e.getMessage());
             h.setStatus(e);
         } finally {
             h.complete();
         }
     }
 
-    private void logMessageStats(MessageStats messageStats, MetricStats metricStats) {
+    private void logMessageStats(CallstackStats callstackStats, MetricStats metricStats) {
         Heartbeat heartbeatMsg = producer.newHeartbeat("agent-stat", HOST_IP);
         try {
             Map<String, Map<String, Object>> stats = new HashMap<>();
-            stats.put("message-stats", messageStats.toStatMap());
+            stats.put("message-stats", callstackStats.toStatMap());
             stats.put("metric-stats", metricStats.toStatMap());
-            stats.put("esight-stats", esightStats.drainToMap());
+
+            //这里不需要上传migrationStats，不过可以上传应用相关的信息: appId, version, host, ip, ect.
             Map<String, Object> migrationStats = new HashMap<>();
-            migrationStats.put("appid", AgentConfiguration.getServiceName());
-            migrationStats.put("version", MIGRATION_ALI_VERSION);
-            stats.put("migration-ali-stats", migrationStats);
+            migrationStats.put("appid", AgentConfiguration.getAppId());
+            migrationStats.put("version", Version.TraceVersion);
+            stats.put("app-stats", migrationStats);
+
             heartbeatMsg.setData(JSONUtil.toString(stats));
             heartbeatMsg.setStatus(Message.SUCCESS);
         } catch (Throwable e) {
-            monitorErrorInfo.put(ErrorConstants.LOG_THREAD_EXECUTOR, e.getMessage());
+            monitorErrorInfo.put(LOG_THREAD_EXECUTOR, e.getMessage());
             heartbeatMsg.setStatus(e);
         } finally {
             if (monitorErrorInfo.size() > 0) {
@@ -269,15 +267,15 @@ public class HeartbeatUploadTask implements Runnable {
     }
 
     private void logThreadExecutor() {
-        Heartbeat threadDumpHB = producer.newHeartbeat("thread-dump", HOST_IP);
+        Heartbeat threadDump = producer.newHeartbeat("thread-dump", HOST_IP);
         try {
-            threadDumpHB.setData(JSONUtil.toString(jvmThreadExecutor.execute()));
-            threadDumpHB.setStatus(Message.SUCCESS);
+            threadDump.setData(JSONUtil.toString(jvmThreadExecutor.execute()));
+            threadDump.setStatus(Message.SUCCESS);
         } catch (Throwable e) {
-            monitorErrorInfo.put(ErrorConstants.LOG_THREAD_EXECUTOR, e.getMessage());
-            threadDumpHB.setStatus(e);
+            monitorErrorInfo.put(LOG_THREAD_EXECUTOR, e.getMessage());
+            threadDump.setStatus(e);
         } finally {
-            threadDumpHB.complete();
+            threadDump.complete();
         }
     }
 
@@ -290,7 +288,7 @@ public class HeartbeatUploadTask implements Runnable {
             }
             h.setStatus(Message.SUCCESS);
         } catch (Throwable e) {
-            monitorErrorInfo.put(ErrorConstants.LOG_MBEAN_EXECUTOR, e.getMessage());
+            monitorErrorInfo.put(LOG_MBEAN_EXECUTOR, e.getMessage());
             h.setStatus(e);
         } finally {
             h.complete();
@@ -298,61 +296,13 @@ public class HeartbeatUploadTask implements Runnable {
     }
 
     private boolean internalSend(Message t) {
-        try {
-            t.setStatus(Constants.SUCCESS);
-            CallStack callStack = new CallStack();
-            callStack.setMessage(t);
-            callStack.setRequestId(messageManager.getCurrentRequestId());
-            callStack.setId(messageManager.getCurrentRpcId());
-            callStack.setAppId(AgentConfiguration.getServiceName());
-            callStack.setHostIp(HOST_IP);
-            callStack.setHostName(HOST_NAME);
-            //set live parameters: cluster, idc, ezone, ezoneid and also instance
-            DiskFileConfiguration diskFileConfiguration = AgentConfiguration.getDiskFileConfiguration();
-            callStack.setCluster(diskFileConfiguration.getCluster());
-            callStack.setEzone(diskFileConfiguration.getEzone());
-            callStack.setIdc(diskFileConfiguration.getIdc());
-            callStack.setMesosTaskId(AgentConfiguration.getMesosTaskId());
-            callStack.setEleapposLabel(AgentConfiguration.getEleapposLabel());
-            callStack.setEleapposSlaveFqdn(AgentConfiguration.getEleapposSlaveFqdn());
-            callStack.setInstance(AgentConfiguration.getInstance());
-            JsonFactory jsonFactory = new JsonFactory();
-            ByteArrayOutputStream baos = null;
-            JsonGenerator generator = null;
-            try {
-                baos = new ByteArrayOutputStream();
-                generator = jsonFactory.createJsonGenerator(baos, JsonEncoding.UTF8);
-                generator.writeStartArray();
-                JSONCodec.encodeAsArray(callStack, generator);
-            } catch (IOException ignore) {
-                monitorErrorInfo.put(ErrorConstants.CALLSTACK_TO_JSON, ignore.getMessage());
-            } finally {
-                if (generator != null) {
-                    try {
-                        generator.writeEndArray();
-                        generator.close();
-                    } catch (IOException ignore) {
-                        monitorErrorInfo.put(ErrorConstants.CLOSE_GENERATOR, ignore.getMessage());
-                    }
-                }
-            }
-            messageHeader.setAppId(AgentConfiguration.getServiceName());
-            messageHeader.setAst(System.currentTimeMillis());
-            messageHeader.setInstance(AgentConfiguration.getInstance());
-            boolean success = client.send(JSONUtil.toBytes(messageHeader), baos.toByteArray());
-            if (!success) {
-                return false;
-            }
-            heartbeatStats.incTotalSize(baos.size());
-            heartbeatStats.incTotalCount(1);
+        boolean result = heartbeatQueue.produce(traceManager.getCurrentRequestId(), traceManager.getRpcId(), t);
+
+        heartbeatStats.incTotalCount(1);
+        if (result) {
             heartbeatStats.incSuccessCount(1);
-            return true;
-        } catch (Exception e) {
-            monitorErrorInfo.put(ErrorConstants.INTERNAL_SEND, e.getMessage());
-            return false;
-        } finally {
-            client.closeConnection();
-            messageManager.reset();
         }
+        traceManager.reset();
+        return result;
     }
 }

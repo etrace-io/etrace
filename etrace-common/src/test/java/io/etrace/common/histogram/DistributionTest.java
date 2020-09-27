@@ -1,9 +1,26 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.common.histogram;
 
-import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 
 public class DistributionTest {
 
@@ -36,8 +53,8 @@ public class DistributionTest {
         PercentileBucketFunction bucketFunction = PercentileBucketFunction.getFunctions(baseNumber);
         //        percentileBucketFunction.adjust(10000000);
         int poolIndex = bucketFunction.indexOf(pool);
-        System.out.println("distribution size : " + bucketFunction.getMaxSlot());
-        System.out.println(bucketFunction.getCategories());
+        //System.out.println("distribution size : " + bucketFunction.getMaxSlot());
+        //System.out.println(bucketFunction.getCategories());
         Distribution distribution = new Distribution(bucketFunction);
         for (int i = 0; i < pool; i++) {
             distribution.record(i);
@@ -52,18 +69,18 @@ public class DistributionTest {
             if (r != 0) {
                 r = data[i] / r;
             }
-            System.out.println(
-                String.format("assert i : %s  dist: %s  count: %s  percentage %s", i, dist, data[i], r * 100));
+            //System.out.println(
+            //    String.format("assert i : %s  dist: %s  count: %s  percentage %s", i, dist, data[i], r * 100));
             if (i == 0) {
                 assert data[i] == PercentileBuckets.get(baseIndex) + 1;
             } else {
-                Assert.assertEquals(data[i], Long.valueOf(numbers[1]) - Long.valueOf(numbers[0]));
+                assertEquals(data[i], Long.valueOf(numbers[1]) - Long.valueOf(numbers[0]));
             }
             count -= data[i];
         }
         String dist = bucketFunction.getDistribution(poolIndex);
-        System.out.println(String.format("assert i : %s  dist: %s  count: %s ", poolIndex, dist, data[poolIndex]));
-        Assert.assertEquals(data[poolIndex], count);
+        //System.out.println(String.format("assert i : %s  dist: %s  count: %s ", poolIndex, dist, data[poolIndex]));
+        assertEquals(data[poolIndex], count);
     }
 
     @Test
@@ -138,8 +155,8 @@ public class DistributionTest {
             }
         }
 
-        for (int i = 0; i < values.length; i++) {
-            System.out.println(values[i]);
-        }
+        //for (int i = 0; i < values.length; i++) {
+        //    System.out.println(values[i]);
+        //}
     }
 }

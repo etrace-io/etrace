@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.common.histogram;
 
 import java.lang.reflect.Array;
@@ -89,7 +105,9 @@ public final class PercentileBuckets {
     }
 
     /**
-     * Returns a copy of the bucket values array.
+     * 为数组 Returns a copy of the bucket values array.
+     *
+     * @return {@link long[]}
      */
     public static long[] asArray() {
         long[] values = new long[BUCKET_VALUES.length];
@@ -98,7 +116,11 @@ public final class PercentileBuckets {
     }
 
     /**
-     * Map the bucket values to a new array of a different type.
+     * 地图 Map the bucket values to a new array of a different type.
+     *
+     * @param c c
+     * @param f f
+     * @return {@link T}
      */
     public static <T> T[] map(Class<T> c, Function<Long, T> f) {
         @SuppressWarnings("unchecked")
@@ -110,22 +132,30 @@ public final class PercentileBuckets {
     }
 
     /**
-     * Return the value of the bucket at index {@code i}.
+     * 得到 Return the value of the bucket at index {@code i}.
+     *
+     * @param i 我
+     * @return long
      */
     public static long get(int i) {
         return BUCKET_VALUES[i];
     }
 
     /**
-     * Returns the number of buckets.
+     * 长度 Returns the number of buckets.
+     *
+     * @return int
      */
     public static int length() {
         return BUCKET_VALUES.length;
     }
 
     /**
-     * Returns the value the index of the bucket that should be used for {@code v}. The bucket value can be retrieved
+     * 指数 Returns the value the index of the bucket that should be used for {@code v}. The bucket value can be retrieved
      * using {@link #get(int)}.
+     *
+     * @param v v
+     * @return int
      */
     public static int indexOf(long v) {
         if (v <= 0) {
@@ -170,7 +200,10 @@ public final class PercentileBuckets {
     }
 
     /**
-     * Returns the value of the bucket that should be used for {@code v}.
+     * 桶 Returns the value of the bucket that should be used for {@code v}.
+     *
+     * @param v v
+     * @return long
      */
     public static long bucket(long v) {
         return BUCKET_VALUES[indexOf(v)];

@@ -1,13 +1,28 @@
+/*
+ * Copyright 2019 etrace.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.etrace.agent.message.manager;
 
 import com.google.inject.Injector;
-import io.etrace.agent.InjectorFactory;
 import io.etrace.agent.Trace;
-import io.etrace.agent.message.CallStackProducer;
-import io.etrace.agent.message.DefaultTraceContext;
-import io.etrace.agent.message.IdFactory;
-import io.etrace.common.message.ConfigManger;
-import io.etrace.common.modal.TraceContext;
+import io.etrace.agent.message.RequestIdAndRpcIdFactory;
+import io.etrace.agent.message.callstack.CallstackQueue;
+import io.etrace.agent.module.InjectorFactory;
+import io.etrace.common.message.agentconfig.ConfigManger;
+import io.etrace.common.message.trace.TraceContext;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,17 +42,18 @@ public class MultiMessageManager extends DefaultMessageManager {
      */
     private boolean isolated = false;
 
-    private MultiMessageManager(CallStackProducer callStackProducer, IdFactory idFactory, ConfigManger configManger) {
-        super(callStackProducer, idFactory, configManger, false);
+    private MultiMessageManager(CallstackQueue callstackQueue, RequestIdAndRpcIdFactory requestIdAndRpcIdFactory,
+                                ConfigManger configManger) {
+        super(callstackQueue, requestIdAndRpcIdFactory, configManger, false);
         this.traceContext = new DefaultTraceContext(new Context());
     }
 
     public static MultiMessageManager createManager() {
         Injector injector = InjectorFactory.getInjector();
-        CallStackProducer producer = injector.getInstance(CallStackProducer.class);
-        IdFactory idFactory = injector.getInstance(IdFactory.class);
+        CallstackQueue producer = injector.getInstance(CallstackQueue.class);
+        RequestIdAndRpcIdFactory requestIdAndRpcIdFactory = injector.getInstance(RequestIdAndRpcIdFactory.class);
         ConfigManger configManger = injector.getInstance(ConfigManger.class);
-        return new MultiMessageManager(producer, idFactory, configManger);
+        return new MultiMessageManager(producer, requestIdAndRpcIdFactory, configManger);
     }
 
     public void setIsolated(boolean isolated) {
@@ -55,6 +71,7 @@ public class MultiMessageManager extends DefaultMessageManager {
             ctx.setup(requestId, rpcId);
         }
         if (!isolated) {
+            // only clean threadLocal Trace context by CallstackProducer
             Trace.continueTrace(requestId, rpcId);
         }
     }

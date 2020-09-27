@@ -1,0 +1,28 @@
+# spring-web
+server:
+  port: 8082
+  connection-timeout: 10000
+  tomcat:
+    accept-count: 256
+    max-threads: 16
+    min-spare-threads: 4
+
+consumer:
+  keeper: 7
+  hbase:
+    - table: stack
+      distribution:
+        - time: "1970-01-01"
+          region: 480
+  hdfs:
+    path: hdfs://mycluster/etrace
+
+  resources:
+    - name: kafka_trace
+      type: KAFKA
+      props:
+        zookeeper.connect: zookeeper:2181
+
+etrace:
+  appId: "etrace.consumer"
+  collector: "collector:2890"
