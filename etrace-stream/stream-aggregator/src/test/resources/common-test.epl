@@ -1,0 +1,6 @@
+module test.common;
+
+import io.etrace.stream.aggregator.mock;
+import io.etrace.stream.aggregator.mock.MockEvent;
+
+create schema mock_event as MockEvent;

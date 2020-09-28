@@ -56,6 +56,7 @@
         <module>etrace-consumer</module>
         <module>etrace-common</module>
         <module>etrace-plugins</module>
+        <module>etrace-stream</module>
     </modules>
 
     <properties>
@@ -64,9 +65,9 @@
         <disruptor.version>3.4.2</disruptor.version>
         <curator.version>2.13.0</curator.version>
         <metrics.version>4.1.0</metrics.version>
-        <netty-all.version>4.0.49.Final</netty-all.version>
+        <netty-all.version>4.1.52.Final</netty-all.version>
         <snappy-java.version>1.1.7.3</snappy-java.version>
-        <zookeeper.version>3.4.9</zookeeper.version>
+        <zookeeper.version>3.6.2</zookeeper.version>
         <micrometer.version>1.2.0</micrometer.version>
         <lombok.version>1.18.8</lombok.version>
         <slf4j.version>1.7.26</slf4j.version>
@@ -110,12 +111,12 @@
             </dependency>
             <dependency>
                 <groupId>io.etrace</groupId>
-                <artifactId>compute-biz-metric</artifactId>
+                <artifactId>stream-biz-metric</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.etrace</groupId>
-                <artifactId>compute-aggregator</artifactId>
+                <artifactId>stream-aggregator</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -136,11 +137,6 @@
             <dependency>
                 <groupId>io.etrace</groupId>
                 <artifactId>spring-interceptors</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.etrace</groupId>
-                <artifactId>datasource-lindb</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

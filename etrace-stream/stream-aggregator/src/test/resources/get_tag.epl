@@ -1,0 +1,17 @@
+module getTag;
+
+
+@Name("getTag")
+@Metric(name="name",tags={'key', 'tagKey'}, fields={'timerCount'})
+select
+name,
+tags('key') as key,
+tag('tagKey') as tagKey,
+trunc_sec(time, 10) as timestamp,
+f_sum(count(1)) as timerCount
+from mock_event(tag('error') = 'unknown')
+group by name, tags('key'), tag('tagKey'), trunc_sec(time, 10);
+
+
+
+

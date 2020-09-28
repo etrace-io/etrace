@@ -1,0 +1,17 @@
+module groupCount;
+
+
+@Name("group_count")
+@Metric(name="name", tags={'type', 'nn', "tags('bb')"}, fields={'timerSum'})
+select
+name,
+tags('type') as type,
+tags('nn') as nn,
+tags('bb'),
+f_sum(count(1)) as timerCount
+from mock_event
+group by name, tags('type'), tags('nn'), tags('bb');
+
+
+
+

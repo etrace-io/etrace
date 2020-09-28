@@ -42,11 +42,11 @@ public class PipelineConfiguration {
             TCP,
             GRPC,
             KAFKA,
-            LINDB,
             HDFS,
             HBASE,
             ES,
-            PROMETHEUS
+            PROMETHEUS,
+            LINDB,
         }
     }
 

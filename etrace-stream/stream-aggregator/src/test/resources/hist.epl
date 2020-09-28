@@ -1,0 +1,24 @@
+module hist;
+
+
+import io.etrace.stream.aggregator.mock;
+create schema event as MockEvent;
+
+@Name("hist")
+@Metric(name="{name}",tags={'key'}, fields={'timerCount', 'timerSum','timerMin', 'timerMax','hist'},fieldMap={'histogramCount','timerCount'})
+@Metric(name="name", fields={'timerCount', 'timerSum','timerMin', 'timerMax','hist'},fieldMap={'histogramCount','timerCount'})
+select
+name,
+tags('key') as key,
+trunc_sec(time, 10) as timestamp,
+f_sum(count(1)) as timerCount,
+f_sum(sum(value)) as timerSum,
+f_min(min(value)) as timerMin,
+f_max(max(value)) as timerMax,
+hist(value) as  hist
+from event
+group by name, tags('key'), trunc_sec(time, 10);
+
+
+
+

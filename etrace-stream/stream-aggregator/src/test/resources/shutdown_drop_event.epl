@@ -1,0 +1,9 @@
+
+
+create schema event as MockEvent;
+
+@Support
+@Name("shutdown")
+@Metric(name='{name}', fields = {'sum'})
+select name, f_sum(sum(value)) as sum, time from event
+group by name, time;

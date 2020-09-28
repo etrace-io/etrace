@@ -2,6 +2,15 @@
 
 ## Set up your local development environment
 
+1. set your git config. (suggest you set your email to [github private email address](https://github.com/settings/emails)):
+
+```
+git config user.name $YOUR_GITHUB_NAME
+git config user.email $YOUR_GITHUB_EMAIL
+# to double check config
+git config --local -l
+```
+
 1. install [Docker](https://www.docker.com/products/docker-desktop)
 2. run docker compose file: `docker-compose up`. This will start up following images:
 
