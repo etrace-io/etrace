@@ -9,6 +9,9 @@ git config user.name $YOUR_GITHUB_NAME
 git config user.email $YOUR_GITHUB_EMAIL
 # to double check config
 git config --local -l
+
+# sign your code with GPG
+git config commit.gpgsign true
 ```
 
 1. install [Docker](https://www.docker.com/products/docker-desktop)
@@ -40,6 +43,9 @@ Take this article for [reference](https://central.sonatype.org/pages/working-wit
 gpg --keyserver hkp://keys.gnupg.net --send-keys YOUR_KEY_ID
 gpg --keyserver hkp://pool.sks-keyservers.net --send-keys YOUR_KEY_ID
 ```
+
+[GPG Suite](https://gpgtools.org/) is a useful to maintain GPG key on MacOS.
+[Signing commits]() doc on github explained how to sign the commits.
 
 #### Step two: register an OSSRH account and configure to maven setting
 
