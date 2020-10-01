@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 # App Home
 cd "$SCRIPT_DIR"
-APP_HOME=${APP_HOME-`pwd -P`}
+APP_HOME=${APP_HOME-$(pwd -P)}
 
 DAEMON="consumer"
 DESC="ETrace Consumer"
@@ -15,7 +15,7 @@ TIMEOUT=3
 
 consumer_run(){
     echo "Starting ${DESC} ....."
-    PID=`sh ${EXE_FILE} check_pid`
+    PID=$(sh ${EXE_FILE} check_pid)
     if [ "${PID}" != "" ];  then
        echo "WARN: ${DESC} already started! (pid=${PID})"
     else
@@ -26,7 +26,7 @@ consumer_run(){
 
 consumer_start(){
     echo "Starting ${DESC} ....."
-    PID=`sh ${EXE_FILE} check_pid`
+    PID=$(sh ${EXE_FILE} check_pid)
     if [ "${PID}" != "" ];  then
        echo "WARN: ${DESC} already started! (pid=${PID})"
     else
@@ -40,7 +40,7 @@ consumer_start(){
 }
 
 consumer_stop(){
-   PID=`sh ${EXE_FILE} check_pid`
+   PID=$(sh ${EXE_FILE} check_pid)
    if [ "${PID}" != "" ]; then
       echo "Stopping ${DESC} ....."
       kill ${PID}
@@ -56,7 +56,7 @@ consumer_stop(){
 
 consumer_status(){
     echo "Checking ${DESC} ....."
-    PID=`sh ${EXE_FILE} check_pid`
+    PID=$(sh ${EXE_FILE} check_pid)
     if [ "${PID}" != "" ];  then
        echo "${DESC} is running! (pid=${PID})"
     else
@@ -70,7 +70,7 @@ consumer_info(){
 }
 
 consumer_force_stop(){
-   PID=`sh ${EXE_FILE} check_pid`
+   PID=$(sh ${EXE_FILE} check_pid)
    if [ "${PID}" != "" ]; then
       echo "Stopping ${DESC} ....."
       kill -9 ${PID}

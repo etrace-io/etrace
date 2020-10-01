@@ -20,7 +20,7 @@ source ${JVM_CONF}
 #source "${APP_HOME}/bin/jvm_conf.sh"
 DAEMON="container"
 DESC="Stream Server"
-CONTAINER_PORT_END=$(expr $CONTAINER_PORT_START + $CONTAINER_PROCESS_COUNT - 1)
+CONTAINER_PORT_END=$((CONTAINER_PORT_START + CONTAINER_PROCESS_COUNT - 1))
 EXE_FILE="$APP_HOME/bin/container.sh"
 LOG_FILE="container.out"
 PID=0
@@ -121,7 +121,7 @@ server_restart(){
             server_start
             break;
         fi
-        i=$[$i+1];
+        i=$((i+1));
         echo -n "."
         sleep 5
         if [ $i -gt ${loop_max} ]
