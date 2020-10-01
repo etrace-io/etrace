@@ -552,11 +552,12 @@
                 <snapshotRepository>
                     <id>ossrh</id>
                     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    <layout>legacy</layout>
                 </snapshotRepository>
                 <repository>
                     <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
-                    </url>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <layout>default</layout>
                 </repository>
             </distributionManagement>
         </profile>
