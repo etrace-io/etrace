@@ -1,8 +1,8 @@
 #!/bin/bash
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
-SCRIPT_DIR=`cd ${SCRIPT_DIR} && pwd -P`
+SCRIPT_DIR=$(cd ${SCRIPT_DIR} && pwd -P)
 
-BASE_DIR=`cd $SCRIPT_DIR  && pwd -P`
+BASE_DIR=$(cd $SCRIPT_DIR  && pwd -P)
 
 CONF_DIR="${BASE_DIR}/conf"
 JVM_CONF="${BASE_DIR}/conf/jvm_conf.sh"
@@ -15,12 +15,12 @@ fi
 
 # App Home
 cd "$SCRIPT_DIR"
-APP_HOME=${APP_HOME-`pwd -P`}
+APP_HOME=${APP_HOME-$(pwd -P)}
 source ${JVM_CONF}
 #source "${APP_HOME}/bin/jvm_conf.sh"
 DAEMON="container"
 DESC="Stream Server"
-CONTAINER_PORT_END=`expr $CONTAINER_PORT_START + $CONTAINER_PROCESS_COUNT - 1`
+CONTAINER_PORT_END=$(expr $CONTAINER_PORT_START + $CONTAINER_PROCESS_COUNT - 1)
 EXE_FILE="$APP_HOME/bin/container.sh"
 LOG_FILE="container.out"
 PID=0
@@ -28,9 +28,9 @@ TIMEOUT=3
 
 server_start(){
     echo "Starting ${DESC} ....."
-    for PORT in `seq $CONTAINER_PORT_START $CONTAINER_PORT_END`
+    for PORT in $(seq $CONTAINER_PORT_START $CONTAINER_PORT_END)
     do
-        PID=`sh ${EXE_FILE} check_pid $PORT`
+        PID=$(sh ${EXE_FILE} check_pid $PORT)
         if [ "${PID}" != "" ];  then
             echo "WARN: ${DESC} port=${PORT} already started! (pid=${PID})"
         else
@@ -50,7 +50,7 @@ server_start(){
 }
 
 get_container_port(){
-    pid_info=`ps -p "$1" -f | grep "Dstream.http.port"`
+    pid_info=$(ps -p "$1" -f | grep "Dstream.http.port")
     pid_info=${pid_info#*Dstream.http.port=}
     echo $pid_info | awk '{print $1}'
 }
@@ -61,14 +61,14 @@ server_stop(){
     else
         echo "Stopping ${DESC}  ....."
     fi
-    PIDS=`ps gaux | grep java | grep "${BASE_DIR}/logs" | grep -v grep | awk '{print $2}'`
+    PIDS=$(ps gaux | grep java | grep "${BASE_DIR}/logs" | grep -v grep | awk '{print $2}')
     if [ "${PIDS}" == "" ];then
         echo "WARN: ${DESC} is stopped."
     else
         for PID in $PIDS
         do
             if [[ "$PID" =~ ^[0-9]+$ ]];then
-                port=`get_container_port $PID`
+                port=$(get_container_port $PID)
                 if [[ "X$1" == "Xforce_restart" ]]; then
                     kill -9 ${PID}
                 else
@@ -86,14 +86,14 @@ server_stop(){
 
 server_status(){
     echo "Checking ${DESC} ....."
-    PIDS=`ps gaux | grep java | grep "${BASE_DIR}/logs" | grep -v grep | awk '{print $2}'`
+    PIDS=$(ps gaux | grep java | grep "${BASE_DIR}/logs" | grep -v grep | awk '{print $2}')
     if [ "${PIDS}" == "" ];then
         echo "${DESC} is stopped!"
     else
         for PID in $PIDS
         do
             if [[ "$PID" =~ ^[0-9]+$ ]];then
-                port=`get_container_port $PID`
+                port=$(get_container_port $PID)
                 echo "${DESC} is running! (pid:${PID}  port:${port})"
             fi
         done
@@ -112,7 +112,7 @@ server_restart(){
     loop_max=12
     while ((i<${loop_max}))
     do
-        RESP=`sh ${SCRIPT_DIR}/run.sh status`
+        RESP=$(sh ${SCRIPT_DIR}/run.sh status)
         if [[ $RESP =~ $stopedStr ]]
         then
             echo ""

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
-BASE_DIR=`cd $SCRIPT_DIR && pwd -P`
+BASE_DIR=$(cd $SCRIPT_DIR && pwd -P)
 # set stream home path
 cd "$SCRIPT_DIR/.."
-STREAM_HOME=${STREAM_HOME-`pwd -P`}
+STREAM_HOME=${STREAM_HOME-$(pwd -P)}
 STREAM_HTTP_PORT=$2
 ENV_FILE="$STREAM_HOME/bin/env.sh"
 source "${ENV_FILE}"
@@ -20,7 +20,7 @@ PID=0
 CLASSPATH="${BASE_DIR}/conf:${STREAM_HOME}/conf/*:${STREAM_HOME}/lib/*:${STREAM_HOME}/*"
 
 check_pid() {
- PID=`ps gaux | grep java | grep "${JVM_LOGS_DIR}" | grep -v grep | awk '{print $2}'`
+ PID=$(ps gaux | grep java | grep "${JVM_LOGS_DIR}" | grep -v grep | awk '{print $2}')
  if [[ "$PID" =~ ^[0-9]+$ ]];then
       echo $PID
  fi
@@ -33,8 +33,8 @@ start() {
 
 info() {
    echo "****************************"
-   echo `head -n 1 /etc/issue`
-   echo `uname -a`
+   echo $(head -n 1 /etc/issue)
+   echo $(uname -a)
    echo "STREAM_HOME=${STREAM_HOME}"
    echo "STREAM_DRIVER=${STREAM_DRIVER}"
    echo "****************************"

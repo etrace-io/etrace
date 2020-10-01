@@ -67,6 +67,8 @@ public class SamplingAggregator implements AggregationMethod {
                     }
                 }
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
         }
     }
 

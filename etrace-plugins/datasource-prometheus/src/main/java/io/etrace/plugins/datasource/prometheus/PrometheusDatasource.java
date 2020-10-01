@@ -147,6 +147,8 @@ public class PrometheusDatasource implements MetricDatasourceService {
                 case Metric:
                     // not supported
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + oneMetric.getMetricType());
             }
 
         });

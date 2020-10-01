@@ -180,6 +180,9 @@ public abstract class AbstractCallStackDecode implements CallStackDecode {
                                 break;
                             case 12:
                                 header.setInstance(parser.getText());
+                            default:
+                                throw new IllegalArgumentException("Bad json data of open-source version: invalid "
+                                    + "index over 12");
                         }
                     }
                     token = parser.nextToken();//move to next value
@@ -298,6 +301,9 @@ public abstract class AbstractCallStackDecode implements CallStackDecode {
                             token = parser.nextToken();//move to next message
                         }
                         break;
+                    default:
+                        throw new IllegalArgumentException("Bad json data of open-source version: invalid "
+                            + "index over 9");
                 }
             }
             // ugly. check based on index==8
