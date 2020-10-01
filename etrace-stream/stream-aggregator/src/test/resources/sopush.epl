@@ -1,0 +1,18 @@
+import io.etrace.stream.aggregator.mock;
+create schema event as MockEvent;
+
+
+@Name('sopush_request')
+@Metric(name = '{project}.sopush_request', tags = {'route', 'method','status'}, fields = {'histogramCount'})
+@Metric(name = 'etrace.dashboard.sopush_request', tags = {'project', 'route', 'status'}, fields = {'histogramCount'})
+select
+       tag('project')                              as project,
+       tag('route')                              as route,
+       tag('method')                              as method,
+       tag('status')                              as status,
+       trunc_sec(time, 10)                    as timestamp,
+       f_sum(count(1))                             as histogramCount
+from event(tag('error') = 'unknown')
+group by  tag('project'), tag('route'), tag('method'), tag('status'), trunc_sec(time, 10);
+
+

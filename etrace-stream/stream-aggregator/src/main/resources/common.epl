@@ -1,0 +1,10 @@
+module common;
+
+/*
+ * Can add common biz.epl.app
+ */
+
+// esper check flush event传递到 sink, 触发sink timeoutFlush, no group by
+@Name('check_flush')
+@Metric(name="stream.esper.check.flush.event", fields={'count'})
+select f_sum(count(1)) as count from io.etrace.stream.aggregator.CheckFlushEvent;

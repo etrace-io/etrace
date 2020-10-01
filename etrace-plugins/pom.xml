@@ -13,6 +13,7 @@
 
     <modules>
         <module>etrace-kafka-0.8.2.2-impl</module>
+        <module>datasource-prometheus</module>
     </modules>
 
 </project>

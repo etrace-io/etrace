@@ -1,0 +1,25 @@
+module metrics_test;
+
+
+import io.etrace.stream.aggregator.mock;
+
+create schema event as MockEvent;
+
+@Support
+@Name("metrics")
+@Metric(name="{name}",fields={"fsum", "fmin","fmax","fgauge"},sampling="sampling",source="source")
+select
+name,
+trunc_sec(time,10) as timestamp,
+f_sum(sum(value)) as fsum,
+f_min(min(value)) as fmin,
+f_max(max(value)) as fmax,
+f_gauge(gauge(time, value)) as fgauge,
+sampling('Timer', value, msg) as sampling,
+'app_metric' as source
+from event
+group by name, trunc_sec(time,10);
+
+
+
+

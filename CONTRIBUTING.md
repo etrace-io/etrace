@@ -2,6 +2,18 @@
 
 ## Set up your local development environment
 
+1. set your git config. (suggest you set your email to [github private email address](https://github.com/settings/emails)):
+
+```
+git config user.name $YOUR_GITHUB_NAME
+git config user.email $YOUR_GITHUB_EMAIL
+# to double check config
+git config --local -l
+
+# sign your code with GPG
+git config commit.gpgsign true
+```
+
 1. install [Docker](https://www.docker.com/products/docker-desktop)
 2. run docker compose file: `docker-compose up`. This will start up following images:
 
@@ -31,6 +43,9 @@ Take this article for [reference](https://central.sonatype.org/pages/working-wit
 gpg --keyserver hkp://keys.gnupg.net --send-keys YOUR_KEY_ID
 gpg --keyserver hkp://pool.sks-keyservers.net --send-keys YOUR_KEY_ID
 ```
+
+[GPG Suite](https://gpgtools.org/) is a useful to maintain GPG key on MacOS.
+[Signing commits]() doc on github explained how to sign the commits.
 
 #### Step two: register an OSSRH account and configure to maven setting
 

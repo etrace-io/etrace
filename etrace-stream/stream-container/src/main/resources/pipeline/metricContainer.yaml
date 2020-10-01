@@ -1,0 +1,63 @@
+# whether to enable this pipeline
+enable: false
+
+receivers:
+  - name: &METRIC_KAFKA_RECEIVER metric_kafka_receiver
+    type: KAFKA
+    clazz: io.etrace.stream.container.receiver.kafka.KafkaConsumeTask
+    props:
+      resourceId: kafka_to_consumer
+      topics: metric,1;
+
+processors:
+  - name: &METRIC_DECODER metric_decoder
+    clazz: io.etrace.stream.biz.metric.BinaryToMetricTask
+    props:
+      shardingStrategy: io.etrace.common.sharding.impl.RoundRobinStrategy
+      taskSize: 1
+      bufferSize: 16
+  - name: &METRIC_AGGREGATION metric_aggregation
+    clazz: io.etrace.stream.aggregator.EPTask
+    props:
+      shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
+      source: opensouce_metric
+      taskSize: 1
+      bufferSize: 2048
+      epls: biz.epl.metric
+
+exporters:
+  - name: &KAFKA_EXPORTER kafka_exporter
+    type: KAFKA
+    clazz: io.etrace.stream.container.exporter.kafka.KafkaExporterTask
+    props:
+      resourceId: kafka_to_produce
+      source: metric_aggregation_output
+      shardingStrategy: ROUND_ROBIN
+      blockSize: 65536
+      flushInterval: 5000
+  - name: &METRICS_EXPORTER metrics_exporter
+    type: PROMETHEUS
+    clazz: io.etrace.stream.container.exporter.metric.MetricExporterTask
+    props:
+      resourceId: application_datasource
+
+
+pipelines:
+  - name: *METRIC_KAFKA_RECEIVER
+    downstreams:
+      - filter: default
+        components:
+          - *METRIC_DECODER
+  - name: *METRIC_DECODER
+    downstreams:
+      - filter: default
+        components:
+          - *METRIC_AGGREGATION
+  - name: *METRIC_AGGREGATION
+    downstreams:
+      - filter: default
+        components:
+          - *KAFKA_EXPORTER
+      - filter: default
+        components:
+          - *METRICS_EXPORTER

@@ -1,0 +1,9 @@
+module plugin.sampling;
+
+@Name("gauge")
+@Metric(name="gauge",fields={"gauge"})
+select
+   name,
+   f_gauge(gauge(time,value)) as gauge
+from mock_event
+group by metric_key(name);

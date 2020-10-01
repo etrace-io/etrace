@@ -24,6 +24,17 @@ services:
     networks:
       - backend
 
+  stream:
+    build:
+      context: ./etrace-stream/stream-container
+      dockerfile: Dockerfile
+    image: etrace-api:local
+    container_name: etrace_stream
+#    ports:
+#      - 9000:9001
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge

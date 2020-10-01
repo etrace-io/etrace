@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.etrace.stream.aggregator.autoconfigure.AggregatorAutoScanConfiguration

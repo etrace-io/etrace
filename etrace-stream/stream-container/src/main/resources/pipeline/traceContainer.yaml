@@ -1,0 +1,59 @@
+# whether to enable this pipeline
+enable: true
+
+receivers:
+  - name: &TRACE_CONSUMER trace_consumer
+    type: KAFKA
+    clazz: io.etrace.stream.container.receiver.kafka.KafkaConsumeTask
+    props:
+      resourceId: kafka_to_consumer
+      topics: callstack,1
+
+processors:
+  - name: &CALLSTACK_PROCESSOR callstack_processor
+    clazz: io.etrace.stream.biz.app.CallStackTask
+    props:
+      bufferSize: 16
+      taskSize: 8
+      appType: Application
+      shardingStrategy: io.etrace.common.sharding.impl.RoundRobinStrategy
+      decode: io.etrace.stream.biz.app.ApplicationCallStackDecode
+  - name: &TRACE_METRIC_AGGREGATION application_agg
+    clazz: io.etrace.stream.aggregator.EPTask
+    props:
+      bufferSize: 2048
+      taskSize: 8
+      shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
+      source: opensouce_trace
+      epls: biz.epl.app
+
+exporters:
+  - name: &CALLSTACK_EXPORTER application_exporter
+    type: KAFKA
+    clazz: io.etrace.stream.container.exporter.kafka.KafkaExporterTask
+    props:
+      resourceId: kafka_to_produce
+      source: trace_metric_aggregation_output
+
+filters:
+  - name: app_filter
+    clazz: io.etrace.common.pipeline.impl.DefaultMatchAllFilter
+    props:
+      key: app
+
+pipelines:
+  - name: *TRACE_CONSUMER
+    downstreams:
+      - filter: default
+        components:
+          - *CALLSTACK_PROCESSOR
+  - name: *CALLSTACK_PROCESSOR
+    downstreams:
+      - filter: app_filter
+        components:
+          - *TRACE_METRIC_AGGREGATION
+  - name: *TRACE_METRIC_AGGREGATION
+    downstreams:
+      - filter: default
+        components:
+          - *CALLSTACK_EXPORTER

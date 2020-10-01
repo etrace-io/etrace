@@ -32,6 +32,6 @@ public interface InternalMetricName {
     String KAFKA_PRODUCER_LOSE_DATA = "kafka.producer.lose.data";
     String KAFKA_BLOCK_STORE_SEND = "kafka.block.store.send";
 
-    String LINDB_PRODUCER_SEND = "lindb.producer.send";
+    String STREAM_PRODUCER_SEND = "stream.producer.send";
 
 }

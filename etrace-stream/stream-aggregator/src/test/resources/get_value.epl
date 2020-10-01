@@ -1,0 +1,13 @@
+module get_value;
+
+@Name("get_value")
+@Metric(name="name", tags={}, fields={'count'})
+select
+name,
+f_sum(count(1)) as count
+from mock_event
+group by metric_key(name);
+
+
+
+

@@ -1,0 +1,21 @@
+module metrics_test;
+
+
+import io.etrace.common.message.metric.Metric;
+
+create schema event as Metric;
+
+@Name("metrics_agg")
+@Metric(name="{name}",fields={"fields"},sampling="sampling")
+select
+metricName as name,
+trunc_sec(timestamp,10) as timestamp,
+fields_agg(fields) as fields,
+metricSampling(e) as sampling,
+source
+from event as e
+group by metricName, source, trunc_sec(timestamp,10);
+
+
+
+

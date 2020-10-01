@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 # set consumer home path
 cd "$SCRIPT_DIR/.."
-CONSUMER_HOME=${CONSUMER_HOME-`pwd -P`}
+CONSUMER_HOME=${CONSUMER_HOME-$(pwd -P)}
 
 ENV_FILE="$CONSUMER_HOME/conf/env.sh"
 source "${ENV_FILE}"
@@ -27,7 +27,7 @@ done
 
 check_pid() {
  if [ -f "${PID_FILE}" ]; then
-      PID=`cat "${PID_FILE}"`
+      PID=$(cat "${PID_FILE}")
       if [ -n pid ]; then
           echo ${PID}
       fi
@@ -40,8 +40,8 @@ start() {
 
 info() {
    echo "****************************"
-   echo `head -n 1 /etc/issue`
-   echo `uname -a`
+   echo $(head -n 1 /etc/issue)
+   echo $(uname -a)
    echo "CONSUMER_HOME=${CONSUMER_HOME}"
    echo "CONSUMER_DRIVER=${CONSUMER_DRIVER}"
    echo "****************************"

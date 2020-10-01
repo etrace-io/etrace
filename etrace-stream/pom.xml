@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>etrace</artifactId>
+        <groupId>io.etrace</groupId>
+        <version>0.0.7-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>etrace-stream</artifactId>
+    <packaging>pom</packaging>
+    <name>etrace-stream</name>
+    <modules>
+        <module>stream-aggregator</module>
+        <module>stream-core</module>
+        <module>stream-biz-app</module>
+        <module>stream-biz-metric</module>
+        <module>stream-container</module>
+    </modules>
+
+    <properties>
+        <esper.version>7.1.0</esper.version>
+        <reflections.version>0.9.10</reflections.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.etrace</groupId>
+                <artifactId>stream-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.etrace</groupId>
+                <artifactId>etrace-kafka-0.8.2.2-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.etrace</groupId>
+                <artifactId>stream-biz-metric</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.etrace</groupId>
+                <artifactId>stream-aggregator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.espertech</groupId>
+                <artifactId>esper</artifactId>
+                <version>${esper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

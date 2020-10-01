@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.etrace.plugins.datasource.prometheus.autoconfigure.PrometheusDatasourceAutoConfiguration,\
+  io.etrace.plugins.datasource.prometheus.autoconfigure.PrometheusStepMeterAutoConfiguration
