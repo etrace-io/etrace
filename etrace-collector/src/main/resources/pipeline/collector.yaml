@@ -60,7 +60,7 @@ filters:
   - name: dal_filter
     clazz: io.etrace.common.pipeline.impl.EqualFilter
     props:
-      key: me.ele.arch.das.capricorn
+      key: das.capricorn
   - name: trace_filter
     clazz: io.etrace.common.pipeline.impl.EqualFilter
     props:

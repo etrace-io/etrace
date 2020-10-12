@@ -1,6 +1,6 @@
 # For Contributor/Maintainers 
 
-Following parts help you to build your local development environment.
+Following contents help you to build your local development environment.
 
 ## 1. Download and install requirements.
 
@@ -39,8 +39,7 @@ GPG sign validate you codes and contribute. It's not mandatory but strongly reco
 
 [GPG Suite](https://gpgtools.org/) is a useful to maintain GPG key on MacOS.
 
-Take this article for [reference](https://central.sonatype.org/pages/working-with-pgp-signatures.html#distributing
--your-public-key):
+Take this article for [reference](https://central.sonatype.org/pages/working-with-pgp-signatures.html#distributing-your-public-key):
 
 1. install [gnupg](https://formulae.brew.sh/formula/gnupg): `brew install gpg` .
 2. generate a key pair: `gpg --gen-key`. In the interactive, it require you a passphrase. Write it down, you'll sign
@@ -133,9 +132,8 @@ run `mvn license:update-file-header` command.
 
 ## Spring Data - ignore the parameter if it has a null value
 
-Based on the answer on [StackOverflow](https://stackoverflow.com/questions/43780226/spring-data-ignore-parameter-if
--it-has-a-null-value/43781418), this project adopt **[Example](https://docs.spring.io/spring-data/jpa/docs/current
-/reference/html/#query-by-example.introduction)** to handle nullable parameter in db query.
+Based on the answer on [StackOverflow](https://stackoverflow.com/questions/43780226/spring-data-ignore-parameter-if-it-has-a-null-value/43781418), 
+this project adopt **[Example](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#query-by-example.introduction)** to handle nullable parameter in db query.
 
 Go to io/etrace/api/service/DashboardService.java:52 for reference.
 

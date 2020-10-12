@@ -40,12 +40,10 @@ import java.util.Map;
 /**
  * The main api of trace.
  * <p>
- * 1. wiki link: http://wiki.ele.to:8090/pages/viewpage.action?pageId=47703803 2. add javadoc on each api.
- * <p>
  * Limitation: Considering the trade-off between convenience of Trace api and the resource usage of agent application,
  * there are some default limitation on the length of names, the size of tags, the number of one Transaction's children
  * and etc. For example, if the length or the size exceeds the threshold, the excessive part will be ignored. Finally,
- * if you encounter any problems, send email to arch.etrace@ele.me for help.
+ * if you encounter any problems, go to https://github.com/etrace-io/etrace/issues for help
  * <p>
  * As for string length, when the size more than max size,it will be String.substring(0, maxSize). -- Trace: ---- type:
  * 256 char ---- name:  512 char ---- status: 64 char ---- data: 2 * 1024 char(default), adjustable ---- tag name: 64
@@ -125,9 +123,8 @@ public class Trace {
      *
      * @param type event type
      * @param name event name
-     * @return me.ele.arch.etrace.common.modal.Event
-     * <p>
-     * 废弃。不如使用logEvent方便。
+     *             <p>
+     *             废弃。不如使用logEvent方便。
      */
     @Deprecated
     public static Event newEvent(String type, String name) {
@@ -191,9 +188,9 @@ public class Trace {
     /**
      * create a new event, then set the message and the throwable stack information, finally complete.
      * <p>
-     * -- Event Type: if throwable instanceof me.ele.contract.exception.ServiceException : type = "BusinessException"
-     * else if throwable instanceof java.lang.Error : type = "Error" else if throwable instanceof
-     * java.lang.RuntimeException : type = "RuntimeException" else type = "Exception"
+     * -- Event Type: if throwable instanceof ServiceException : type = "BusinessException" else if throwable instanceof
+     * java.lang.Error : type = "Error" else if throwable instanceof java.lang.RuntimeException : type =
+     * "RuntimeException" else type = "Exception"
      * <p>
      * -- Event Name: name = throwable.getClass().getName()
      * <p>
@@ -221,7 +218,6 @@ public class Trace {
      *
      * @param type the type
      * @param name the name
-     * @return me.ele.arch.etrace.common.modal.Transaction
      */
     public static Transaction newTransaction(String type, String name) {
         return trace.producer.newTransaction(type, name);
@@ -277,9 +273,6 @@ public class Trace {
     }
 
     /**
-     * more detail about RpcId, refer to ：http://wiki.ele.to:8090/pages/viewpage.action?pageId=62202413
-     * "RequestId与RpcId说明"
-     *
      * @return {@link String}
      */
     public static String getRpcId() {

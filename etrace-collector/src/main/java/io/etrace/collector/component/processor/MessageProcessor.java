@@ -6,6 +6,7 @@ import io.etrace.collector.service.CollectorConfigurationService;
 import io.etrace.collector.sharding.impl.FrontShardIngImpl;
 import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.common.util.Bytes;
 import io.etrace.common.util.JSONUtil;
@@ -25,7 +26,7 @@ import static io.etrace.collector.metrics.MetricName.THROUGHPUT;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class MessageProcessor extends DefaultSyncTask {
+public class MessageProcessor extends DefaultSyncTask implements Processor {
     private final Logger LOGGER = LoggerFactory.getLogger(MessageProcessor.class);
 
     @Autowired

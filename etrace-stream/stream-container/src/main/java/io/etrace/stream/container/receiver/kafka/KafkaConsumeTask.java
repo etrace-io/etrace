@@ -2,6 +2,7 @@ package io.etrace.stream.container.receiver.kafka;
 
 import com.google.common.collect.Maps;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Receiver;
 import io.etrace.common.pipeline.Resource;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.common.util.JSONUtil;
@@ -31,7 +32,7 @@ import static io.etrace.common.constant.InternalMetricName.*;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class KafkaConsumeTask extends DefaultSyncTask {
+public class KafkaConsumeTask extends DefaultSyncTask implements Receiver {
     private final static Logger LOGGER = LoggerFactory.getLogger(KafkaConsumeTask.class);
     private final Map<String, Counter> throughputCounters = newHashMap();
     private final String resourceId;
@@ -164,7 +165,7 @@ public class KafkaConsumeTask extends DefaultSyncTask {
                                     }
 
                                     String topic = msgAndMetadata.topic();
-                                    component.dispatch(key, msgAndMetadata.message());
+                                    component.dispatchAll(key, msgAndMetadata.message());
 
                                     Counter throughputCounter = throughputCounters.get(topic);
                                     if (throughputCounter != null) {

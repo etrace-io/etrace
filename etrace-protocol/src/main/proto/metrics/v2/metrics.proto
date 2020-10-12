@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package io.etrace.proto.metrics.v2;
+
+option java_multiple_files = true;
+option java_package = "io.etrace.proto.metrics.v2";
+option java_outer_classname = "MetricsProto";
+
+message ResourceMetrics {
+    map<string, string> attributes = 5;
+    repeated Metric metric = 6;
+}
+
+message Metric {
+    enum MetricKind {
+        COUNTER = 0;
+        GAUGE = 1;
+        TIMER = 2;
+        RATIO = 3;
+        PAYLOAD = 4;
+        HISTOGRAM = 5;
+        SUMMARY = 6;
+        HISTOGRAM_INTERNAL = 7;
+    }
+
+    MetricKind kind = 1;
+    string name = 2;
+    uint64 timestamp = 3;
+    map<string, string> tags = 4;
+
+    map<string, Field> fields = 5;
+    repeated Bucket buckets = 6;
+}
+
+message Field {
+    AggregateType aggregateType = 1;
+    oneof value {
+        uint64 longVal = 100;
+        double doubleVal = 101;
+        string stringVal = 102;
+    }
+}
+
+enum AggregateType {
+    SUM = 0;
+    GAUGE = 1;
+    MAX = 2;
+    MIN = 3;
+}
+
+message Bucket {
+    double bucket = 1;
+    double count = 2;
+}

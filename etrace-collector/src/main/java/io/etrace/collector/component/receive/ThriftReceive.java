@@ -5,6 +5,7 @@ import io.etrace.collector.network.thrift.ThriftHandler;
 import io.etrace.collector.network.thrift.ThriftServerDef;
 import io.etrace.collector.network.thrift.ThriftServerDefBuilder;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Receiver;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.common.thrift.MessageService;
 import io.netty.bootstrap.ServerBootstrap;
@@ -29,7 +30,7 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ThriftReceive extends DefaultSyncTask {
+public class ThriftReceive extends DefaultSyncTask implements Receiver {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThriftReceive.class);
     @Autowired
     ThriftHandler thriftHandler;
@@ -46,7 +47,6 @@ public class ThriftReceive extends DefaultSyncTask {
         this.workerNum = (int)Optional.ofNullable(params.get("workers")).orElse(8);
     }
 
-    @PostConstruct
     @Override
     public void startup() {
         super.startup();
@@ -65,7 +65,7 @@ public class ThriftReceive extends DefaultSyncTask {
                 }
                 // Create the processor
                 TProcessor processor = new MessageService.Processor<>(
-                    (head, message) -> component.dispatch(head.array(), message.array()));
+                    (head, message) -> component.dispatchAll(head.array(), message.array()));
                 ThriftServerDef def = new ThriftServerDefBuilder().withProcessor(processor).build();
                 thriftHandler.setThriftServerDef(def);
 
@@ -91,7 +91,7 @@ public class ThriftReceive extends DefaultSyncTask {
                     future = bootstrap.bind(port).sync();
                     future.channel().closeFuture().sync().channel();
                 } catch (Exception e) {
-                    LOGGER.error("Started netty Server Failed:" + port, e);
+                    LOGGER.error("Started NETTY transport Server Failed:" + port, e);
                 }
 
             } finally {

@@ -44,4 +44,8 @@ public class MessageItem {
             this.requestId = RequestIdHelper.removeRootAppId(callStack.getRequestId());
         }
     }
+
+    public String getSampleMessageId() {
+        return this.requestId + "$$" + this.callStack.getId();
+    }
 }

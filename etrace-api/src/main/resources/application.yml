@@ -1,0 +1,27 @@
+swagger.host: api.etrace.io
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring.datasource.driver-class-name: "com.mysql.cj.jdbc.Driver"
+spring.datasource.username: root
+spring.datasource.password: 123456
+spring.datasource.url: "jdbc:mysql://mysql:3306/etrace"
+
+server:
+  port: 8080
+
+etrace:
+  appId: "etrace.api"
+  collector: "collector:2890"

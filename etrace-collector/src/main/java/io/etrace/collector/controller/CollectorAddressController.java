@@ -17,8 +17,8 @@
 package io.etrace.collector.controller;
 
 import io.etrace.collector.cluster.ClusterService;
+import io.etrace.collector.cluster.discovery.ServiceDiscovery;
 import io.etrace.collector.cluster.discovery.ServiceInstance;
-import io.etrace.collector.cluster.discovery.impl.ServiceDiscovery;
 import io.etrace.collector.metrics.MetricsService;
 import io.etrace.collector.service.ClientConfigurationService;
 import io.etrace.collector.util.Convertor;

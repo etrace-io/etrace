@@ -88,7 +88,7 @@ public class LegacyVersionMetricCodecTest {
 
     @Test
     public void legacyToLegacyByCodecV1_111() throws IOException {
-        String msg = "[[\"#v1#t2\",null,\"me.ele.arch.etrace.collector\",\"127.0.0.1\",\"Pro"
+        String msg = "[[\"#v1#t2\",null,\"etrace.collector\",\"127.0.0.1\",\"Pro"
             + ".local\",null,[[\"timer\",\"task.process.duration\",1590027515721,{\"name\":\"trace_processor\","
             + "\"pipeline\":\"collector\",\"task\":\"collector-trace_processor-1\"},13206,2258,13206,98,0],"
             + "[\"timer\",\"task.process.duration\",1590027515721,{\"name\":\"trace_processor\","

@@ -88,7 +88,7 @@ public class EPAggregatorEventListener implements StatementAwareUpdateListener {
                 }
                 Collection<Metric> list = metricMap.values();
                 // todo:  key should be what?
-                component.dispatch("", list);
+                component.dispatchAll("", list);
             }
         } catch (Exception e) {
             String msg = "process aggregator event listener error";

@@ -40,6 +40,10 @@ public abstract class Task {
         return name;
     }
 
+    /**
+     * 所有的Task 会被 TaskPool 手动starUp
+     * 因此子类，不需要手动自学starup，包括不需要@PostConstruct
+     */
     public void startup() {
         this.running = true;
     }

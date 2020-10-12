@@ -4,6 +4,7 @@ import io.etrace.collector.metrics.MetricsService;
 import io.etrace.collector.service.ChannelManager;
 import io.etrace.collector.worker.impl.KafkaCallback;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Exporter;
 import io.etrace.common.pipeline.Resource;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.plugins.kafka0882.impl.impl.producer.KafkaCluster;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class KafkaExporter extends DefaultSyncTask {
+public class KafkaExporter extends DefaultSyncTask implements Exporter {
     @Autowired
     ChannelManager channelManager;
     @Autowired

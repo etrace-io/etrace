@@ -54,9 +54,12 @@
         <module>etrace-agent</module>
         <module>etrace-collector</module>
         <module>etrace-consumer</module>
+        <module>etrace-stream</module>
         <module>etrace-common</module>
         <module>etrace-plugins</module>
-        <module>etrace-stream</module>
+        <module>etrace-protocol</module>
+        <module>etrace-example</module>
+        <module>etrace-api</module>
     </modules>
 
     <properties>
@@ -79,7 +82,7 @@
         <protoc.version>3.7.1</protoc.version>
         <lombok.version>1.18.8</lombok.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
-<!--        skip unit test and integration by default-->
+        <!--        skip unit test and integration by default-->
         <skip.unit.tests>true</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
         <project.inceptionYear>2019</project.inceptionYear>
@@ -531,20 +534,20 @@
                         </configuration>
                     </plugin>
                     <!--            Configure to sign artifacts while releasing.-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-gpg-plugin</artifactId>-->
-<!--                        <version>1.6</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>sign-artifacts</id>-->
-<!--                                <phase>verify</phase>-->
-<!--                                <goals>-->
-<!--                                    <goal>sign</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>org.apache.maven.plugins</groupId>-->
+                    <!--                        <artifactId>maven-gpg-plugin</artifactId>-->
+                    <!--                        <version>1.6</version>-->
+                    <!--                        <executions>-->
+                    <!--                            <execution>-->
+                    <!--                                <id>sign-artifacts</id>-->
+                    <!--                                <phase>verify</phase>-->
+                    <!--                                <goals>-->
+                    <!--                                    <goal>sign</goal>-->
+                    <!--                                </goals>-->
+                    <!--                            </execution>-->
+                    <!--                        </executions>-->
+                    <!--                    </plugin>-->
                 </plugins>
             </build>
 

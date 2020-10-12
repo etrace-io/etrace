@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package io.etrace.proto.trace.v2;
+
+option java_multiple_files = true;
+option java_package = "io.etrace.proto.trace.v2";
+option java_outer_classname = "TraceProto";
+
+
+message Trace {
+    string request_id = 1;
+    string rpc_id = 2;
+    map<string, string> attributes = 3;
+    Span span = 4;
+}
+
+message Span {
+    string type = 1;
+    string name = 2;
+    string status = 3;
+    uint64 id = 4;
+    uint64 timestamp = 5;
+    bool completed = 6;
+    SpanKind kind = 7;
+    map<string, string> tags = 8;
+    string data = 9;
+    uint64 duration = 10;
+    repeated Span children = 11;
+}
+
+enum SpanKind {
+    LOCAL = 0; //Span
+    EVENT = 1; //event
+    SERVER = 2;
+    CLIENT = 3;
+    DAL = 4;
+    RMQ = 5;
+    REDIS = 6;
+    HEARTBEAT = 7;
+}
+
+//message SpanInfo {
+//    string type = 1;
+//    string name = 2;
+//    string status = 3;
+//    uint64 id = 4;
+//    uint64 timestamp = 5;
+//    bool completed = 6;
+//    map<string, string> tags = 7;
+//}
+//
+//
+//message Event {
+//    SpanInfo info = 1;
+//}
+//
+//message Transaction {
+//    //    SpanInfo info = 1;
+//
+//    uint64 duration = 2;
+//    Span children = 3;
+//}
+//
+//message Heartbeat {
+//
+//    SpanInfo info = 1;
+//    string data = 2;
+//}

@@ -2,7 +2,6 @@ package io.etrace.collector.cluster.discovery;
 
 import io.etrace.collector.BaseTest;
 import io.etrace.collector.cluster.ClusterService;
-import io.etrace.collector.cluster.discovery.impl.ServiceDiscovery;
 import io.etrace.collector.config.CollectorProperties;
 import io.etrace.collector.config.RestTemplateConfig;
 import io.etrace.collector.sharding.impl.FrontShardIngImpl;

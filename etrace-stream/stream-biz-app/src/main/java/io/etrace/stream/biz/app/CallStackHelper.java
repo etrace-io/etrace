@@ -144,12 +144,7 @@ public class CallStackHelper {
 
     public static String transferHostName(String hostName) {
         String result = hostName;
-        if (result.endsWith(".elenet.me")) {
-            result = result.substring(0, result.lastIndexOf(".elenet.me"));
-        }
-        if (result.endsWith(".ele.me")) {
-            result = result.substring(0, result.lastIndexOf(".ele.me"));
-        }
+        // todo: custom host transfer logic
         return result;
     }
 

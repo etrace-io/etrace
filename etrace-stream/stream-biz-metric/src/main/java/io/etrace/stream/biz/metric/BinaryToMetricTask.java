@@ -33,7 +33,7 @@ public class BinaryToMetricTask extends AbstractSnappyDecodeTask {
         for (Metric metric : metricMessage.getMetrics()) {
             if (isTsValid(metric.getTimestamp()) || ignoreSources.contains(metric.getSource())) {
                 MetricWithHeader metricWithHeader = new MetricWithHeader(metricMessage.getMetricHeader(), metric);
-                component.dispatch(Objects.hash(metric.getMetricName(), metric.getTags()), metricWithHeader);
+                component.dispatchAll(Objects.hash(metric.getMetricName(), metric.getTags()), metricWithHeader);
             }
         }
 

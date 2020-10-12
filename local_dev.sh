@@ -37,7 +37,7 @@ Input number: " num
     docker-compose  -f docker-compose-etrace.yml -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml up
     ;;
   [4]*)
-    docker-compose -f docker-compose-kafka-hadoop.yml up
+    docker-compose -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml up
     ;;
   [5]*)
     docker-compose -f docker-compose-mysql.yml up

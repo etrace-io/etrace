@@ -42,7 +42,7 @@ public class TcpRecvHandler extends SimpleChannelInboundHandler<Pair<byte[], byt
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Pair<byte[], byte[]> pair) {
-        es.execute(() -> component.dispatch(pair.getKey(), pair.getValue()));
+        es.execute(() -> component.dispatchAll(pair.getKey(), pair.getValue()));
     }
 
     @Override

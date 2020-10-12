@@ -10,17 +10,18 @@ import io.etrace.common.message.metric.Metric;
 import io.etrace.common.message.metric.MetricMessage;
 import io.etrace.common.message.metric.codec.FramedMetricMessageCodec;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Exporter;
 import io.etrace.common.pipeline.Resource;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.common.util.JSONUtil;
-import io.etrace.stream.container.exporter.kafka.model.HashFactory;
-import io.etrace.stream.container.exporter.kafka.model.HashStrategy;
-import io.etrace.stream.container.service.ChannelManager;
 import io.etrace.plugins.kafka0882.impl.impl.producer.KafkaCluster;
 import io.etrace.plugins.kafka0882.impl.impl.producer.KafkaEmitter;
 import io.etrace.plugins.kafka0882.impl.impl.producer.KafkaManager;
 import io.etrace.plugins.kafka0882.impl.impl.producer.model.Partition;
 import io.etrace.plugins.kafka0882.impl.impl.producer.model.RecordInfo;
+import io.etrace.stream.container.exporter.kafka.model.HashFactory;
+import io.etrace.stream.container.exporter.kafka.model.HashStrategy;
+import io.etrace.stream.container.service.ChannelManager;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -42,7 +43,7 @@ import static io.etrace.common.constant.InternalMetricName.KAFKA_PRODUCER_LOSE_D
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class KafkaExporterTask extends DefaultSyncTask {
+public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
     private final static Logger LOGGER = LoggerFactory.getLogger(KafkaExporterTask.class);
     private final Counter loseDataCounter;
     @Autowired

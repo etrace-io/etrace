@@ -83,7 +83,7 @@ public abstract class AbstractMetricWorker extends DiskBackedInMemoryTask {
     }
 
     private void send(Partition partition, byte[] data) throws Exception {
-        component.dispatch(partition.getLeader(), new ProducerRecord(topic, partition.getPartition(),
+        component.dispatchAll(partition.getLeader(), new ProducerRecord(topic, partition.getPartition(),
             JSONUtil.toBytes(new HeaderKey(System.currentTimeMillis())), data));
     }
 

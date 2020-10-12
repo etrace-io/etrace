@@ -2,7 +2,7 @@ name: Deploy To Central Maven
 
 on:
   release:
-    types: [created]
+    types: [ created ]
 
 jobs:
   publish:

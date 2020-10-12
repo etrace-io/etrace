@@ -4,6 +4,7 @@ import io.etrace.common.compression.CompressType;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.common.message.trace.MessageItem;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
 import io.etrace.common.util.IPUtil;
 import io.etrace.common.util.NetworkInterfaceHelper;
@@ -25,6 +26,8 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -33,8 +36,8 @@ import java.util.Map;
 import static io.etrace.consumer.metrics.MetricName.*;
 
 @org.springframework.stereotype.Component
-
-public class HDFSProcessor extends DefaultAsyncTask {
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class HDFSProcessor extends DefaultAsyncTask implements Processor {
     public final Logger LOGGER = LoggerFactory.getLogger(HDFSProcessor.class);
 
     private final CompressType compressType = CompressType.snappy;
@@ -134,7 +137,7 @@ public class HDFSProcessor extends DefaultAsyncTask {
         put.addColumn(stackSchema.getCf(), Bytes.toBytes(callStack.getId()), qualifierValue);
 
         long start = System.currentTimeMillis();
-        component.dispatch(shard, put);
+        component.dispatchAll(shard, put);
         stackTimer.record(Duration.ofMillis(System.currentTimeMillis() - start));
     }
 

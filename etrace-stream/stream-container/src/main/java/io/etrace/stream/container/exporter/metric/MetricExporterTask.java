@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import io.etrace.common.message.metric.Metric;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Exporter;
 import io.etrace.common.pipeline.Resource;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.stream.container.service.ChannelManager;
@@ -23,7 +24,7 @@ import static io.etrace.common.constant.InternalMetricName.STREAM_PRODUCER_SEND;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class MetricExporterTask extends DefaultSyncTask {
+public class MetricExporterTask extends DefaultSyncTask implements Exporter {
 
     private final Map<String, Counter> sendCounter;
     private String resourceId;

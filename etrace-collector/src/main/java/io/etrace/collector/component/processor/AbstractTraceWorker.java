@@ -61,7 +61,7 @@ public abstract class AbstractTraceWorker extends DiskBackedInMemoryTask {
                 // todo: 验证 emptylist emptymap 对 消费时处理的影响； 若不需要这两个字段，更新header字段
                 CallStackHeader header = new CallStackHeader(compressType.code(), Collections.emptyList(),
                     System.currentTimeMillis(), Collections.emptyMap());
-                component.dispatch(partition.getLeader(),
+                component.dispatchAll(partition.getLeader(),
                     new ProducerRecord<>(topic, partition.getPartition(), JSONUtil.toBytes(header), data));
             }
         } catch (Exception e) {

@@ -13,7 +13,9 @@
 
     <modules>
         <module>etrace-kafka-0.8.2.2-impl</module>
+        <module>spring-interceptors</module>
         <module>datasource-prometheus</module>
     </modules>
+
 
 </project>

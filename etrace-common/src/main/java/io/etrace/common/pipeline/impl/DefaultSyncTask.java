@@ -45,6 +45,6 @@ public abstract class DefaultSyncTask extends Task {
     }
 
     public void processEvent(Object key, Object event) throws Exception {
-        component.dispatch(key, event);
+        component.dispatchAll(key, event);
     }
 }

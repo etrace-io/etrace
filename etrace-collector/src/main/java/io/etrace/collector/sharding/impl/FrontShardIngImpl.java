@@ -2,8 +2,8 @@ package io.etrace.collector.sharding.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.etrace.collector.cluster.discovery.ServiceDiscovery;
 import io.etrace.collector.cluster.discovery.ServiceInstance;
-import io.etrace.collector.cluster.discovery.impl.ServiceDiscovery;
 import io.etrace.collector.config.CollectorProperties;
 import io.etrace.collector.controller.ThroughputController;
 import io.etrace.collector.service.impl.ShardingService;

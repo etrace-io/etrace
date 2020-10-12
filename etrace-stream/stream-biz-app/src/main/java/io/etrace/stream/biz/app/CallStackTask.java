@@ -39,7 +39,7 @@ public class CallStackTask extends AbstractSnappyDecodeTask {
         if (events != null) {
             for (Event event : events) {
                 if (isTsValid(event.getTimestamp())) {
-                    component.dispatch(event.shardingKey(), event);
+                    component.dispatchAll(event.shardingKey(), event);
                 }
             }
         }

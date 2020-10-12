@@ -7,6 +7,7 @@ import io.etrace.common.message.metric.MetricMessage;
 import io.etrace.common.message.metric.codec.MetricCodecV1;
 import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.common.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class MetricProcessor extends AbstractMetricWorker {
+public class MetricProcessor extends AbstractMetricWorker implements Processor {
     private final static String SPLIT_STR = "##";
 
     private MetricCodecV1 decoder = new MetricCodecV1();
@@ -53,8 +54,7 @@ public class MetricProcessor extends AbstractMetricWorker {
             return;
         }
         //todo key??
-        //        String key = pair.getKey().getKey();
-        String key = "ss";
+        String key = pair.getKey().getKey();
         String metricName = extractMetricName(key);
         if (collectorConfigurationService.isForbiddenMetricName(pair.getKey().getAppId(), metricName)) {
             metricsService.forbiddenMetrics(pair.getKey().getAppId(), pair.getValue().length);

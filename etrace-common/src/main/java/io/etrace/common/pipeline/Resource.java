@@ -16,7 +16,6 @@
 
 package io.etrace.common.pipeline;
 
-import io.etrace.common.pipeline.PipelineConfiguration;
 import lombok.Data;
 
 import java.util.Map;

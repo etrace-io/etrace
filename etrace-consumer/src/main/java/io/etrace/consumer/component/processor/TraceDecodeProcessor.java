@@ -4,6 +4,7 @@ import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.common.message.trace.MessageItem;
 import io.etrace.common.message.trace.codec.JSONCodecV1;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
 import io.etrace.consumer.metrics.MetricsService;
 import io.etrace.consumer.model.MessageBlock;
@@ -33,7 +34,7 @@ import static io.etrace.consumer.metrics.MetricName.*;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TraceDecodeProcessor extends DefaultAsyncTask {
+public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor {
     public final Logger LOGGER = LoggerFactory.getLogger(TraceDecodeProcessor.class);
 
     @Autowired
@@ -90,7 +91,7 @@ public class TraceDecodeProcessor extends DefaultAsyncTask {
             }
             if (!items.isEmpty()) {
                 long start = System.currentTimeMillis();
-                component.dispatch("", new MessageBlock(items, body));
+                component.dispatchAll("", new MessageBlock(items, body));
                 hdfsTimer.record(Duration.ofMillis(System.currentTimeMillis() - start));
             }
         }
