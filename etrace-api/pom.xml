@@ -71,18 +71,8 @@
 
         <dependency>
             <groupId>io.etrace</groupId>
-            <artifactId>datasource-lindb</artifactId>
+            <artifactId>datasource-prometheus</artifactId>
             <version>0.0.7-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>etrace-consumer</artifactId>
-                    <groupId>io.etrace</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>etrace-kafka-0.8.2.2-impl</artifactId>
-                    <groupId>io.etrace</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
     <build>

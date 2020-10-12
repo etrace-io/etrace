@@ -17,7 +17,7 @@
 package io.etrace.api.config;
 
 import io.etrace.common.datasource.MetricDatasourceService;
-import io.etrace.plugins.datasource.lindb.LinDBDatasourceService;
+import io.etrace.plugins.datasource.prometheus.PrometheusDatasource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +26,6 @@ public class MetricDatasourceConfig {
 
     @Bean
     public MetricDatasourceService MetricDataSource() {
-        return new LinDBDatasourceService();
+        return new PrometheusDatasource();
     }
 }
