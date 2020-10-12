@@ -1,5 +1,5 @@
 #!/bin/sh
-set -xv
+#set -xv
 
 echo "### Welcome! Your can use this script to build your local development environment.
 Your should have cloned this git repository. Then your need:
@@ -10,6 +10,7 @@ Your should have cloned this git repository. Then your need:
 
 Run 'mvn clean install' first to compile all codes.
 "
+
 while true; do
   read -p "#### choose the profile you want to build: [Input the number]
 
@@ -55,6 +56,7 @@ Input number: " num
     docker image prune
     ;;
   [0]*) exit ;;
+  [q]*) exit ;;
   *) echo "Only number accepted!" ;;
   esac
 done
