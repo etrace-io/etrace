@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>etrace-plugins</artifactId>
+        <groupId>io.etrace</groupId>
+        <version>0.0.7-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>etrace-prometheus-pushgateway</artifactId>
+
+
+    <properties>
+        <promethues.simpleclient.version>0.9.0</promethues.simpleclient.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.etrace</groupId>
+            <artifactId>etrace-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.etrace</groupId>
+            <artifactId>etrace-agent</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.0-jre</version>
+        </dependency>
+
+        <!-- The client -->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>${promethues.simpleclient.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Hotspot JVM metrics-->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_hotspot</artifactId>
+            <version>${promethues.simpleclient.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Exposition HTTPServer-->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_httpserver</artifactId>
+            <version>${promethues.simpleclient.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Pushgateway exposition-->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_pushgateway</artifactId>
+            <version>${promethues.simpleclient.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>prometheus-pushgateway</finalName>
+                    <descriptors>
+                        <descriptor>/assembly/pushgateway.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
