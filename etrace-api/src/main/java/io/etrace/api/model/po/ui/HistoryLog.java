@@ -18,11 +18,14 @@ package io.etrace.api.model.po.ui;
 
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
+
 public class HistoryLog extends BasePersistentObject {
     private String type;
     private Long historyId;

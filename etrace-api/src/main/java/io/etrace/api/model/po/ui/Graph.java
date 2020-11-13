@@ -20,12 +20,14 @@ import io.etrace.api.model.graph.Relation;
 import io.etrace.api.model.po.BaseVisualizationObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "graph")
 public class Graph extends BaseVisualizationObject {
 

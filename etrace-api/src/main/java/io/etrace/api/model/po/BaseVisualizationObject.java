@@ -18,6 +18,7 @@ package io.etrace.api.model.po;
 
 import io.etrace.common.constant.Status;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -28,6 +29,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BaseVisualizationObject extends BasePersistentObject {
 
     @Nullable

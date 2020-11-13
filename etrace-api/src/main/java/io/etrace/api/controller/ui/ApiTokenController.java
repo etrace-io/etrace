@@ -7,6 +7,7 @@ import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.model.po.ui.ApiToken;
 import io.etrace.api.model.po.ui.ApplyTokenLog;
 import io.etrace.api.model.po.user.ETraceUser;
+import io.etrace.api.model.vo.SearchResult;
 import io.etrace.api.service.ApiTokenService;
 import io.etrace.api.service.ApplyTokenLogService;
 import io.swagger.annotations.Api;
@@ -30,17 +31,13 @@ public class ApiTokenController {
     private ApplyTokenLogService applyTokenLogService;
 
     @GetMapping("/user/findToken")
-    public ResponseEntity<ApiToken> findOwnerToken(@CurrentUser ETraceUser user) {
+    public ApiToken findOwnerToken(@CurrentUser ETraceUser user) {
         Optional<ApiToken> op = apiTokenService.tryToFindTokenOrApplyRecord(user);
-        if (op.isPresent()) {
-            return ResponseEntity.ok(op.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return op.orElse(null);
     }
 
     @PostMapping(value = "/user/apply")
-    public ResponseEntity apply(@CurrentUser ETraceUser user) throws BadRequestException {
+    public void apply(@CurrentUser ETraceUser user) throws BadRequestException {
         try {
             // avoid duplicated application
             if (apiTokenService.tryToFindTokenOrApplyRecord(user).isPresent()) {
@@ -53,7 +50,6 @@ public class ApiTokenController {
                 applyTokenLog.setAuditStatus(ApplyTokenAuditStatus.NOT_AUDIT);
                 applyTokenLog.setUserEmail(user.getEmail());
                 applyTokenLogService.create(applyTokenLog, user);
-                return ResponseEntity.noContent().build();
             }
         } catch (Exception e) {
             throw new BadRequestException("apply token failed！", e);
@@ -61,27 +57,26 @@ public class ApiTokenController {
     }
 
     @PostMapping(value = "/admin/audit")
-    public ResponseEntity audit(@RequestBody ApplyTokenLog applyTokenLog, @CurrentUser ETraceUser user)
+    public void audit(@RequestBody ApplyTokenLog applyTokenLog, @CurrentUser ETraceUser user)
         throws BadRequestException {
         try {
             applyTokenLogService.auditApply(applyTokenLog.getAuditStatus(), applyTokenLog.getAuditOpinion(),
-                user.getUsername(),
-                applyTokenLog.getId());
-            return ResponseEntity.noContent().build();
+                user.getUsername(), applyTokenLog.getId());
         } catch (Exception e) {
             throw new BadRequestException("audit apply failed！", e);
         }
     }
 
     @GetMapping(value = "/admin/apply/search")
-    public ResponseEntity search(ApplyTokenAuditStatus auditStatus, TokenStatus status, String userCode,
-                                 Integer pageNum, Integer pageSize) throws BadRequestException {
+    public SearchResult<ApplyTokenLog> search(ApplyTokenAuditStatus auditStatus, @RequestParam TokenStatus status,
+                                              String userCode,
+                                              Integer pageNum, Integer pageSize) throws BadRequestException {
         try {
-            return ResponseEntity.ok(applyTokenLogService.search(
+            return applyTokenLogService.search(
                 auditStatus != null ? auditStatus.value : "", status != null ? status.value : "",
                 userCode,
                 Optional.ofNullable(pageNum).orElse(1),
-                Optional.ofNullable(pageSize).orElse(100)));
+                Optional.ofNullable(pageSize).orElse(100));
         } catch (Exception e) {
             throw new BadRequestException("search apply fail!！", e);
         }

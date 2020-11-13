@@ -25,6 +25,7 @@ import io.etrace.api.model.po.yellowpage.SearchList;
 import io.etrace.api.model.po.yellowpage.SearchRecord;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -33,6 +34,7 @@ import java.util.List;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class UserAction extends BasePersistentObject {
 
     private String userEmail;

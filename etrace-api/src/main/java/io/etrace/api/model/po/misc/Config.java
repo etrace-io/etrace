@@ -18,12 +18,14 @@ package io.etrace.api.model.po.misc;
 
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Config extends BasePersistentObject {
 
     @Column(name = "`key`")

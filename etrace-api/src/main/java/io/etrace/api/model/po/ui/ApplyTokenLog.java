@@ -20,12 +20,14 @@ import io.etrace.api.consts.ApplyTokenAuditStatus;
 import io.etrace.api.consts.TokenStatus;
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class ApplyTokenLog extends BasePersistentObject {
 
     @Column(unique = true, nullable = false)

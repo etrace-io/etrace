@@ -20,6 +20,7 @@ import io.etrace.api.model.po.BasePersistentObject;
 import io.etrace.api.util.JpaConverterJson;
 import io.etrace.common.constant.Status;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -28,6 +29,8 @@ import javax.persistence.Transient;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+
 @Entity
 public class MonitorEntity extends BasePersistentObject {
     private long parentId;

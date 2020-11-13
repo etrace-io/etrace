@@ -19,12 +19,14 @@ package io.etrace.api.model.po.misc;
 import io.etrace.api.consts.LimitQueryType;
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
 public class LimitSql extends BasePersistentObject {

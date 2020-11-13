@@ -18,11 +18,13 @@ package io.etrace.api.model.po.user;
 
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class UserConfig extends BasePersistentObject {
     private String userEmail;
     private String config;

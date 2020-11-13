@@ -17,6 +17,7 @@
 package io.etrace.api.model.po;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,6 +28,7 @@ import java.util.Date;
 // MappedSuperclass https://docs.spring.io/spring-data/jpa/docs/2.3.1.RELEASE/reference/html/#dependencies
 @MappedSuperclass
 @Data
+@EqualsAndHashCode
 public abstract class BasePersistentObject implements Serializable {
 
     @Id

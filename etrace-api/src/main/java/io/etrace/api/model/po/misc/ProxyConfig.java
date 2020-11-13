@@ -18,11 +18,13 @@ package io.etrace.api.model.po.misc;
 
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ProxyConfig extends BasePersistentObject {
 
     private String serverName;

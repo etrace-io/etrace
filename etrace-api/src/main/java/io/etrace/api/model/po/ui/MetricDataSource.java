@@ -21,11 +21,12 @@ import io.etrace.api.util.JpaConverterJson;
 import io.etrace.common.constant.Status;
 import io.etrace.common.datasource.OneDatasourceConfig;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.util.List;
-
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "datasource")
 @Data
 public class MetricDataSource extends BasePersistentObject {

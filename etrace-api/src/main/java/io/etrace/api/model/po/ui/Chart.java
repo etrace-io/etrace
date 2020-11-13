@@ -20,6 +20,7 @@ import io.etrace.api.model.Target;
 import io.etrace.api.model.po.BaseVisualizationObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Chart extends BaseVisualizationObject {
 
     private String config;

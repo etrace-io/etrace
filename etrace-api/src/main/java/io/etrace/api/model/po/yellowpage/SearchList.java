@@ -3,11 +3,13 @@ package io.etrace.api.model.po.yellowpage;
 import io.etrace.api.consts.SearchListTypeEnum;
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class SearchList extends BasePersistentObject {
 
     /**

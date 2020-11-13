@@ -19,6 +19,7 @@ package io.etrace.api.model.po.ui;
 import io.etrace.api.model.po.BaseVisualizationObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Entity(name = "dashboard_app")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class DashboardApp extends BaseVisualizationObject {
     private Boolean critical;
 

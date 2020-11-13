@@ -18,12 +18,14 @@ package io.etrace.api.model.po.ui;
 
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Data
 @Entity(name = "app")
+@EqualsAndHashCode(callSuper = true)
 public class App extends BasePersistentObject {
 
     /**

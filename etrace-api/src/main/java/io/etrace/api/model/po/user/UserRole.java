@@ -19,6 +19,7 @@ package io.etrace.api.model.po.user;
 import io.etrace.api.model.po.BasePersistentObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 public class UserRole extends BasePersistentObject {
 
     private Long userId;
