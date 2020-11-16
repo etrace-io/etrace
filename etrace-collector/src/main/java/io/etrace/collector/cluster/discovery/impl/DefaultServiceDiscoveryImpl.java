@@ -196,6 +196,8 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
                 LOGGER.info("Collector node removed: {}.", path);
                 removeInstance(instance);
                 break;
+            default:
+                throw new RuntimeException("==updateListener==:  " + event.getType());
         }
     }
 

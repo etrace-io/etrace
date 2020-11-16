@@ -33,6 +33,7 @@ public class DashboardService extends BaseService<Dashboard> {
         this.dashboardMapper = dashboardMapper;
     }
 
+    @Override
     public List<Dashboard> findByIds(String title, List<Long> ids) {
         return dashboardMapper.findByTitleContainingAndIdIn(title, ids);
     }
@@ -80,15 +81,6 @@ public class DashboardService extends BaseService<Dashboard> {
         }
     }
 
-    public List<Dashboard> findByIds(String title, Long department, Long productLine, List<Long> dashboardIds) {
-        return dashboardMapper.findByTitleContainingAndIdIn(title, dashboardIds);
-    }
-
-    public void updateDashboardChartIds(Dashboard dashboard, ETraceUser user) throws UserForbiddenException {
-        createHistoryLog(findById(dashboard.getId()).orElse(null), user, HistoryLogTypeEnum.dashboard, true);
-        dashboardMapper.save(dashboard);
-    }
-
     @Override
     public void syncSonMetricConfig(Dashboard dashboard, ETraceUser user) {
         // todo: 这里怎么改成DashboardVO ?
@@ -114,4 +106,14 @@ public class DashboardService extends BaseService<Dashboard> {
     public Dashboard findByGlobalId(@NotNull String globalConfigId) {
         return dashboardMapper.findByGlobalId(globalConfigId);
     }
+
+    public List<Dashboard> findByIds(String title, Long department, Long productLine, List<Long> dashboardIds) {
+        return dashboardMapper.findByTitleContainingAndIdIn(title, dashboardIds);
+    }
+
+    public void updateDashboardChartIds(Dashboard dashboard, ETraceUser user) throws UserForbiddenException {
+        createHistoryLog(findById(dashboard.getId()).orElse(null), user, HistoryLogTypeEnum.dashboard, true);
+        dashboardMapper.save(dashboard);
+    }
+
 }

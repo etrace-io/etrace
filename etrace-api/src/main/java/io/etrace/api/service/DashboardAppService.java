@@ -104,6 +104,21 @@ public class DashboardAppService extends BaseService<DashboardApp> {
 
     }
 
+    @Override
+    public void updateUserFavorite(long id) {
+        dashboardAppMapper.updateUserFavorite(id);
+    }
+
+    @Override
+    public void updateUserView(long id) {
+        dashboardAppMapper.updateUserView(id);
+    }
+
+    @Override
+    public void deleteUserFavorite(long id) {
+        dashboardAppMapper.deleteUserFavorite(id);
+    }
+
     public SearchResult<DashboardApp> search(String title, Long department, Long productLine, String user,
                                              Integer pageNum, Integer pageSize, Boolean critical) {
         SearchResult<DashboardApp> searchResult = new SearchResult<>();
@@ -144,20 +159,5 @@ public class DashboardAppService extends BaseService<DashboardApp> {
                 }
             }
         }
-    }
-
-    @Override
-    public void updateUserFavorite(long id) {
-        dashboardAppMapper.updateUserFavorite(id);
-    }
-
-    @Override
-    public void updateUserView(long id) {
-        dashboardAppMapper.updateUserView(id);
-    }
-
-    @Override
-    public void deleteUserFavorite(long id) {
-        dashboardAppMapper.deleteUserFavorite(id);
     }
 }

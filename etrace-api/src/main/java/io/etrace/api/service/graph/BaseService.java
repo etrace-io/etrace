@@ -63,6 +63,10 @@ public abstract class BaseService<T extends BaseVisualizationObject>
 
     public abstract List<T> findByIds(String title, List<Long> ids);
 
+    public abstract T findById(long id, ETraceUser user);
+
+    public abstract <S extends T> void syncSonMetricConfig(S t, ETraceUser user);
+
     public void delete(long id, ETraceUser user) throws UserForbiddenException {
         createHistoryLog(crudRepository.findById(id).orElse(null), user, null, true);
         crudRepository.deleteById(id);
@@ -105,8 +109,6 @@ public abstract class BaseService<T extends BaseVisualizationObject>
 
     }
 
-    public abstract T findById(long id, ETraceUser user);
-
     @Override
     public void syncMetricConfig(@NotNull T t, ETraceUser user) throws UserForbiddenException {
         if (null == t) {
@@ -137,6 +139,4 @@ public abstract class BaseService<T extends BaseVisualizationObject>
             }
         }
     }
-
-    public abstract <S extends T> void syncSonMetricConfig(S t, ETraceUser user);
 }
