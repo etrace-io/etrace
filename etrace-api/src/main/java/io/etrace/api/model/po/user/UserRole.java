@@ -23,6 +23,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -35,6 +36,6 @@ public class UserRole extends BasePersistentObject {
     private String userEmail;
 
     @Convert(converter = JpaConverterJson.class)
-    private Set<String> roles;
+    private List<String> roles;
 }
 

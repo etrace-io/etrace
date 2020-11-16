@@ -39,6 +39,7 @@ public class ApiToken extends BasePersistentObject {
     /**
      * 是否始终允许访问
      */
+    @Column(length = 1)
     private Boolean isAlwaysAccess;
     private String createdBy;
     private String updatedBy;

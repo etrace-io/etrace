@@ -16,6 +16,7 @@
 
 package io.etrace.api.service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserRole;
@@ -28,6 +29,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -73,7 +75,7 @@ public class MyUserDetailsService implements UserDetailsService {
             ETraceUser user = op.get();
             Optional<UserRole> op2 = userRoleMapper.findByUserId(user.getId());
             if (op2.isPresent()) {
-                user.setRoles(op2.get().getRoles());
+                user.setRoles(Sets.newHashSet(op2.get().getRoles()));
             } else {
                 user.setRoles(Sets.newHashSet("ROLE_USER"));
             }

@@ -17,9 +17,11 @@
 package io.etrace.api.model.po.ui;
 
 import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 
 @Entity
@@ -29,6 +31,8 @@ import javax.persistence.Entity;
 public class HistoryLog extends BasePersistentObject {
     private String type;
     private Long historyId;
+
+    @Convert(converter = JpaConverterJson.class)
     private Object history;
     private String createdBy;
     private String updatedBy;

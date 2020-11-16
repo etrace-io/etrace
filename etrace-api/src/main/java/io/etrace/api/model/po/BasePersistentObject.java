@@ -32,7 +32,7 @@ import java.util.Date;
 public abstract class BasePersistentObject implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)

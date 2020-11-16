@@ -1,22 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `etrace` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `etrace`;
--- MySQL dump 10.13  Distrib 8.0.20, for macos10.15 (x86_64)
---
--- Host: 127.0.0.1    Database: etrace
--- ------------------------------------------------------
--- Server version	8.0.21
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
 --
 -- Table structure for table `api_token`
 --
@@ -30,8 +13,8 @@ CREATE TABLE `api_token` (
                              `updated_at` datetime DEFAULT NULL,
                              `cid` varchar(255) DEFAULT NULL,
                              `created_by` varchar(255) DEFAULT NULL,
-                             `is_always_access` varchar(255) DEFAULT NULL,
-                             `status` varchar(255) DEFAULT NULL,
+                             `is_always_access` bit(1) DEFAULT NULL,
+                             `status` int DEFAULT NULL,
                              `token` varchar(255) DEFAULT NULL,
                              `updated_by` varchar(255) DEFAULT NULL,
                              `user_email` varchar(255) NOT NULL,
@@ -39,15 +22,6 @@ CREATE TABLE `api_token` (
                              UNIQUE KEY `UK_7cia4eeb3klyl3mce3tvybuo1` (`user_email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `api_token`
---
-
-LOCK TABLES `api_token` WRITE;
-/*!40000 ALTER TABLE `api_token` DISABLE KEYS */;
-/*!40000 ALTER TABLE `api_token` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `app`
@@ -63,7 +37,7 @@ CREATE TABLE `app` (
                        `app_id` varchar(255) NOT NULL,
                        `app_name` varchar(255) DEFAULT NULL,
                        `app_type` varchar(255) DEFAULT NULL,
-                       `critical` varchar(255) DEFAULT NULL,
+                       `critical` bit(1) DEFAULT NULL,
                        `owner` varchar(255) DEFAULT NULL,
                        `status` varchar(255) DEFAULT NULL,
                        `tenant` varchar(255) DEFAULT NULL,
@@ -71,15 +45,6 @@ CREATE TABLE `app` (
                        UNIQUE KEY `UK_fo5tnbjkos6udvf57gdtr6ro2` (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `app`
---
-
-LOCK TABLES `app` WRITE;
-/*!40000 ALTER TABLE `app` DISABLE KEYS */;
-/*!40000 ALTER TABLE `app` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `apply_token_log`
@@ -94,24 +59,15 @@ CREATE TABLE `apply_token_log` (
                                    `updated_at` datetime DEFAULT NULL,
                                    `apply_reason` varchar(255) DEFAULT NULL,
                                    `audit_opinion` varchar(255) DEFAULT NULL,
-                                   `audit_status` varchar(255) DEFAULT NULL,
+                                   `audit_status` int DEFAULT NULL,
                                    `created_by` varchar(255) DEFAULT NULL,
-                                   `status` varchar(255) DEFAULT NULL,
+                                   `status` int DEFAULT NULL,
                                    `updated_by` varchar(255) DEFAULT NULL,
                                    `user_email` varchar(255) NOT NULL,
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `UK_advyj91lomm77svc7grmj6a71` (`user_email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `apply_token_log`
---
-
-LOCK TABLES `apply_token_log` WRITE;
-/*!40000 ALTER TABLE `apply_token_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `apply_token_log` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `chart`
@@ -124,31 +80,22 @@ CREATE TABLE `chart` (
                          `id` bigint NOT NULL,
                          `created_at` datetime DEFAULT NULL,
                          `updated_at` datetime DEFAULT NULL,
-                         `admin_visible` varchar(255) DEFAULT NULL,
+                         `admin_visible` bit(1) DEFAULT NULL,
                          `created_by` varchar(255) DEFAULT NULL,
                          `description` varchar(255) DEFAULT NULL,
-                         `favorite_count` varchar(255) DEFAULT NULL,
+                         `favorite_count` bigint DEFAULT NULL,
                          `global_id` varchar(255) NOT NULL,
-                         `is_star` varchar(255) DEFAULT NULL,
+                         `is_star` bit(1) DEFAULT NULL,
                          `status` varchar(255) DEFAULT NULL,
                          `title` varchar(255) DEFAULT NULL,
                          `updated_by` varchar(255) DEFAULT NULL,
-                         `view_count` varchar(255) DEFAULT NULL,
+                         `view_count` bigint DEFAULT NULL,
                          `config` varchar(255) DEFAULT NULL,
                          `targets` varchar(255) DEFAULT NULL,
                          PRIMARY KEY (`id`),
                          UNIQUE KEY `UK_b75w12kgnonflf1j6qk2gn4d6` (`global_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `chart`
---
-
-LOCK TABLES `chart` WRITE;
-/*!40000 ALTER TABLE `chart` DISABLE KEYS */;
-/*!40000 ALTER TABLE `chart` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `config`
@@ -171,15 +118,6 @@ CREATE TABLE `config` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `config`
---
-
-LOCK TABLES `config` WRITE;
-/*!40000 ALTER TABLE `config` DISABLE KEYS */;
-/*!40000 ALTER TABLE `config` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `dashboard`
 --
 
@@ -190,16 +128,16 @@ CREATE TABLE `dashboard` (
                              `id` bigint NOT NULL,
                              `created_at` datetime DEFAULT NULL,
                              `updated_at` datetime DEFAULT NULL,
-                             `admin_visible` varchar(255) DEFAULT NULL,
+                             `admin_visible` bit(1) DEFAULT NULL,
                              `created_by` varchar(255) DEFAULT NULL,
                              `description` varchar(255) DEFAULT NULL,
-                             `favorite_count` varchar(255) DEFAULT NULL,
+                             `favorite_count` bigint DEFAULT NULL,
                              `global_id` varchar(255) NOT NULL,
-                             `is_star` varchar(255) DEFAULT NULL,
+                             `is_star` bit(1) DEFAULT NULL,
                              `status` varchar(255) DEFAULT NULL,
                              `title` varchar(255) DEFAULT NULL,
                              `updated_by` varchar(255) DEFAULT NULL,
-                             `view_count` varchar(255) DEFAULT NULL,
+                             `view_count` bigint DEFAULT NULL,
                              `chart_ids` varchar(255) DEFAULT NULL,
                              `config` varchar(255) DEFAULT NULL,
                              `layout` varchar(255) DEFAULT NULL,
@@ -207,15 +145,6 @@ CREATE TABLE `dashboard` (
                              UNIQUE KEY `UK_flqkpqi3jhe0tap0xh9mgayn8` (`global_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dashboard`
---
-
-LOCK TABLES `dashboard` WRITE;
-/*!40000 ALTER TABLE `dashboard` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dashboard` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `dashboard_app`
@@ -228,33 +157,24 @@ CREATE TABLE `dashboard_app` (
                                  `id` bigint NOT NULL,
                                  `created_at` datetime DEFAULT NULL,
                                  `updated_at` datetime DEFAULT NULL,
-                                 `admin_visible` varchar(255) DEFAULT NULL,
+                                 `admin_visible` bit(1) DEFAULT NULL,
                                  `created_by` varchar(255) DEFAULT NULL,
                                  `description` varchar(255) DEFAULT NULL,
-                                 `favorite_count` varchar(255) DEFAULT NULL,
+                                 `favorite_count` bigint DEFAULT NULL,
                                  `global_id` varchar(255) NOT NULL,
-                                 `is_star` varchar(255) DEFAULT NULL,
+                                 `is_star` bit(1) DEFAULT NULL,
                                  `status` varchar(255) DEFAULT NULL,
                                  `title` varchar(255) DEFAULT NULL,
                                  `updated_by` varchar(255) DEFAULT NULL,
-                                 `view_count` varchar(255) DEFAULT NULL,
-                                 `critical` varchar(255) DEFAULT NULL,
+                                 `view_count` bigint DEFAULT NULL,
+                                 `critical` bit(1) DEFAULT NULL,
                                  `dashboard_ids` varchar(255) DEFAULT NULL,
                                  `icon` varchar(255) DEFAULT NULL,
-                                 `order` varchar(10) DEFAULT NULL,
+                                 `order` bigint DEFAULT NULL,
                                  PRIMARY KEY (`id`),
                                  UNIQUE KEY `UK_6qrm9hsfk4qg0c4lt04bsnm7v` (`global_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dashboard_app`
---
-
-LOCK TABLES `dashboard_app` WRITE;
-/*!40000 ALTER TABLE `dashboard_app` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dashboard_app` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `datasource`
@@ -269,20 +189,11 @@ CREATE TABLE `datasource` (
                               `updated_at` datetime DEFAULT NULL,
                               `config` varchar(255) DEFAULT NULL,
                               `name` varchar(255) DEFAULT NULL,
-                              `status` varchar(255) DEFAULT NULL,
+                              `status` int DEFAULT NULL,
                               `type` varchar(255) DEFAULT NULL,
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `datasource`
---
-
-LOCK TABLES `datasource` WRITE;
-/*!40000 ALTER TABLE `datasource` DISABLE KEYS */;
-/*!40000 ALTER TABLE `datasource` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `graph`
@@ -295,16 +206,16 @@ CREATE TABLE `graph` (
                          `id` bigint NOT NULL,
                          `created_at` datetime DEFAULT NULL,
                          `updated_at` datetime DEFAULT NULL,
-                         `admin_visible` varchar(255) DEFAULT NULL,
+                         `admin_visible` bit(1) DEFAULT NULL,
                          `created_by` varchar(255) DEFAULT NULL,
                          `description` varchar(255) DEFAULT NULL,
-                         `favorite_count` varchar(255) DEFAULT NULL,
+                         `favorite_count` bigint DEFAULT NULL,
                          `global_id` varchar(255) NOT NULL,
-                         `is_star` varchar(255) DEFAULT NULL,
+                         `is_star` bit(1) DEFAULT NULL,
                          `status` varchar(255) DEFAULT NULL,
                          `title` varchar(255) DEFAULT NULL,
                          `updated_by` varchar(255) DEFAULT NULL,
-                         `view_count` varchar(255) DEFAULT NULL,
+                         `view_count` bigint DEFAULT NULL,
                          `config` varchar(255) DEFAULT NULL,
                          `layout` varchar(255) DEFAULT NULL,
                          `node_ids` varchar(255) DEFAULT NULL,
@@ -314,37 +225,6 @@ CREATE TABLE `graph` (
                          UNIQUE KEY `UK_cboxqslcmecsq46kux0teylg4` (`global_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `graph`
---
-
-LOCK TABLES `graph` WRITE;
-/*!40000 ALTER TABLE `graph` DISABLE KEYS */;
-/*!40000 ALTER TABLE `graph` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `hibernate_sequence`
---
-
-DROP TABLE IF EXISTS `hibernate_sequence`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hibernate_sequence` (
-    `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `hibernate_sequence`
---
-
-LOCK TABLES `hibernate_sequence` WRITE;
-/*!40000 ALTER TABLE `hibernate_sequence` DISABLE KEYS */;
-INSERT INTO `hibernate_sequence` VALUES (1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1),(1);
-/*!40000 ALTER TABLE `hibernate_sequence` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `history_log`
@@ -359,21 +239,12 @@ CREATE TABLE `history_log` (
                                `updated_at` datetime DEFAULT NULL,
                                `created_by` varchar(255) DEFAULT NULL,
                                `history` varchar(255) DEFAULT NULL,
-                               `history_id` varchar(255) DEFAULT NULL,
+                               `history_id` bigint DEFAULT NULL,
                                `type` varchar(255) DEFAULT NULL,
                                `updated_by` varchar(255) DEFAULT NULL,
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `history_log`
---
-
-LOCK TABLES `history_log` WRITE;
-/*!40000 ALTER TABLE `history_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `history_log` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `limit_sql`
@@ -387,7 +258,7 @@ CREATE TABLE `limit_sql` (
                              `created_at` datetime DEFAULT NULL,
                              `updated_at` datetime DEFAULT NULL,
                              `created_by` varchar(255) DEFAULT NULL,
-                             `limit_query_type` varchar(255) DEFAULT NULL,
+                             `limit_query_type` int DEFAULT NULL,
                              `measurement` varchar(255) DEFAULT NULL,
                              `sql` varchar(255) DEFAULT NULL,
                              `status` varchar(255) DEFAULT NULL,
@@ -395,15 +266,6 @@ CREATE TABLE `limit_sql` (
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `limit_sql`
---
-
-LOCK TABLES `limit_sql` WRITE;
-/*!40000 ALTER TABLE `limit_sql` DISABLE KEYS */;
-/*!40000 ALTER TABLE `limit_sql` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `monitor_entity`
@@ -420,7 +282,7 @@ CREATE TABLE `monitor_entity` (
                                   `code` varchar(255) DEFAULT NULL,
                                   `config` varchar(255) DEFAULT NULL,
                                   `database` varchar(255) DEFAULT NULL,
-                                  `datasource_id` varchar(255) DEFAULT NULL,
+                                  `datasource_id` bigint DEFAULT NULL,
                                   `meta_link` varchar(255) DEFAULT NULL,
                                   `meta_placeholder` varchar(255) DEFAULT NULL,
                                   `meta_url` varchar(255) DEFAULT NULL,
@@ -433,15 +295,6 @@ CREATE TABLE `monitor_entity` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `monitor_entity`
---
-
-LOCK TABLES `monitor_entity` WRITE;
-/*!40000 ALTER TABLE `monitor_entity` DISABLE KEYS */;
-/*!40000 ALTER TABLE `monitor_entity` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `node`
 --
 
@@ -452,37 +305,28 @@ CREATE TABLE `node` (
                         `id` bigint NOT NULL,
                         `created_at` datetime DEFAULT NULL,
                         `updated_at` datetime DEFAULT NULL,
-                        `admin_visible` varchar(255) DEFAULT NULL,
+                        `admin_visible` bit(1) DEFAULT NULL,
                         `created_by` varchar(255) DEFAULT NULL,
                         `description` varchar(255) DEFAULT NULL,
-                        `favorite_count` varchar(255) DEFAULT NULL,
+                        `favorite_count` bigint DEFAULT NULL,
                         `global_id` varchar(255) NOT NULL,
-                        `is_star` varchar(255) DEFAULT NULL,
+                        `is_star` bit(1) DEFAULT NULL,
                         `status` varchar(255) DEFAULT NULL,
                         `title` varchar(255) DEFAULT NULL,
                         `updated_by` varchar(255) DEFAULT NULL,
-                        `view_count` varchar(255) DEFAULT NULL,
+                        `view_count` bigint DEFAULT NULL,
                         `app_id` varchar(255) DEFAULT NULL,
                         `chart_ids` varchar(255) DEFAULT NULL,
                         `charts` varchar(255) DEFAULT NULL,
                         `config` varchar(255) DEFAULT NULL,
                         `group_by` varchar(255) DEFAULT NULL,
                         `layout` varchar(255) DEFAULT NULL,
-                        `node_type` varchar(255) DEFAULT NULL,
+                        `node_type` int DEFAULT NULL,
                         `single_node_config` varchar(255) DEFAULT NULL,
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `UK_3lt6o0sqvk1mivrcnnupqv6pa` (`global_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `node`
---
-
-LOCK TABLES `node` WRITE;
-/*!40000 ALTER TABLE `node` DISABLE KEYS */;
-/*!40000 ALTER TABLE `node` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `proxy_config`
@@ -507,15 +351,6 @@ CREATE TABLE `proxy_config` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `proxy_config`
---
-
-LOCK TABLES `proxy_config` WRITE;
-/*!40000 ALTER TABLE `proxy_config` DISABLE KEYS */;
-/*!40000 ALTER TABLE `proxy_config` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `search_key_word`
 --
 
@@ -533,15 +368,6 @@ CREATE TABLE `search_key_word` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `search_key_word`
---
-
-LOCK TABLES `search_key_word` WRITE;
-/*!40000 ALTER TABLE `search_key_word` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_key_word` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `search_key_word_correlation`
 --
 
@@ -553,20 +379,11 @@ CREATE TABLE `search_key_word_correlation` (
                                                `created_at` datetime DEFAULT NULL,
                                                `updated_at` datetime DEFAULT NULL,
                                                `correlation_coefficient` int NOT NULL,
-                                               `correlation_keyword_id` varchar(255) DEFAULT NULL,
-                                               `keyword_id` varchar(255) DEFAULT NULL,
+                                               `correlation_keyword_id` bigint DEFAULT NULL,
+                                               `keyword_id` bigint DEFAULT NULL,
                                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `search_key_word_correlation`
---
-
-LOCK TABLES `search_key_word_correlation` WRITE;
-/*!40000 ALTER TABLE `search_key_word_correlation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_key_word_correlation` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `search_list`
@@ -582,24 +399,15 @@ CREATE TABLE `search_list` (
                                `created_by` varchar(255) DEFAULT NULL,
                                `description` varchar(255) DEFAULT NULL,
                                `icon` varchar(255) DEFAULT NULL,
-                               `list_type` varchar(255) DEFAULT NULL,
+                               `list_type` int DEFAULT NULL,
                                `maintainer_email` varchar(255) DEFAULT NULL,
                                `name` varchar(255) DEFAULT NULL,
-                               `star` varchar(255) DEFAULT NULL,
+                               `star` bit(1) DEFAULT NULL,
                                `status` varchar(255) DEFAULT NULL,
                                `updated_by` varchar(255) DEFAULT NULL,
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `search_list`
---
-
-LOCK TABLES `search_list` WRITE;
-/*!40000 ALTER TABLE `search_list` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_list` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `search_list_record_mapping`
@@ -612,21 +420,12 @@ CREATE TABLE `search_list_record_mapping` (
                                               `id` bigint NOT NULL,
                                               `created_at` datetime DEFAULT NULL,
                                               `updated_at` datetime DEFAULT NULL,
-                                              `list_id` varchar(255) DEFAULT NULL,
-                                              `record_id` varchar(255) DEFAULT NULL,
+                                              `list_id` bigint DEFAULT NULL,
+                                              `record_id` bigint DEFAULT NULL,
                                               `status` varchar(255) DEFAULT NULL,
                                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `search_list_record_mapping`
---
-
-LOCK TABLES `search_list_record_mapping` WRITE;
-/*!40000 ALTER TABLE `search_list_record_mapping` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_list_record_mapping` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `search_record`
@@ -650,24 +449,15 @@ CREATE TABLE `search_record` (
                                  `name` varchar(255) DEFAULT NULL,
                                  `owner_dingtalk_number` varchar(255) DEFAULT NULL,
                                  `owner_dingtalkame` varchar(255) DEFAULT NULL,
-                                 `star` varchar(255) DEFAULT NULL,
+                                 `star` bit(1) DEFAULT NULL,
                                  `status` varchar(255) DEFAULT NULL,
-                                 `type` varchar(255) DEFAULT NULL,
+                                 `type` int DEFAULT NULL,
                                  `type_name` varchar(255) DEFAULT NULL,
                                  `updated_by` varchar(255) DEFAULT NULL,
                                  `url` varchar(255) DEFAULT NULL,
                                  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `search_record`
---
-
-LOCK TABLES `search_record` WRITE;
-/*!40000 ALTER TABLE `search_record` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_record` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `search_record_keyword_mapping`
@@ -688,15 +478,6 @@ CREATE TABLE `search_record_keyword_mapping` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `search_record_keyword_mapping`
---
-
-LOCK TABLES `search_record_keyword_mapping` WRITE;
-/*!40000 ALTER TABLE `search_record_keyword_mapping` DISABLE KEYS */;
-/*!40000 ALTER TABLE `search_record_keyword_mapping` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user`
 --
 
@@ -714,15 +495,6 @@ CREATE TABLE `user` (
                         UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `user_action`
@@ -750,15 +522,6 @@ CREATE TABLE `user_action` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user_action`
---
-
-LOCK TABLES `user_action` WRITE;
-/*!40000 ALTER TABLE `user_action` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_action` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user_config`
 --
 
@@ -776,15 +539,6 @@ CREATE TABLE `user_config` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user_config`
---
-
-LOCK TABLES `user_config` WRITE;
-/*!40000 ALTER TABLE `user_config` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_config` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user_role`
 --
 
@@ -797,31 +551,11 @@ CREATE TABLE `user_role` (
                              `updated_at` datetime DEFAULT NULL,
                              `roles` varchar(255) DEFAULT NULL,
                              `user_email` varchar(255) DEFAULT NULL,
-                             `user_id` varchar(255) DEFAULT NULL,
+                             `user_id` bigint DEFAULT NULL,
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `user_role`
---
-
-LOCK TABLES `user_role` WRITE;
-/*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2020-11-11 18:45:29
 
 -- init data
 insert into user (id, password, user_name, email) values (1, 'abc', 'admin', 'some111@abc.om'), (2, 'def','user', 'some222@abc.om');
-insert into user_role (id, user_id, roles) values (1, 1, 'ROLE_ADMIN'), (2, 2,'ROLE_USER');
+insert into user_role (id, user_id, roles) values (1, 1, '["ROLE_ADMIN"]'), (2, 2,'["ROLE_USER"]');

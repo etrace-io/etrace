@@ -24,7 +24,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.io.IOException;
 
-@Converter(autoApply = true)
+@Converter(autoApply = false)
 public class JpaConverterJson implements AttributeConverter<Object, String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaConverterJson.class);
 
