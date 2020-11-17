@@ -124,32 +124,6 @@ public class TimeHelper {
         return calendar.getTime().getTime();
     }
 
-    public static String getDate(String timeStr, Date date) throws ParseException {
-        if (timeStr.contains(key)) {
-            String[] timer = timeStr.split("/");
-            String timePoint = timer[0];
-            if (timer.length == 2) {
-
-            }
-
-            if (timePoint.equalsIgnoreCase(key)) {
-                return getFormatDate(date.getTime());
-            } else {
-                String[] points = timePoint.split("-");
-                String prefix = points[1];
-                String type = prefix.substring(prefix.length() - 1);
-                int interval = Integer.parseInt(prefix.substring(0, prefix.length() - 1));
-                return getFormatDate(getTime(interval, date, type));
-            }
-        } else {
-            if (timeStr.contains("-")) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                return new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(dateFormat.parse(timeStr));
-            }
-        }
-        return timeStr;
-    }
-
     public static long getDateLong(String timeStr, Date date) throws ParseException {
         if (timeStr.contains(key)) {
             String[] timer = timeStr.split("/");

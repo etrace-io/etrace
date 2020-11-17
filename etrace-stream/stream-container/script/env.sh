@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 
-BASE_DIR=`cd ${SCRIPT_DIR} && pwd -P`
+BASE_DIR=$(cd ${SCRIPT_DIR} && pwd -P)
 JVM_CONF="${BASE_DIR}/../conf/jvm_conf.sh"
 
 if [ ! -f "${JVM_CONF}" ]; then

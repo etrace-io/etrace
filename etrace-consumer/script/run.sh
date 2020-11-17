@@ -43,8 +43,8 @@ consumer_stop(){
    PID=$(sh ${EXE_FILE} check_pid)
    if [ "${PID}" != "" ]; then
       echo "Stopping ${DESC} ....."
-      kill ${PID}
-      if [ $? -eq 0 ]; then
+      if ! kill -9 ${PID}
+      then
          echo "[OK]"
       else
          echo "[Failed]"
@@ -73,8 +73,8 @@ consumer_force_stop(){
    PID=$(sh ${EXE_FILE} check_pid)
    if [ "${PID}" != "" ]; then
       echo "Stopping ${DESC} ....."
-      kill -9 ${PID}
-      if [ $? -eq 0 ]; then
+      if ! kill -9 ${PID}
+      then
          echo "[OK]"
       else
          echo "[Failed]"

@@ -140,9 +140,6 @@ public class MultiMessageManager extends DefaultMessageManager {
         if (ctx != null && ctx.getCtx() instanceof Context) {
             Context curCtx = (Context)ctx.getCtx();
             traceContext = new DefaultTraceContext(curCtx);
-
-            // TODO do we need use isImport variable?
-            //            isImport.set(true);
         }
     }
 

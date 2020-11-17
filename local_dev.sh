@@ -12,7 +12,7 @@ Run 'mvn clean install' first to compile all codes.
 "
 
 while true; do
-  read -p "#### choose the profile you want to build: [Input the number]
+echo "#### choose the profile you want to build: [Input the number]
 
 [1]. All in One: whole etrace project (include front-end and back-end services) and related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
 [2]. Only front-end project
@@ -26,7 +26,9 @@ while true; do
 
 [0]. exit
 
-Input number: " num
+Input number: "
+
+  read -r num
   case $num in
   [1]*) echo 1 ;;
   [2]*)
