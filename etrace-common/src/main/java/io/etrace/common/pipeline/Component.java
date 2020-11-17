@@ -93,11 +93,26 @@ public class Component {
     }
 
     // todo:  待梳理
-    public void dispatch(@Nonnull Object key, @Nonnull Object event) {
+
+    /**
+     * 无视条件， dispatch 到所有下游  COMPONENT
+     */
+    public void dispatchAll(@Nonnull Object key, @Nonnull Object event) {
         if (!downstreams.isEmpty()) {
             for (DownStream downStream : downstreams) {
-                Object obj = downStream.getFilter().match(key);
-                if (null != obj) {
+                for (Component component : downStream.getComponent()) {
+                    component.emit(key, event);
+                }
+            }
+        } else {
+            LOGGER.warn("Pipeline [{}], downstreams are empty. You should check the its configuration", pipeline);
+        }
+    }
+
+    public void dispatchWithFilter(@Nonnull Object key, @Nonnull Object event, Filterable filterable) {
+        if (!downstreams.isEmpty()) {
+            for (DownStream downStream : downstreams) {
+                if (downStream.getFilter().match(filterable)) {
                     for (Component component : downStream.getComponent()) {
                         component.emit(key, event);
                     }
@@ -111,9 +126,7 @@ public class Component {
     public void routeToFirstComponent(MessageHeader key, Object data) {
         if (!downstreams.isEmpty()) {
             for (DownStream downStream : downstreams) {
-                // todo 这里太针对性处理了
-                Object obj = downStream.getFilter().match(key.getMessageType());
-                if (null != obj) {
+                if (downStream.getFilter().matchByMessageHeader(key)) {
                     for (Component component : downStream.getComponent()) {
                         component.emit(key, data);
                     }

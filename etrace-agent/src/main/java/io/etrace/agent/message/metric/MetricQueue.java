@@ -275,6 +275,10 @@ public class MetricQueue {
             event.clear();
         }
 
+        protected void send(byte[] data, int sendCount, String key) {
+            messageSender.send(data, sendCount);
+        }
+
         private void flush(int sendCount, String key) throws IOException {
             generator.flush();
             if (baos != null && baos.size() > 0) {
@@ -355,9 +359,6 @@ public class MetricQueue {
             return sendCount;
         }
 
-        protected void send(byte[] data, int sendCount, String key) {
-            messageSender.send(data, sendCount);
-        }
 
     }
 }

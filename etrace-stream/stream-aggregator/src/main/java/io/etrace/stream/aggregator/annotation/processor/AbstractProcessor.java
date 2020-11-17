@@ -7,8 +7,8 @@ import io.etrace.common.exception.EsperConfigException;
 import io.etrace.common.message.metric.field.MetricType;
 import io.etrace.common.util.Pair;
 import io.etrace.stream.aggregator.EPEngine;
-import io.etrace.stream.core.util.ObjectUtil;
 import io.etrace.stream.aggregator.annotation.AnnotationProcessor;
+import io.etrace.stream.core.util.ObjectUtil;
 
 import java.util.Collections;
 import java.util.List;

@@ -16,10 +16,11 @@
 
 package io.etrace.common.message.trace;
 
+import io.etrace.common.pipeline.Filterable;
 import lombok.Data;
 
 @Data
-public class MessageHeader {
+public class MessageHeader implements Filterable {
 
     /**
      * 开源版本的第一个版本。开始添加该version字段
@@ -46,8 +47,14 @@ public class MessageHeader {
     private long cst;//collector send time
 
     private long csrt;//consumer receive time
+
     /**
-     * todo: 消息类型 ??
+     * todo: 用于 Component 做过滤
      */
     private String messageType;
+
+    @Override
+    public String filterKey() {
+        return messageType;
+    }
 }

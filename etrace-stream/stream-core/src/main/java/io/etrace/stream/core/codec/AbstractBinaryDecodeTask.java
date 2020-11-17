@@ -1,13 +1,14 @@
 package io.etrace.stream.core.codec;
 
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Timer;
 
 import java.util.Map;
 
-public abstract class AbstractBinaryDecodeTask extends DefaultAsyncTask {
+public abstract class AbstractBinaryDecodeTask extends DefaultAsyncTask implements Processor {
     protected final Timer decodeTimer;
     protected final Timer allocationSizeTimer;
 

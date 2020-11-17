@@ -33,8 +33,8 @@ start() {
 
 info() {
    echo "****************************"
-   echo $(head -n 1 /etc/issue)
-   echo $(uname -a)
+   head -n 1 /etc/issue
+   uname -a
    echo "STREAM_HOME=${STREAM_HOME}"
    echo "STREAM_DRIVER=${STREAM_DRIVER}"
    echo "****************************"

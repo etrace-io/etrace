@@ -1,6 +1,7 @@
 package io.etrace.stream.aggregator;
 
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import static io.etrace.common.pipeline.PipelineRepository.PIPELINE_PATH;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class EPTask extends DefaultAsyncTask {
+public class EPTask extends DefaultAsyncTask implements Processor {
     private final static Logger LOGGER = LoggerFactory.getLogger(EPTask.class);
     private static final long CHECK_FLUSH_INTERVAL = 5000;
     private EPEngine epEngine;

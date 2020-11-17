@@ -1,8 +1,10 @@
 package io.etrace.stream.core.model;
 
+import io.etrace.common.pipeline.Filterable;
+
 import java.util.List;
 
-public interface Event {
+public interface Event extends Filterable {
     Header getHeader();
 
     void setHeader(Header header);
@@ -18,5 +20,10 @@ public interface Event {
      */
     default List<Event> postDecode() {
         return null;
+    }
+
+    @Override
+    default String filterKey() {
+        return getEventType();
     }
 }

@@ -117,7 +117,7 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
     }
 
     public void processEvent(Object key, Object event) throws Exception {
-        component.dispatch(key, event);
+        component.dispatchAll(key, event);
     }
 
     @Override

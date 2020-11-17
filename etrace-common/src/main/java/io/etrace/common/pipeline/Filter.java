@@ -16,14 +16,37 @@
 
 package io.etrace.common.pipeline;
 
+import io.etrace.common.message.trace.MessageHeader;
+
 import java.util.Map;
 
 public interface Filter {
 
     void init(Map<String, Object> params);
 
-    //todo: 这里要改成 return boolean
-    Object match(Object obj);
+    boolean match(Filterable filterable);
+
+    boolean matchByMessageHeader(MessageHeader messageHeader);
 
     String name();
+
+    //// todo:  不得已而为之，Component.dispatch() 不好处理
+    //default boolean matchByString(String s) {
+    //    return match(new FilterableString(s));
+    //}
+    //
+    //String name();
+    //
+    //class FilterableString implements Filterable {
+    //    String key;
+    //
+    //    public FilterableString(String key) {
+    //        this.key = key;
+    //    }
+    //
+    //    @Override
+    //    public String filterKey() {
+    //        return key;
+    //    }
+    //}
 }

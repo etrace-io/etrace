@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package io.etrace.proto.collector.trace.v2;
+
+
+import "trace/v2/trace.proto";
+import "common/v2/resource.proto";
+
+option java_multiple_files = true;
+option java_package = "io.etrace.proto.collector.trace.v2";
+option java_outer_classname = "TraceServiceProto";
+
+
+service TraceService {
+    rpc Send (TraceServiceRequest) returns (TraceServiceResponse) {
+    }
+}
+
+message TraceServiceRequest {
+    io.etrace.proto.common.v2.Resource resource = 1;
+    repeated io.etrace.proto.trace.v2.Trace trace = 2;
+}
+
+message TraceServiceResponse {
+    bytes result = 1;
+}

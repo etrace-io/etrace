@@ -3,6 +3,7 @@ package io.etrace.collector.component.processor;
 import io.etrace.collector.sharding.BackendShardIng;
 import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Processor;
 import io.etrace.plugins.kafka0882.impl.impl.producer.model.Partition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TraceProcessor extends AbstractTraceWorker {
+public class TraceProcessor extends AbstractTraceWorker implements Processor {
     @Autowired
     private BackendShardIng shardingService;
 

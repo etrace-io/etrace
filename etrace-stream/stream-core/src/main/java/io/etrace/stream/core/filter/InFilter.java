@@ -1,27 +1,19 @@
 package io.etrace.stream.core.filter;
 
 import com.google.common.collect.Sets;
-import io.etrace.common.pipeline.AbstractFilter;
-import io.etrace.stream.core.model.Event;
+import io.etrace.common.message.trace.MessageHeader;
+import io.etrace.common.pipeline.Filter;
+import io.etrace.common.pipeline.Filterable;
 
 import java.util.Map;
 import java.util.Set;
 
-public class InFilter extends AbstractFilter {
+public class InFilter implements Filter {
     private Set<String> eventTypes;
     private String name;
 
     public InFilter(String name) {
         this.name = name;
-    }
-
-    @Override
-    public boolean isMatch(Object obj) {
-        if (obj instanceof Event) {
-            Event event = (Event)obj;
-            return eventTypes.contains(event.getEventType());
-        }
-        return false;
     }
 
     @Override
@@ -34,6 +26,16 @@ public class InFilter extends AbstractFilter {
                     + params + "]";
             throw new RuntimeException(msg);
         }
+    }
+
+    @Override
+    public boolean match(Filterable filterable) {
+        return eventTypes.contains(filterable.filterKey());
+    }
+
+    @Override
+    public boolean matchByMessageHeader(MessageHeader messageHeader) {
+        return match(messageHeader);
     }
 
     @Override

@@ -16,7 +16,9 @@
 
 package io.etrace.common.pipeline.impl;
 
+import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.pipeline.Filter;
+import io.etrace.common.pipeline.Filterable;
 
 import java.util.Map;
 
@@ -35,10 +37,18 @@ public class EqualFilter implements Filter {
 
     /**
      * ignore case
+     *
+     * @param filterable
+     * @return
      */
     @Override
-    public Object match(Object obj) {
-        return key.toLowerCase().equals(obj.toString().toLowerCase()) ? obj : null;
+    public boolean match(Filterable filterable) {
+        return key.toLowerCase().equals(filterable.filterKey());
+    }
+
+    @Override
+    public boolean matchByMessageHeader(MessageHeader messageHeader) {
+        return key.toLowerCase().equals(messageHeader.getKey());
     }
 
     @Override

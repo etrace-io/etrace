@@ -13,3 +13,11 @@
 
 # Introduce
 
+# How to run _ETrace_
+
+1. Requirement: 
+    1. Jave 8
+    2. Maven 3.6.0+
+    3. Docker
+
+2. Run the shell `local_dev.sh`. Follow the instruction to run _ETrace_ and related dependencies in Docker. 

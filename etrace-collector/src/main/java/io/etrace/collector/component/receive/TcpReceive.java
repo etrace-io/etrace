@@ -3,6 +3,7 @@ package io.etrace.collector.component.receive;
 import io.etrace.collector.network.tcp.NettyFrameDecode;
 import io.etrace.collector.network.tcp.TcpRecvHandler;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Receiver;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TcpReceive extends DefaultSyncTask {
+public class TcpReceive extends DefaultSyncTask implements Receiver {
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpReceive.class);
 
     private int port;

@@ -12,7 +12,6 @@ import io.etrace.common.queue.QueueConfig;
 import io.etrace.common.queue.impl.MappedFileQueue;
 import io.etrace.common.util.Pair;
 import io.etrace.common.util.ThreadUtil;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.etrace.collector.service.impl.PersistentQueueImpl.INCOMING_QUEUE;
-import static io.etrace.common.constant.InternalMetricName.*;
+import static io.etrace.common.constant.InternalMetricName.TASK_PROCESS_DURATION;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -39,11 +38,9 @@ public abstract class DiskBackedInMemoryTask extends Task implements Runnable {
     public final Logger LOGGER = LoggerFactory.getLogger(DiskBackedInMemoryTask.class);
     private final Object producerLock = new Object();
     private final AtomicLong overflowCount = new AtomicLong(0);
-    private final Timer pendingTimer;
     private final Timer processTimer;
-    private final Counter processErrorCounter;
     @Autowired
-    Config config;
+    private Config config;
     //in memory queue
     private BlockingQueue<Pair<MessageHeader, byte[]>> inMemoryQueue;
     //on disk persistent queue
@@ -57,24 +54,11 @@ public abstract class DiskBackedInMemoryTask extends Task implements Runnable {
     public DiskBackedInMemoryTask(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
 
-        pendingTimer = Timer.builder(TASK_PENDING)
-            .tag("pipeline", component.getPipeline())
-            .tag("name", component.getName())
-            .tag("task", name)
-            .register(Metrics.globalRegistry);
-
         processTimer = Timer.builder(TASK_PROCESS_DURATION)
             .tag("pipeline", component.getPipeline())
             .tag("name", component.getName())
             .tag("task", name)
             .register(Metrics.globalRegistry);
-
-        processErrorCounter = Counter.builder(TASK_MSG_ERROR)
-            .tag("pipeline", component.getPipeline())
-            .tag("name", component.getName())
-            .tag("task", name)
-            .register(Metrics.globalRegistry);
-
     }
 
     @Override

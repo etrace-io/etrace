@@ -28,7 +28,7 @@ done
 check_pid() {
  if [ -f "${PID_FILE}" ]; then
       PID=$(cat "${PID_FILE}")
-      if [ -n pid ]; then
+      if [ -n "$PID" ]; then
           echo ${PID}
       fi
   fi
@@ -40,8 +40,8 @@ start() {
 
 info() {
    echo "****************************"
-   echo $(head -n 1 /etc/issue)
-   echo $(uname -a)
+   head -n 1 /etc/issue
+   uname -a
    echo "CONSUMER_HOME=${CONSUMER_HOME}"
    echo "CONSUMER_DRIVER=${CONSUMER_DRIVER}"
    echo "****************************"

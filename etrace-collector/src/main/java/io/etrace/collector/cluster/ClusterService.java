@@ -2,8 +2,8 @@ package io.etrace.collector.cluster;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import io.etrace.collector.cluster.discovery.ServiceDiscovery;
 import io.etrace.collector.cluster.discovery.ServiceInstance;
-import io.etrace.collector.cluster.discovery.impl.ServiceDiscovery;
 import io.etrace.collector.config.CollectorProperties;
 import io.etrace.collector.model.MatchType;
 import io.etrace.collector.sharding.impl.FrontShardIngImpl;

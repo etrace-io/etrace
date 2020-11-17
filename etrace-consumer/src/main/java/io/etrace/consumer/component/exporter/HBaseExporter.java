@@ -4,6 +4,7 @@ import com.carrotsearch.hppc.*;
 import com.carrotsearch.hppc.cursors.IntObjectCursor;
 import com.carrotsearch.hppc.cursors.ShortObjectCursor;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.Exporter;
 import io.etrace.common.pipeline.TimeTick;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
 import io.etrace.consumer.storage.hbase.HBaseClient;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class HBaseExporter extends DefaultAsyncTask {
+public class HBaseExporter extends DefaultAsyncTask implements Exporter {
 
     @Autowired
     public HBaseClient client;

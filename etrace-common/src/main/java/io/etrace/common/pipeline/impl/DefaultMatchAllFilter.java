@@ -16,7 +16,9 @@
 
 package io.etrace.common.pipeline.impl;
 
+import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.pipeline.Filter;
+import io.etrace.common.pipeline.Filterable;
 
 import java.util.Map;
 
@@ -35,8 +37,13 @@ public class DefaultMatchAllFilter implements Filter {
     }
 
     @Override
-    public Object match(Object obj) {
-        return obj;
+    public boolean match(Filterable filterable) {
+        return true;
+    }
+
+    @Override
+    public boolean matchByMessageHeader(MessageHeader messageHeader) {
+        return true;
     }
 
     @Override

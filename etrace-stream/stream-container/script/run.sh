@@ -69,12 +69,13 @@ server_stop(){
         do
             if [[ "$PID" =~ ^[0-9]+$ ]];then
                 port=$(get_container_port $PID)
-                if [[ "X$1" == "Xforce_restart" ]]; then
-                    kill -9 ${PID}
-                else
-                    kill ${PID}    
-                fi
-                if [ $? -eq 0 ]; then
+#                if [[ "X$1" == "Xforce_restart" ]]; then
+#                    kill -9 ${PID}
+#                else
+#                    kill ${PID}
+#                fi
+                if ! kill ${PID}
+                then
                     echo "stop  (pid:${PID}  port:${port}) [OK]"
                 else
                     echo "stop  (pid:${PID}  port:${port}) [Failed]"

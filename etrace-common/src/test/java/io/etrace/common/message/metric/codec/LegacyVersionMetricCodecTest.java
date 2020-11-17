@@ -88,7 +88,7 @@ public class LegacyVersionMetricCodecTest {
 
     @Test
     public void legacyToLegacyByCodecV1_111() throws IOException {
-        String msg = "[[\"#v1#t2\",null,\"me.ele.arch.etrace.collector\",\"127.0.0.1\",\"Pro"
+        String msg = "[[\"#v1#t2\",null,\"etrace.collector\",\"127.0.0.1\",\"Pro"
             + ".local\",null,[[\"timer\",\"task.process.duration\",1590027515721,{\"name\":\"trace_processor\","
             + "\"pipeline\":\"collector\",\"task\":\"collector-trace_processor-1\"},13206,2258,13206,98,0],"
             + "[\"timer\",\"task.process.duration\",1590027515721,{\"name\":\"trace_processor\","
@@ -143,7 +143,7 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("counter.name", counterMetric.getMetricName());
         Assert.assertEquals(12345, counterMetric.getTimestamp());
         Assert.assertEquals(targetMap, counterMetric.getTags());
-        Assert.assertEquals(new Field(AggregateType.SUM, 4l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 4L),
             counterMetric.getFields().get(MetricFieldName.COUNTER_COUNT));
         Assert.assertEquals(1, counterMetric.getFields().size());
 
@@ -163,10 +163,10 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("timer.name", timerMetric.getMetricName());
         Assert.assertEquals(12345, timerMetric.getTimestamp());
         Assert.assertEquals(targetMap, timerMetric.getTags());
-        Assert.assertEquals(new Field(AggregateType.SUM, 4l), timerMetric.getFields().get(MetricFieldName.TIMER_SUM));
-        Assert.assertEquals(new Field(AggregateType.SUM, 5l), timerMetric.getFields().get(MetricFieldName.TIMER_COUNT));
-        Assert.assertEquals(new Field(AggregateType.MIN, 6l), timerMetric.getFields().get(MetricFieldName.TIMER_MIN));
-        Assert.assertEquals(new Field(AggregateType.MAX, 7l), timerMetric.getFields().get(MetricFieldName.TIMER_MAX));
+        Assert.assertEquals(new Field(AggregateType.SUM, 4L), timerMetric.getFields().get(MetricFieldName.TIMER_SUM));
+        Assert.assertEquals(new Field(AggregateType.SUM, 5L), timerMetric.getFields().get(MetricFieldName.TIMER_COUNT));
+        Assert.assertEquals(new Field(AggregateType.MIN, 6L), timerMetric.getFields().get(MetricFieldName.TIMER_MIN));
+        Assert.assertEquals(new Field(AggregateType.MAX, 7L), timerMetric.getFields().get(MetricFieldName.TIMER_MAX));
         //        Assert.assertEquals(new Field(AggregateType.MAX, 8l), timerMetric.getFields().get(FieldName
         //        .TIMER_UPPERENABLE));
         Assert.assertEquals(4, timerMetric.getFields().size());
@@ -177,13 +177,13 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("payload.name", payloadMetric.getMetricName());
         Assert.assertEquals(12345, payloadMetric.getTimestamp());
         Assert.assertEquals(targetMap, payloadMetric.getTags());
-        Assert.assertEquals(new Field(AggregateType.SUM, 4l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 4L),
             payloadMetric.getFields().get(MetricFieldName.PAYLOAD_SUM));
-        Assert.assertEquals(new Field(AggregateType.SUM, 5l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 5L),
             payloadMetric.getFields().get(MetricFieldName.PAYLOAD_COUNT));
-        Assert.assertEquals(new Field(AggregateType.MIN, 6l),
+        Assert.assertEquals(new Field(AggregateType.MIN, 6L),
             payloadMetric.getFields().get(MetricFieldName.PAYLOAD_MIN));
-        Assert.assertEquals(new Field(AggregateType.MAX, 7l),
+        Assert.assertEquals(new Field(AggregateType.MAX, 7L),
             payloadMetric.getFields().get(MetricFieldName.PAYLOAD_MAX));
         Assert.assertEquals(4, payloadMetric.getFields().size());
 
@@ -193,9 +193,9 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("ratio.name", ratioMetric.getMetricName());
         Assert.assertEquals(12345, ratioMetric.getTimestamp());
         Assert.assertEquals(targetMap, ratioMetric.getTags());
-        Assert.assertEquals(new Field(AggregateType.SUM, 4l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 4L),
             ratioMetric.getFields().get(MetricFieldName.RATIO_NUMERATOR));
-        Assert.assertEquals(new Field(AggregateType.SUM, 5l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 5L),
             ratioMetric.getFields().get(MetricFieldName.RATIO_DENOMINATOR));
         Assert.assertEquals(2, ratioMetric.getFields().size());
 
@@ -205,7 +205,7 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("metric.name", metricMetric.getMetricName());
         Assert.assertEquals(12345, metricMetric.getTimestamp());
         Assert.assertEquals(targetMap, metricMetric.getTags());
-        Assert.assertEquals(new Field(AggregateType.SUM, 10l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 10L),
             metricMetric.getFields().get(MetricFieldName.COUNTER_COUNT));
         Assert.assertEquals(new Field(AggregateType.GAUGE, 10.10d),
             metricMetric.getFields().get(MetricFieldName.GAUGE_VALUE));
@@ -216,13 +216,13 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("histogram1.name", histogram1Metric.getMetricName());
         Assert.assertEquals(12345, histogram1Metric.getTimestamp());
         Assert.assertEquals(targetMap, histogram1Metric.getTags());
-        Assert.assertEquals(new Field(AggregateType.MIN, 5l),
+        Assert.assertEquals(new Field(AggregateType.MIN, 5L),
             histogram1Metric.getFields().get(MetricFieldName.HISTOGRAM_MIN));
-        Assert.assertEquals(new Field(AggregateType.MAX, 6l),
+        Assert.assertEquals(new Field(AggregateType.MAX, 6L),
             histogram1Metric.getFields().get(MetricFieldName.HISTOGRAM_MAX));
-        Assert.assertEquals(new Field(AggregateType.SUM, 7l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 7L),
             histogram1Metric.getFields().get(MetricFieldName.HISTOGRAM_SUM));
-        Assert.assertEquals(new Field(AggregateType.SUM, 8l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 8L),
             histogram1Metric.getFields().get(MetricFieldName.HISTOGRAM_COUNT));
         for (int i = 1; i < 100; i++) {
             Assert.assertEquals(new Field(AggregateType.SUM, i),
@@ -235,19 +235,19 @@ public class LegacyVersionMetricCodecTest {
         Assert.assertEquals("histogram2.name", histogram2Metric.getMetricName());
         Assert.assertEquals(12345, histogram2Metric.getTimestamp());
         Assert.assertEquals(targetMap, histogram2Metric.getTags());
-        Assert.assertEquals(new Field(AggregateType.MIN, 5l),
+        Assert.assertEquals(new Field(AggregateType.MIN, 5L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_MIN));
-        Assert.assertEquals(new Field(AggregateType.MAX, 6l),
+        Assert.assertEquals(new Field(AggregateType.MAX, 6L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_MAX));
-        Assert.assertEquals(new Field(AggregateType.SUM, 7l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 7L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_SUM));
-        Assert.assertEquals(new Field(AggregateType.SUM, 8l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 8L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_COUNT));
-        Assert.assertEquals(new Field(AggregateType.SUM, 1l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 1L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_FIELD_PREFIX + 1));
-        Assert.assertEquals(new Field(AggregateType.SUM, 50l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 50L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_FIELD_PREFIX + 50));
-        Assert.assertEquals(new Field(AggregateType.SUM, 99l),
+        Assert.assertEquals(new Field(AggregateType.SUM, 99L),
             histogram2Metric.getFields().get(MetricFieldName.HISTOGRAM_FIELD_PREFIX + 99));
 
         Assert.assertEquals(7, histogram2Metric.getFields().size());

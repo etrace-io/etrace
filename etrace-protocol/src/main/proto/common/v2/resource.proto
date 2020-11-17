@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package io.etrace.proto.common.v2;
+
+option java_multiple_files = true;
+option java_package = "io.etrace.proto.common.v2";
+option java_outer_classname = "ResourceProto";
+
+message Resource {
+    string version = 1;
+    string app_id = 2;
+    string host_ip = 3;
+    string host_name = 4;
+    string instance = 5;
+    uint64 ast = 6;
+    uint64 crt = 7;
+    uint64 cst = 8;
+    uint64 csrt = 9;
+}

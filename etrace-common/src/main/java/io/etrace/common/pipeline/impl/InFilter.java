@@ -17,24 +17,20 @@
 package io.etrace.common.pipeline.impl;
 
 import com.google.common.collect.Sets;
-import io.etrace.common.pipeline.AbstractFilter;
+import io.etrace.common.message.trace.MessageHeader;
+import io.etrace.common.pipeline.Filter;
+import io.etrace.common.pipeline.Filterable;
 
 import java.util.Map;
 import java.util.Set;
 
-// todo: 重复了
-public class InFilter extends AbstractFilter {
+// todo: 命名重复了
+public class InFilter implements Filter {
     private Set<String> contains;
     private String name;
 
     public InFilter(String name) {
         this.name = name;
-    }
-
-    // todo 这里的 match 逻辑有问题
-    @Override
-    public boolean isMatch(Object obj) {
-        return contains.contains(obj.toString());
     }
 
     @Override
@@ -46,6 +42,16 @@ public class InFilter extends AbstractFilter {
                 + params + "]";
             throw new RuntimeException(msg);
         }
+    }
+
+    @Override
+    public boolean match(Filterable filterable) {
+        return contains.contains(filterable.filterKey());
+    }
+
+    @Override
+    public boolean matchByMessageHeader(MessageHeader messageHeader) {
+        return contains.contains(messageHeader.filterKey());
     }
 
     @Override
