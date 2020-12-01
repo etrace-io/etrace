@@ -1,0 +1,19 @@
+# YAML node properties: http://yaml.org/spec/1.2/spec.html#id2785586
+
+# spring-web
+server:
+  port: 19091
+  connection-timeout: 5000
+  tomcat:
+    accept-count: 64
+    max-threads: 8
+    min-spare-threads: 4
+
+
+
+etrace:
+  collector: "collector:2890"
+  appId: etrace.prometheus.pushgateway
+
+
+prometheus.type: metric

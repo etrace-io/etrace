@@ -46,6 +46,16 @@ services:
     networks:
       - backend
 
+  etrace-prometheus-pushgateway:
+    build:
+      context: ./etrace-plugins/etrace-prometheus-pushgateway
+      dockerfile: Dockerfile
+    image: etrace-prometheus-pushgateway:local
+    container_name: etrace-prometheus-pushgateway-pushgateway
+    ports:
+      - 19091:19091
+    networks:
+      - backend
 networks:
   backend:
     driver: bridge
