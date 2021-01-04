@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-@Primary
 public class StackImpl extends StackTable {
 
     public static final int STACK_DATA_LEN = 3 * Bytes.SIZEOF_LONG + Bytes.SIZEOF_INT + Bytes.SIZEOF_SHORT;

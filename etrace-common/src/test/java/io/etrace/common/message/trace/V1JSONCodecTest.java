@@ -53,7 +53,7 @@ public class V1JSONCodecTest {
         callStackV1Origin.setMessage(transaction);
         byte[] data = JSONCodecV1.encodeCallstackByArrayFormat(callStackV1Origin);
 
-        CallStackV1 callstackV1 = JSONCodecV1.decodeToV1FromArrayFormatTo(data);
+        CallStackV1 callstackV1 = JSONCodecV1.decodeToV1FromArrayFormat(data);
         assertEquals(callstackV1.getExtraProperties(), extraProperties);
     }
 

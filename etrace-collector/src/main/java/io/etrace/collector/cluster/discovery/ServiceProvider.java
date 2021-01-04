@@ -46,10 +46,12 @@ public class ServiceProvider {
     }
 
     public void createEphemeralNode(String path, byte[] data) throws Exception {
-        client.create()
-            .withMode(CreateMode.EPHEMERAL)
-            .forPath(path, data);
+        client.create().withMode(CreateMode.EPHEMERAL).forPath(path, data);
     }
+
+    //public void createEphemeralNode(String path) throws Exception {
+    //    client.create().withMode(CreateMode.EPHEMERAL).forPath(path);
+    //}
 
     public void createPersistNode(String name) throws Exception {
         while (client.checkExists().forPath(name) == null) {

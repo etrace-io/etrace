@@ -17,6 +17,7 @@
 package io.etrace.collector.controller;
 
 import io.etrace.collector.service.ClientConfigurationService;
+import io.etrace.common.message.agentconfig.MetricConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class MetricConfigController {
     public ClientConfigurationService clientConfigurationService;
 
     @GetMapping
-    public String getMetricConfig(@RequestParam("appId") String appId, @RequestParam("host") String host) {
+    public MetricConfig getMetricConfig(@RequestParam("appId") String appId, @RequestParam("host") String host) {
         return clientConfigurationService.getMetricConfig(appId, host);
     }
 }

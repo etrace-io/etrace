@@ -30,7 +30,7 @@ public abstract class AbstractSocketClient implements SocketClient {
         this.SENDER_TIMEOUT = senderTimeout;
     }
 
-    protected void getConnection() {
+    protected void initConnection() {
         useTcp = CollectorRegistry.getInstance().isUseTcp();
         if (connection == null || !connection.isOpen()) {
             closeConnection();
@@ -104,5 +104,9 @@ public abstract class AbstractSocketClient implements SocketClient {
     @Override
     public void shutdown() {
         closeConnection();
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 }

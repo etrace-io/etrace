@@ -62,4 +62,9 @@ public abstract class AbstractJVM implements Event {
     public String getEventType() {
         return "app";
     }
+
+    @Override
+    public String getAppId() {
+        return header.getAppId();
+    }
 }

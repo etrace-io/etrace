@@ -46,10 +46,10 @@ public class KafkaConsumeTask extends DefaultSyncTask implements Receiver {
 
     public KafkaConsumeTask(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
-        this.resourceId = Optional.of(params.get("resourceId")).get().toString();
+        this.resourceId = String.valueOf(params.get("resourceId"));
 
         topicAndFetchNums = Maps.newHashMap();
-        String topicMap = params.get("topics").toString();
+        String topicMap = String.valueOf(params.get("topics"));
         Arrays.stream(topicMap.split(";")).forEach(pair -> {
             String[] arr = pair.split(",");
             topicAndFetchNums.put(arr[0], Integer.valueOf(arr[1]));

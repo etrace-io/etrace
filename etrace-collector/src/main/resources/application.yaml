@@ -19,9 +19,11 @@ server:
     max-threads: 8
     min-spare-threads: 4
 
+etrace:
+  appId: etrace.collector
+  backendAddress: localhost:2890
+
 config:
-  appId: "etrace.collector"
-  backendAddress: "localhost:2890"
   queue:
     path: "temp/collector-queue"
     maxFileSize: 128
@@ -32,6 +34,7 @@ collector:
   cluster:
     name: *MAIN_CLUSTER
     defaultCluster: *MAIN_CLUSTER
+    zkPath: /etrace-opensource-collector-cluster
     register:
       zkAddress: zookeeper:2181
       namespace: etrace/collector

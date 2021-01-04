@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
-public class BlockManager<K, V extends Compressor> {
+public class BlockManager<K, V extends SnappyCompressor> {
     int flushThreshold;
     int flushInterval;
     Map<K, V> blockStoreMap;

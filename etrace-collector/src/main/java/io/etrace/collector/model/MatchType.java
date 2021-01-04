@@ -18,6 +18,6 @@ public enum MatchType {
                 return key.endsWith(matchKey);
             default:
         }
-        throw new IllegalArgumentException("Undefined match type!" + type);
+        throw new IllegalArgumentException("Undefined MatchType!" + type);
     }
 }

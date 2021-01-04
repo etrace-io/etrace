@@ -43,5 +43,7 @@ public class CollectorApplication {
     private void initAgentConfig() {
         AgentConfiguration.setAppId(config.getAppId());
         AgentConfiguration.setCollectorIp(config.getBackendAddress());
+
+        //AgentConfiguration.setDebugMode(true);
     }
 }

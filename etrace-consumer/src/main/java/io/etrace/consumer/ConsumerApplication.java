@@ -16,7 +16,6 @@
 
 package io.etrace.consumer;
 
-import io.etrace.agent.config.AgentConfiguration;
 import io.etrace.common.pipeline.PipelineRepository;
 import io.etrace.common.pipeline.impl.DefaultPipelineLoader;
 import io.etrace.consumer.config.ConsumerProperties;
@@ -27,7 +26,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -40,18 +38,19 @@ public class ConsumerApplication implements BeanFactoryAware {
     @Autowired
     private ConsumerProperties consumerProperties;
     private BeanFactory beanFactory;
-    @Value("${etrace.collector}")
-    private String collector;
-    @Value("${etrace.appId}")
-    private String appId;
 
     public static void main(String[] args) {
         SpringApplication.run(ConsumerApplication.class, args);
     }
 
     public void init() {
-        AgentConfiguration.setAppId(appId);
-        AgentConfiguration.setCollectorIp(collector);
+        //AgentConfiguration.setDebugMode(true);
+    }
+    //@Autowired
+    //IHBaseStorageService ihBaseStorageService;
+
+    //@PostConstruct
+    public void xxx() {
     }
 
     @PostConstruct

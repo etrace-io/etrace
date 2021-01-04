@@ -14,6 +14,7 @@ public interface EventConstant {
     String TRANSACTION_TYPE_SQL = Constants.SQL;
     String TRANSACTION_TYPE_URL = Constants.URL;
 
+
     String JVM_MEMORY_POOL = "jvm.memory.pool";
     String JVM_MEMORY_HEAP = "jvm.memory";
     String JVM_GARBAGE_COUNT = "jvm.garbage.count";

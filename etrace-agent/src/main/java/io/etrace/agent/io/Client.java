@@ -90,7 +90,7 @@ public class Client extends AbstractSocketClient {
 
     @Override
     public boolean openConnection() {
-        getConnection();
+        initConnection();
         return isOpen();
     }
 

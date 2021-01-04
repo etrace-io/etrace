@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class Compressor {
+public abstract class SnappyCompressor {
     FixedByteArrayOutputStream baos;
     OutputStream out;
     int blockSize;
     AtomicBoolean dirty = new AtomicBoolean(false);
     private long lastFlushTime;
 
-    public Compressor(int blockSize) {
+    public SnappyCompressor(int blockSize) {
         this.baos = new FixedByteArrayOutputStream(blockSize);
         this.out = new SnappyOutputStream(this.baos);
     }

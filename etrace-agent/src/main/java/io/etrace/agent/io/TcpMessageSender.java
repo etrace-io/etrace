@@ -217,6 +217,13 @@ public class TcpMessageSender implements MessageSender {
                 messageHeader.setAst(System.currentTimeMillis());
                 messageHeader.setInstance(AgentConfiguration.getInstance());
                 boolean success = socketClient.send(JSONUtil.toBytes(messageHeader), data);
+
+                if(AgentConfiguration.isDebugMode()) {
+                    System.out.printf("TcpMessageSender: Connection [%s], Result [%s]. Data: %s%n",
+                        socketClient.getConnection().getCollector(), success, new String(data));
+                }
+
+
                 if (success) {
                     stats.incSuccessCount(count);
                 } else {

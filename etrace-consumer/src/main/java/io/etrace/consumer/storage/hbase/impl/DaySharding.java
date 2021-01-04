@@ -22,6 +22,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DaySharding implements TimeSharding {
+    /**
+     * sharding by timestamp, return DayOfMonth
+     */
     @Override
     public int sharding(long timestamp) {
         return TimeHelper.getDay(timestamp);

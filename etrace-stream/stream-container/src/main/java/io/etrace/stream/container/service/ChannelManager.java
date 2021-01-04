@@ -40,10 +40,9 @@ public class ChannelManager implements BeanFactoryAware {
         try {
             repository = beanFactory.getBean(PipelineRepository.class, new DefaultPipelineLoader().load(),
                 configProp.getResources());
-            repository.initAndStartUp();
-
             metricDatasourceService.initResource(repository.getResources());
             metricDatasourceService.start();
+            repository.initAndStartUp();
         } catch (Exception e) {
             LOGGER.error("start up pipeline error: ", e);
             System.exit(-1);

@@ -26,4 +26,9 @@ public interface Event extends Filterable {
     default String filterKey() {
         return getEventType();
     }
+
+    @Override
+    default String getAppId() {
+        return getHeader().getAppId();
+    };
 }

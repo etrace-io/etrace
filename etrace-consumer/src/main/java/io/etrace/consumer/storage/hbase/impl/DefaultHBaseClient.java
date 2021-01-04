@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package io.etrace.consumer.storage.hbase;
+package io.etrace.consumer.storage.hbase.impl;
 
 import io.etrace.consumer.metrics.MetricsService;
+import io.etrace.consumer.storage.hbase.IHBaseClient;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,23 +31,24 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-public class HBaseClient {
+public class DefaultHBaseClient implements IHBaseClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHBaseClient.class);
 
     @Autowired
-    private HBaseClientFactory hBaseClientFactory;
+    private IHBaseClientFactory hBaseClientFactory;
     @Autowired
     private MetricsService metricsService;
 
-    public boolean executeBatch(String name, int day, List<Put> actions) {
-        String tableName = hBaseClientFactory.getTableName(name, day);
+    @Override
+    public boolean executeBatch(String logicTableName, String physicalTableName, List<Put> actions) {
         if (actions == null || actions.isEmpty()) {
             return true;
         }
         int tryCount = 0;
-        Table table = null;
+        HTable table = null;
         long start = System.currentTimeMillis();
         try {
-            metricsService.hBaseBatchPutCount(tableName, actions.size());
+            metricsService.hBaseBatchPutCount(physicalTableName, actions.size());
             while (!actions.isEmpty()) {
                 tryCount++;
                 if (tryCount > 1) {
@@ -52,10 +57,11 @@ public class HBaseClient {
                 Object[] results = new Object[actions.size()];
                 try {
                     if (table == null) {
-                        table = hBaseClientFactory.getOrAddTable(tableName);
+                        table = hBaseClientFactory.getOrCreateTable(logicTableName, physicalTableName);
                     }
                     table.batch(actions, results);
                 } catch (IOException e) {
+                    LOGGER.error("==executeBatch==", e);
                     metricsService.hbaseFail();
                 }
                 for (int i = results.length - 1; i >= 0; i--) {
@@ -66,9 +72,9 @@ public class HBaseClient {
             }
             return true;
         } catch (InterruptedException e) {
-            hBaseClientFactory.closeCurrentThreadHTable(tableName);
+            hBaseClientFactory.closeCurrentThreadHTable(physicalTableName);
         } finally {
-            metricsService.hBaseBatchDuration(tableName, System.currentTimeMillis() - start);
+            metricsService.hBaseBatchDuration(physicalTableName, System.currentTimeMillis() - start);
         }
         return false;
     }

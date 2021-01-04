@@ -44,7 +44,7 @@ exporters:
       tableName: stack
       workerNum: 4
       bufferSize: 256
-      timeTick: true
+      timeTick: 5000
       shardingStrategy: io.etrace.common.sharding.HashingStrategy
       #      flushSize should be 256
       flushSize: 1
@@ -55,7 +55,7 @@ exporters:
       tableName: metric
       workerNum: 2
       bufferSize: 256
-      timeTick: true
+      timeTick: 5000
       shardingStrategy: io.etrace.common.sharding.HashingStrategy
       #      flushSize should be 128
       flushSize: 1

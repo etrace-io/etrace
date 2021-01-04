@@ -42,8 +42,8 @@ public abstract class AbstractMetricWorker extends DiskBackedInMemoryTask {
     public AbstractMetricWorker(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
 
-        this.topic = params.get("topic").toString();
-        this.blockManager = new MetricBlockManager(Integer.valueOf(params.get("flushThreshold").toString()),
+        this.topic = String.valueOf(params.get("topic"));
+        this.blockManager = new MetricBlockManager(Integer.valueOf(String.valueOf(params.get("flushThreshold"))),
             FLUSH_INTERVAL);
     }
 

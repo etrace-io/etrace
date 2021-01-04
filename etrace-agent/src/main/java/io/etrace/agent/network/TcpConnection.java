@@ -96,4 +96,9 @@ public class TcpConnection extends AbstractConnection {
         return socketChannel;
     }
 
+    @Override
+    public Collector getCollector() {
+        return currentCollector;
+    }
+
 }

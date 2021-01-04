@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * not thread safe
  */
-public class MetricCompressor extends Compressor {
+public class MetricCompressor extends SnappyCompressor {
 
     public MetricCompressor() {
         super(2 << 13);

@@ -50,7 +50,7 @@ public class TaskPool implements BeanFactoryAware {
         if (DefaultSyncTask.class.isAssignableFrom(taskClazz)) {
             // sync task
             tasks = new Task[taskSize];
-            String taskName = String.format("%s-%s-%d", component.getPipeline(), component.getName(), 0);
+            String taskName = String.format("%s-%s-%d-%d", component.getPipeline(), component.getName(), 0, taskSize);
 
             tasks[0] = beanFactory.getBean(taskClazz, taskName, component, taskProp.getProps());
             //taskClazz.getConstructor(String.class, Component.class, Map.class)
@@ -58,7 +58,9 @@ public class TaskPool implements BeanFactoryAware {
         } else {
             tasks = new Task[taskSize];
             for (int i = 0; i < taskSize; i++) {
-                String taskName = String.format("%s-%s-%d", component.getPipeline(), component.getName(), i);
+                // todo: HDFSProcessor.java:69 居然依赖这里的naming pattern
+                String taskName = String.format("%s-%s-%d-%d", component.getPipeline(), component.getName(), i,
+                    taskSize);
 
                 tasks[i] = beanFactory.getBean(taskClazz, taskName, component, taskProp.getProps());
             }

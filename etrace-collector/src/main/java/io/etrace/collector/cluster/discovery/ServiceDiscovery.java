@@ -27,8 +27,6 @@ public interface ServiceDiscovery {
 
     void unregister(ServiceInstance instance);
 
-    boolean updateInstance(String name, ServiceInstance instance);
-
     Set<ServiceInstance> queryForInstances(String name);
 
     Map<String, Set<ServiceInstance>> getAllInstances();

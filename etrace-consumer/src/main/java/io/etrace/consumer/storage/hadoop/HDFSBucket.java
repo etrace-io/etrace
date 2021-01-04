@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class HDFSBucket implements Bucket {
     private final static Logger LOGGER = LoggerFactory.getLogger(HDFSBucket.class);
 
-    private final static String STACK_PATH = "stack";
+    public final static String MESSAGE_TRACE_PATH = "message_trace";
     private final AtomicBoolean isClose = new AtomicBoolean(false);
     private final String dataFile;
     private FSDataOutputStream dataStream;
@@ -41,6 +41,10 @@ public class HDFSBucket implements Bucket {
         this.dataFile = dataFile;
         this.compressType = compressType;
         Path path = HDFSBucket.buildDataFilePath(remotePath, dataFile);
+
+        // 由于日常环境是 admin才有权限WRITE hdfs，因此设置成它
+        System.setProperty("HADOOP_USER_NAME", "admin");
+
         FileSystem fileSystem = FileSystemManager.getFileSystem();
         if (fileSystem.exists(path)) {
             DistributedFileSystem distributedFileSystem = (DistributedFileSystem)fileSystem;
@@ -71,9 +75,9 @@ public class HDFSBucket implements Bucket {
 
     public static String buildDataFilePathString(String remotePath, String dataFile) {
         if (!remotePath.endsWith(File.separator)) {
-            return remotePath + File.separator + STACK_PATH + File.separator + dataFile;
+            return remotePath + File.separator + MESSAGE_TRACE_PATH + File.separator + dataFile;
         } else {
-            return remotePath + STACK_PATH + File.separator + dataFile;
+            return remotePath + MESSAGE_TRACE_PATH + File.separator + dataFile;
         }
     }
 

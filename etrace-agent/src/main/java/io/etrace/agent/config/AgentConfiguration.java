@@ -50,6 +50,8 @@ public class AgentConfiguration {
 
     private static Map<String, String> extraProperties;
 
+    private static boolean debugMode = false;
+
     public static void initByConfigurationLoader(ConfigurationLoader loader) {
         setAppId(loader.getAppId());
         setCollectorIp(loader.getCollectorDomainAndPort());
@@ -140,5 +142,13 @@ public class AgentConfiguration {
 
     public static void setExtraProperties(Map<String, String> extraProperties) {
         AgentConfiguration.extraProperties = extraProperties;
+    }
+
+    public static boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public static void setDebugMode(boolean debugMode) {
+        AgentConfiguration.debugMode = debugMode;
     }
 }

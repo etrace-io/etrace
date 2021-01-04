@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.etrace.common.autoconfigure.PipelineAutoScanConfiguration
+  io.etrace.common.autoconfigure.PipelineAutoScanConfiguration,\
+  io.etrace.common.autoconfigure.EtraceConfig
+

@@ -21,7 +21,7 @@ public class CallStackTask extends AbstractSnappyDecodeTask {
 
         try {
             Class<? extends CallStackDecode> decodeClazz =
-                (Class<? extends CallStackDecode>)Class.forName(params.get(DECODE_CLASS).toString());
+                (Class<? extends CallStackDecode>)Class.forName(String.valueOf(params.get(DECODE_CLASS)));
             decode = decodeClazz.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Cannot find decode implement.", e);

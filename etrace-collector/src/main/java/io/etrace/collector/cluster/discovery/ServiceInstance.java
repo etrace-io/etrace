@@ -13,7 +13,7 @@ public class ServiceInstance {
      * name of the service
      */
     @EqualsAndHashCode.Include
-    private String name;
+    private String cluster;
     /**
      * address of this instance
      */

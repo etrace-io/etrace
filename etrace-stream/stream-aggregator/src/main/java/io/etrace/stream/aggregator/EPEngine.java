@@ -58,9 +58,11 @@ public class EPEngine {
     private Map<String, Object> params;
 
     private Map<Class, String> eventTypeCache;
+    boolean outputDetailEpl;
 
-    EPEngine(String name, Component component, Map<String, Object> params) {
+    EPEngine(String name, boolean outputDetailEpl, Component component, Map<String, Object> params) {
         this.name = name;
+        this.outputDetailEpl = outputDetailEpl;
         this.component = component;
         this.configuration = EPConfigurationFactory.createEPConfiguration();
         this.epAnnotationProcessorManager = new EPAnnotationProcessorManager();
@@ -151,13 +153,13 @@ public class EPEngine {
         List<Module> modules = newArrayList();
         EPDeploymentAdmin deploymentAdmin = epAdmin.getDeploymentAdmin();
         for (String file : files) {
-            LOGGER.info("Load module [{}]", file);
+            LOGGER.debug("Load module [{}]", file);
             Module module = deploymentAdmin.read(file);
             modules.add(module);
         }
         DeploymentOrder deploymentOrder = deploymentAdmin.getDeploymentOrder(modules, new DeploymentOrderOptions());
         for (Module module : deploymentOrder.getOrdered()) {
-            LOGGER.info("EPEngine deploy module [{}]", module.getName());
+            LOGGER.debug("EPEngine deploy module [{}]", module.getName());
             module.getImports().forEach(epAdmin.getConfiguration()::addImport);
 
             for (int i = 0; i < module.getItems().size(); i++) {
@@ -238,15 +240,12 @@ public class EPEngine {
 
         }
 
-        LOGGER.info("create epl: " + model.toEPL());
+        if (outputDetailEpl) {
+            LOGGER.info("create epl: " + model.toEPL());
+        }
 
         EPStatement epStatement = epAdmin.create(model, name, userObject);
-        if (listener != null) {
-            epStatement.addListener(listener);
-        } else {
-            //todo: only for DEBUG! remove this when commit!
-            System.out.println("xxxxxxxxxxxxxxxxxxx");
-        }
+        epStatement.addListener(listener);
 
         epStatement.start();
         return epStatement;

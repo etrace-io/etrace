@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
 //@Configuration
-//todo : delete
+//todo : delete 。  使用这个类实现，会有循环依赖的问题。
 public class PipelineConfig implements BeanFactoryAware {
     @Autowired
     private CollectorProperties collectorProperties;

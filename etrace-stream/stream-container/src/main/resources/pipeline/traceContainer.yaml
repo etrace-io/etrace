@@ -24,7 +24,7 @@ processors:
       bufferSize: 2048
       taskSize: 8
       shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
-      source: opensouce_trace
+      source: open_source_trace
       epls: biz.epl.app
 
 exporters:

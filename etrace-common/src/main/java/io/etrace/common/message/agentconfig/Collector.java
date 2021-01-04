@@ -19,10 +19,12 @@ package io.etrace.common.message.agentconfig;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Collector {
     private String ip;
     private int port;

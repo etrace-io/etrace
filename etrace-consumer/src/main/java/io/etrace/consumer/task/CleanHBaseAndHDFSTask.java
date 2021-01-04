@@ -16,7 +16,7 @@
 
 package io.etrace.consumer.task;
 
-import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import io.etrace.agent.Trace;
 import io.etrace.common.constant.Constants;
 import io.etrace.common.message.trace.Transaction;
@@ -24,7 +24,8 @@ import io.etrace.common.util.ThreadUtil;
 import io.etrace.common.util.TimeHelper;
 import io.etrace.consumer.config.ConsumerProperties;
 import io.etrace.consumer.storage.hadoop.FileSystemManager;
-import io.etrace.consumer.storage.hbase.HBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseTableNameFactory;
 import io.etrace.consumer.storage.hbase.impl.MetricImpl;
 import io.etrace.consumer.storage.hbase.impl.StackImpl;
 import org.apache.hadoop.fs.FileStatus;
@@ -33,6 +34,7 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +44,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
@@ -57,61 +61,63 @@ public class CleanHBaseAndHDFSTask {
     @Autowired
     public StackImpl stackImpl;
     @Autowired
-    private HBaseClientFactory hBaseClientFactory;
+    private IHBaseClientFactory iHBaseClientFactory;
+
+    @Autowired
+    private IHBaseTableNameFactory ihBaseTableNameFactory;
+
+    @Autowired
+    ApplicationContext context;
+
+    Map<String, Integer> hbaseTableToClean = Maps.newHashMap();
 
     private static void deleteByPath(FileSystem fs, Path path) throws IOException {
         LOGGER.info("{} will be deleted", path);
         fs.delete(path, true);
     }
 
-    @Scheduled(initialDelay = 10 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000)
-    public void deleteHBaseTable() {
-        int keeper = consumerProperties.getKeeper();
+    public void registerTableToDelete (String logicHBaseTableName, int daysToClean) {
+        hbaseTableToClean.put(logicHBaseTableName, daysToClean);
+    }
+
+    @Scheduled(initialDelay = 10 * 60 * 1000 , fixedRate = 24 * 60 * 60 * 1000)
+    public void cleanHBaseTables() {
+        hbaseTableToClean.forEach(this::deleteHBaseTable);
+    }
+
+    private void deleteHBaseTable(String logicHBaseTableName, int daysToClean) {
         long current = System.currentTimeMillis();
-        Set<Integer> keepSet = newHashSet();
+        Set<Integer> retainedTables = newHashSet();
 
-        Transaction transaction = Trace.newTransaction("DELETE_HBASE", "keeper:" + keeper);
         try {
-            //keeper last keeper day table
-            for (int i = 0; i < keeper + 1; i++) {
-                keepSet.add(TimeHelper.getDay(current - i * TimeHelper.ONE_DAY));
+            //retain last x day
+            for (int i = 0; i < daysToClean + 1; i++) {
+                retainedTables.add(TimeHelper.getDay(current - i * TimeHelper.ONE_DAY));
             }
-            //keeper future x day table
-            for (int i = 1; i < 3; i++) {
-                keepSet.add(TimeHelper.getDay(current + i * TimeHelper.ONE_DAY));
-            }
-            LOGGER.info("keeper hbase table is [{}].", Joiner.on(",").join(keepSet));
 
-            if (keepSet.size() < keeper + 2) {
-                LOGGER.warn("keeper day is wrong, data is [{}].", Joiner.on(",").join(keepSet));
-                return;
+            //retain future 2 day
+            for (int i = 1; i < 3; i++) {
+                retainedTables.add(TimeHelper.getDay(current + i * TimeHelper.ONE_DAY));
             }
-            for (int i = 1; i <= 31; i++) {
-                if (!keepSet.contains(i)) {
-                    List<String> deleteTables = newArrayList();
-                    String tableName = stackImpl.getName() + "_" + i;
-                    tryDeleteTable(tableName);
-                    deleteTables.add(tableName);
-                    tableName = metricImpl.getName() + "_" + i;
-                    tryDeleteTable(tableName);
-                    deleteTables.add(tableName);
-                    transaction.addTag("tables_" + i, deleteTables.toString());
-                }
-            }
-            transaction.setStatus(Constants.SUCCESS);
+            LOGGER.info("going to retain hbase table {}, other days will be deleted.", retainedTables);
+
+            // Tables to delete
+            IntStream.rangeClosed(1,31)
+                .filter(day -> !retainedTables.contains(day))
+                .forEach(day -> {
+                String tableName = ihBaseTableNameFactory.getPhysicalTableNameByTableNamePrefix(logicHBaseTableName, day);
+                tryDeleteTable(tableName);
+            });
         } catch (Throwable e) {
-            transaction.setStatus(e);
-        } finally {
-            transaction.complete();
+            LOGGER.error("==deleteHBaseTable==", e);
         }
     }
 
     public void tryDeleteTable(String tableName) {
         int tryCount = 0;
-        //try delete
         while (++tryCount < 4) {
             try {
-                hBaseClientFactory.deleteTable(tableName);
+                iHBaseClientFactory.deleteTable(tableName);
                 LOGGER.info("Delete hbase table {} success.", tableName);
                 break;
             } catch (Exception e) {
@@ -122,7 +128,7 @@ public class CleanHBaseAndHDFSTask {
     }
 
     @Scheduled(initialDelay = 10 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000)
-    public void deleteHDFS() {
+    public void deleteHDFSFiles() {
         int doKeeper = consumerProperties.getKeeper();
         String remotePath = consumerProperties.getHdfs().getPath();
 

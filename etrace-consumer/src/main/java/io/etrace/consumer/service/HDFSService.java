@@ -24,6 +24,7 @@ import io.etrace.common.message.trace.codec.JSONCodecV1;
 import io.etrace.consumer.config.ConsumerProperties;
 import io.etrace.consumer.model.BlockIndex;
 import io.etrace.consumer.storage.hadoop.FileSystemManager;
+import io.etrace.consumer.storage.hadoop.HDFSBucket;
 import io.etrace.consumer.storage.hadoop.PathBuilder;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -53,7 +54,7 @@ public class HDFSService {
 
     @PostConstruct
     public void startup() {
-        stackPath = consumerProperties.getHdfs().getPath() + File.separator + "stack" + File.separator;
+        stackPath = consumerProperties.getHdfs().getPath() + File.separator + HDFSBucket.MESSAGE_TRACE_PATH + File.separator;
         dataReaderCache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .expireAfterAccess(5, TimeUnit.MINUTES)
@@ -86,7 +87,7 @@ public class HDFSService {
                 if (blockIndex.getBlockId() > 0) {
                     byte[] data = dataReader.readMessage(blockIndex.getBlockId(), blockIndex.getOffset());
                     if (data != null) {
-                        return JSONCodecV1.decodeToV1FromArrayFormatTo(data);
+                        return JSONCodecV1.decodeToV1FromArrayFormat(data);
                     }
                 }
             } catch (Throwable e) {

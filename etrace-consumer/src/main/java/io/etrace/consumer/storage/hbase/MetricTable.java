@@ -16,9 +16,11 @@
 
 package io.etrace.consumer.storage.hbase;
 
+import com.google.common.collect.Lists;
 import io.etrace.common.message.metric.Metric;
 
 import java.io.IOException;
+import java.util.List;
 
 public abstract class MetricTable implements TableSchema {
 
@@ -34,12 +36,12 @@ public abstract class MetricTable implements TableSchema {
     public abstract byte[] buildQualifierValue(Metric metric) throws IOException;
 
     @Override
-    public String getName() {
+    public String getLogicalTableName() {
         return "metric";
     }
 
     @Override
-    public byte[] getCf() {
+    public byte[] getColumnFamily() {
         return "d".getBytes();
     }
 }

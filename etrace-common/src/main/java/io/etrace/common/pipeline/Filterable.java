@@ -19,4 +19,6 @@ package io.etrace.common.pipeline;
 public interface Filterable {
 
     String filterKey();
+
+    String getAppId();
 }

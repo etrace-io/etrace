@@ -19,6 +19,7 @@ package io.etrace.consumer.storage.hbase;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.consumer.model.BlockIndex;
 
+
 public abstract class StackTable implements TableSchema {
 
     /**
@@ -31,12 +32,12 @@ public abstract class StackTable implements TableSchema {
     public abstract BlockIndex decode(byte[] data);
 
     @Override
-    public String getName() {
+    public String getLogicalTableName() {
         return "stack";
     }
 
     @Override
-    public byte[] getCf() {
+    public byte[] getColumnFamily() {
         return "t".getBytes();
     }
 }

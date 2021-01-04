@@ -16,6 +16,7 @@
 
 package io.etrace.common.pipeline.impl;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.ExceptionHandler;
 import com.lmax.disruptor.LiteBlockingWaitStrategy;
@@ -25,6 +26,7 @@ import com.lmax.disruptor.dsl.ProducerType;
 import io.etrace.common.event.MutableEvent;
 import io.etrace.common.event.MutableEventFactory;
 import io.etrace.common.pipeline.Component;
+import io.etrace.common.pipeline.TimeTick;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Metrics;
@@ -34,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static io.etrace.common.constant.InternalMetricName.*;
@@ -99,6 +103,34 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
             }
         });
 
+        int timeTick = -1;
+        if (null != params && params.containsKey("timeTick")) {
+            timeTick = Integer.parseInt(String.valueOf(params.get("timeTick")));
+
+            try {
+                timeTick = Integer.parseInt(String.valueOf(params.get("timeTick")));
+                if (timeTick <= 0) {
+                    throw new NumberFormatException(timeTick + " <=0");
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.error("Invalid 'timeTick' [{}] configuration for Task [{}]. It should be number or greater "
+                    + "than 0!(time unit in milliseconds) System.exit()", params.get("timeTick"), name, e);
+                System.exit(1);
+            }
+        }
+
+        // set up scheduled flush() thread
+        if (timeTick > 0) {
+            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1,
+                new ThreadFactoryBuilder()
+                    .setNameFormat(String.format("Component-%s-Timetick-%d-Thread", name, timeTick) + "-%d")
+                    .setDaemon(true).build()
+            );
+            scheduledExecutorService.scheduleAtFixedRate(() -> {
+                this.handleEvent(TimeTick.TICK, null);
+            }, 1000, timeTick, TimeUnit.MILLISECONDS);
+        }
+
         Gauge.builder(TASK_QUEUE_REMAINING, this.buffer, RingBuffer::remainingCapacity)
             .tag("pipeline", component.getPipeline())
             .tag("name", component.getName())
@@ -106,13 +138,20 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
             .register(Metrics.globalRegistry);
     }
 
+    public void onTimeTick() {
+        Counter.builder(TASK_TIME_TICK)
+            .tag("pipeline", component.getPipeline())
+            .tag("name", component.getName())
+            .tag("task", name)
+            .register(Metrics.globalRegistry).increment();
+    }
+
     @Override
     public void startup() {
         if (disruptor != null) {
-            LOGGER.info("Starting task disruptor for [{}] [{}] [{}]", this.name, component.getName(),
+            LOGGER.debug("Starting Disruptor Queue for [{}] [{}] [{}]", this.name, component.getName(),
                 this.getClass().getName());
             disruptor.start();
-            LOGGER.info("Started task disruptor  for [{}] [{}] ", this.name, component.getName());
         }
     }
 
@@ -129,8 +168,13 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
         try {
             long startProcessTime = System.currentTimeMillis();
             pendingTimer.record(startProcessTime - sendTime, TimeUnit.MILLISECONDS);
-            //process event
-            processEvent(key, event);
+            // if TimeTick
+            if (key instanceof TimeTick) {
+                onTimeTick();
+            } else {
+                // process event
+                processEvent(key, event);
+            }
 
             processTimer.record(System.currentTimeMillis() - startProcessTime, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
@@ -157,6 +201,6 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
         } catch (Throwable e) {
             LOGGER.error("shutdown task <{}> error:", this.name, e);
         }
-        LOGGER.info("Shutdown task <{}> successfully!", this.name);
+        LOGGER.debug("Shutdown task <{}> successfully!", this.name);
     }
 }

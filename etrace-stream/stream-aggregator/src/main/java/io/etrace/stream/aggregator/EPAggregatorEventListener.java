@@ -31,7 +31,7 @@ public class EPAggregatorEventListener implements StatementAwareUpdateListener {
     public EPAggregatorEventListener(Component component, Map<String, Object> params) {
         this.component = component;
 
-        this.defaultSource = (String)Optional.ofNullable(params.get("source")).orElse(null);
+        this.defaultSource = String.valueOf(params.get("source"));
         counters = new HashMap<>();
     }
 

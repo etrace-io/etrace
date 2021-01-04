@@ -1,5 +1,7 @@
 package io.etrace.consumer.component.processor;
 
+import io.etrace.agent.Trace;
+import io.etrace.agent.config.AgentConfiguration;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.common.message.trace.MessageItem;
 import io.etrace.common.message.trace.codec.JSONCodecV1;
@@ -13,6 +15,7 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
+import joptsimple.internal.Strings;
 import kafka.message.MessageAndMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +24,13 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.xerial.snappy.SnappyInputStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static io.etrace.consumer.metrics.MetricName.*;
@@ -35,6 +38,9 @@ import static io.etrace.consumer.metrics.MetricName.*;
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor {
+
+    protected static final String INVALID_MESSAGE = "invalid.message";
+
     public final Logger LOGGER = LoggerFactory.getLogger(TraceDecodeProcessor.class);
 
     @Autowired
@@ -71,7 +77,21 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
     }
 
     public void error(byte[] body, Exception e) {
-        //LOGGER.error("write to hdfs error :".concat(StringUtils.toString(body, 0, Math.min(1024, body.length))), e);
+        if (AgentConfiguration.isDebugMode()) {
+            try {
+            ByteArrayInputStream bain = new ByteArrayInputStream(body);
+            SnappyInputStream in = new SnappyInputStream(bain);
+            String result = new BufferedReader(new InputStreamReader(in))
+                .lines().collect(Collectors.joining("\n"));
+
+                LOGGER.error("fail to processEvent: data:\n {}", result, e);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        } else {
+            LOGGER.error("fail to processEvent.", e);
+        }
+
         parseError.increment();
     }
 
@@ -107,18 +127,52 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
                 int dataLen = in.readInt();
                 byte[] data = new byte[dataLen];
                 in.readFully(data);
-                CallStackV1 callStack = JSONCodecV1.decodeToV1FromArrayFormatTo(data);
+                CallStackV1 callStack = JSONCodecV1.decodeToV1FromArrayFormat(data);
 
                 MessageItem item = new MessageItem(callStack);
 
                 //set CallStack offset in message block
                 item.setOffset(offset);
 
-                messageItems.add(item);
+                // validate message. subclass can override validMessage()
+                if (validMessage(item)) {
+                    messageItems.add(item);
+                }
 
                 offset += 4 + dataLen;
             }
             return messageItems;
+        }
+    }
+
+    public boolean validMessage(MessageItem item) {
+        boolean valid = validateCallStack(item.getCallStack());
+        if (!valid) {
+            Trace.newCounter(INVALID_MESSAGE)
+                .addTag("name", component.getName())
+                .addTag("type", "invalidCallstack")
+                .addTag("appId", item.getCallStack() == null ? "nullCallstack":
+                    Optional.ofNullable(item.getCallStack().getAppId()).orElse("nullAppId"))
+                .once();
+        }
+        return valid;
+    }
+
+    private static boolean validateCallStack(CallStackV1 callStack) {
+        if (callStack == null) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getAppId())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getHostIp())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getHostName())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getRequestId())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getId())) {
+            return false;
+        } else {
+            return callStack.getMessage() != null;
         }
     }
 }

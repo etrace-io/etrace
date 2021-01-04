@@ -32,7 +32,7 @@ public class KafkaExporter extends DefaultSyncTask implements Exporter {
 
     public KafkaExporter(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
-        resourceId = (String)params.get("resourceId");
+        resourceId = String.valueOf(params.get("resourceId"));
     }
 
     @Override

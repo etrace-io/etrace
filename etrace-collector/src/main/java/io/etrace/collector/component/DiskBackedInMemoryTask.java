@@ -114,7 +114,7 @@ public abstract class DiskBackedInMemoryTask extends Task implements Runnable {
                 }
                 flushIfNeed();
             } catch (JsonParseException jpe) {
-                LOGGER.error("appId:[{}] to json error!", appId);
+                LOGGER.error("appId:[{}] to json error!", appId, jpe);
                 this.metricsService.messageError(name, appId, "JsonParseException");
             } catch (OutOfMemoryError oom) {
                 LOGGER.error("Out of memory error, system will exit!", oom);

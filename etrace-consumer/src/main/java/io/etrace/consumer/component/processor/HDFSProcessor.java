@@ -14,8 +14,8 @@ import io.etrace.consumer.config.ConsumerProperties;
 import io.etrace.consumer.model.MessageBlock;
 import io.etrace.consumer.storage.hadoop.HDFSBucket;
 import io.etrace.consumer.storage.hadoop.PathBuilder;
-import io.etrace.consumer.storage.hbase.HBaseClientFactory;
-import io.etrace.consumer.storage.hbase.PutBuilder;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseStorageService;
 import io.etrace.consumer.storage.hbase.StackTable;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
@@ -52,7 +52,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
 
     private HDFSBucket bucket;
     @Autowired
-    private HBaseClientFactory hBaseClientFactory;
+    private IHBaseClientFactory IHBaseClientFactory;
     @Autowired
     private StackTable stackSchema;
 
@@ -62,6 +62,8 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
 
     @Autowired
     private ConsumerProperties consumerProperties;
+    @Autowired
+    private IHBaseStorageService ihBaseStorageService;
 
     public HDFSProcessor(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
@@ -128,13 +130,13 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
     }
 
     public void writeToHBase(long timestamp, String requestId, CallStackV1 callStack, int messageOffset) {
+        short shard = IHBaseClientFactory.getShardIdByLogicalTableName(stackSchema.getLogicalTableName(), timestamp,
+            RequestIdHelper.getRequestId(requestId).hashCode());
         // rowKey
-        short shard = hBaseClientFactory.getShardId(timestamp, RequestIdHelper.getRequestId(requestId).hashCode());
-        Put put = PutBuilder.createPut(PutBuilder.createRowKey(shard, requestId), timestamp);
-
         byte[] qualifierValue = stackSchema.buildQualifierValue(callStack, messageOffset, startPos, currentWritingHour,
             ip, idx);
-        put.addColumn(stackSchema.getCf(), Bytes.toBytes(callStack.getId()), qualifierValue);
+        Put put = ihBaseStorageService.buildHbasePut(timestamp, requestId, shard, stackSchema.getColumnFamily(),
+            Bytes.toBytes(callStack.getId()), qualifierValue);
 
         long start = System.currentTimeMillis();
         component.dispatchAll(shard, put);
