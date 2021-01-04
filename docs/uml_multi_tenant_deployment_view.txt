@@ -1,0 +1,78 @@
+@startuml
+skinparam nodesep 5
+skinparam ranksep 10
+skinparam shadowing false
+'skinparam backgroundColor red
+skinparam package<<Invisible>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+component UI
+
+cloud Primary_Tenant_in_IDC_1 {
+
+folder ClientApps1 {
+    component ApplicationOne
+    component ApplicationTwo
+}
+package m1 <<Invisible>> {
+component Api_Primary
+
+component Collector1 {
+}
+component Consumer1 {
+}
+component Stream1 {
+}
+}
+
+package m2 <<Invisible>> {
+database Hadoop1 {
+}
+database TSDB1 {
+}
+}
+}
+
+cloud Secondary_Tenant_in_IDC_1 {
+folder ClientApps2 {
+    component ApplicationOne21
+    component ApplicationTwo22
+}
+package t1 <<Invisible>> {
+component Api_Secondary
+component Collector2 {
+}
+component Consumer2 {
+}
+component Stream2 {
+}
+}
+package t2 <<Invisible>> {
+database Hadoop2 {
+}
+database TSDB2 {
+}
+}
+}
+
+UI ---down-> Api_Primary: query
+Api_Primary -> TSDB1 : direct mode
+Api_Primary -> Hadoop1 : direct mode
+Api_Primary -> TSDB2 : direct mode
+Api_Primary -> Hadoop2 : direct mode
+
+Api_Primary .> Api_Secondary: proxy mode
+
+ClientApps1 -[hidden]d-> m1
+m1 -[hidden]d-> m2
+ClientApps2 -[hidden]d-> t1
+t1 -[hidden]d-> t2
+
+Primary_Tenant_in_IDC_1-[hidden]l- Secondary_Tenant_in_IDC_1
+
+
+@enduml

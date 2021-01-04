@@ -1,0 +1,85 @@
+@startuml
+skinparam nodesep 5
+skinparam ranksep 10
+skinparam shadowing false
+'skinparam backgroundColor red
+skinparam package<<Invisible>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+
+package "ETrace UI" <<Folder>> #lightyellow {
+	
+package PC <<Rectangle>>  {
+
+}
+package Mobile <<Rectangle>> {
+
+}
+}
+
+package "Clinet App" <<Folder>> {
+	
+package "embeded SDK" <<Rectangle>> #lightyellow {
+
+}
+}
+
+package ETrace <<Folder>> #lightyellow{
+	
+package Collector <<Rectangle>> {
+
+}
+package Consumer <<Rectangle>> {
+
+}
+package Stream <<Rectangle>> {
+			
+}
+package Api <<Rectangle>> {
+			
+}
+}
+
+
+package Dependencies <<Folder>> {
+	
+package Kafka <<Rectangle>> {
+
+}
+package TSDB <<Rectangle>> {
+
+}
+package Hadoop <<Rectangle>> {
+			
+}
+
+package Database <<Rectangle>> {
+			
+}
+}
+
+ "embeded SDK" ..> Collector : send data via thrift
+ Collector ..> Kafka : produce
+ Consumer <.. Kafka : consume
+ Stream <.. Kafka : consume
+ Consumer ..> Hadoop: storage/query Trace data
+ Stream ..> TSDB : storage Metric data
+ Api --> Database: query configuration
+ Api --> TSDB: query Metric
+ Api --> Consumer: query Trace
+ 
+ Mobile --> Api
+ PC --> Api
+
+legend left
+    |=Color/Line |= Instruction |
+    |<#lightyellow>| ETrace Related Components|
+    | Straignt Line| Data Flow of Process or Storage |
+    | Dashed Line| Data Flow of Query Trace or Metric |
+endlegend
+
+@enduml

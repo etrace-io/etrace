@@ -1,0 +1,48 @@
+@startuml
+skinparam nodesep 5
+skinparam ranksep 10
+skinparam shadowing false
+'skinparam backgroundColor red
+skinparam package<<Invisible>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+package io.etrace <<Folder>> {
+
+package "ETrace UI" <<Folder>> {
+
+}
+package c1 <<Invisible>> {
+package io.etrace.collector <<Folder>> {
+}
+package io.etrace.consumer <<Folder>> {
+}
+package io.etrace.api <<Folder>> {
+}
+package io.etrace.agent <<Folder>> {
+}
+}
+
+package io.etrace.stream <<Folder>> {
+			
+package io.etrace.stream.container <<Folder>> {
+
+}
+package io.etrace.stream.core <<Folder>> {
+}
+package io.etrace.stream.aggregator <<Folder>> {
+}
+package io.etrace.stream.biz.metric <<Folder>> {
+}
+package io.etrace.stream.biz.app <<Folder>> {
+}
+}
+}
+
+c1 -[hidden]d- io.etrace.stream
+
+
+@enduml
