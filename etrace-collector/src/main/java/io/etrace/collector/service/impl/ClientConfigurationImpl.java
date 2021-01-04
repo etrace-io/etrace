@@ -3,40 +3,28 @@ package io.etrace.collector.service.impl;
 import io.etrace.collector.service.ClientConfigurationService;
 import io.etrace.common.message.agentconfig.MetricConfig;
 import io.etrace.common.message.agentconfig.TraceConfig;
-import io.etrace.common.util.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-
 @Service
 public class ClientConfigurationImpl implements ClientConfigurationService {
 
-    private String defaultAgentConfig;
-    private String defaultMetricConfig;
     @Autowired
     private DefaultTraceConfig agentConfig;
     @Autowired
     private DefaultMetricConfig metricConfig;
 
-    @PostConstruct
-    public void postConstruct() throws IOException {
-        defaultAgentConfig = JSONUtil.toString(agentConfig);
-        defaultMetricConfig = JSONUtil.toString(metricConfig);
+    @Override
+    public TraceConfig getAgentConfig(String appId, String hostIp) {
+        return agentConfig;
     }
 
     @Override
-    public String getAgentConfig(String appId, String hostIp) {
-        return defaultAgentConfig;
-    }
-
-    @Override
-    public String getMetricConfig(String appId, String hostIp) {
-        return defaultMetricConfig;
+    public MetricConfig getMetricConfig(String appId, String hostIp) {
+        return metricConfig;
     }
 
     @Override

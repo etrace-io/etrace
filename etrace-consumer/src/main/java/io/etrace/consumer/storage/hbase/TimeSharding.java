@@ -17,5 +17,9 @@
 package io.etrace.consumer.storage.hbase;
 
 public interface TimeSharding {
+    /**
+     *
+     */
     int sharding(long timestamp);
+
 }

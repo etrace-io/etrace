@@ -124,5 +124,10 @@ public abstract class AbstractEvent implements Event {
 
         return raw;
     }
+
+    @Override
+    public String getAppId() {
+        return header.getAppId();
+    }
 }
 

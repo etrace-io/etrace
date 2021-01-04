@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,7 @@ public class ClusterService implements BeanFactoryAware {
 
     @Autowired
     private CollectorProperties collectorProperties;
+
     @Value("${server.port}")
     private int httpPort;
 
@@ -43,14 +45,11 @@ public class ClusterService implements BeanFactoryAware {
 
     private PipelineRepository pipelineRepository;
 
-    private String defaultCluster;
     private BeanFactory beanFactory;
 
     @PostConstruct
     public void start() {
         try {
-            this.defaultCluster = collectorProperties.getCluster().getDefaultCluster();
-
             // start pipelines
             pipelineRepository = beanFactory.getBean(PipelineRepository.class,
                 new DefaultPipelineLoader().load(),
@@ -71,7 +70,7 @@ public class ClusterService implements BeanFactoryAware {
 
     public void register(List<PipelineConfiguration.Channel> receives) throws Exception {
         for (PipelineConfiguration.Channel channel : receives) {
-            ServiceInstance instance = ServiceInstance.builder().name(collectorProperties.getCluster().getName())
+            ServiceInstance instance = ServiceInstance.builder().cluster(collectorProperties.getCluster().getName())
                 .address(NetworkInterfaceHelper.INSTANCE.getLocalHostAddress())
                 .serverType(channel.getType().toString())
                 .port((Integer)channel.getProps().get("port"))
@@ -82,16 +81,16 @@ public class ClusterService implements BeanFactoryAware {
         }
     }
 
-    public List<ServiceInstance> getCollectors(String appId, String protocol) {
+    public List<ServiceInstance> getCollectors(String appId, @Nullable String protocol) {
+        // step one: get collector cluster by appId
         String cluster = getClusterByAppId(appId);
+        // step two: filter by protocol
         Set<ServiceInstance> instances = serviceDiscovery.queryForInstances(cluster);
-        List<ServiceInstance> collectors = instances.stream().filter(in -> {
-            if (!Strings.isNullOrEmpty(protocol)) {
-                return in.getServerType().equalsIgnoreCase(protocol);
-            }
-            return true;
-        }).collect(Collectors.toList());
-
+        List<ServiceInstance> collectors = instances.stream()
+            // 若 protocol为null，则返回所有；否则返回protocol匹配的
+            .filter(in -> Strings.isNullOrEmpty(protocol) || in.getServerType().equalsIgnoreCase(protocol))
+            .collect(Collectors.toList());
+        // step three: adjust by throughput
         if (balanceThroughputService.isEnabled()) {
             collectors = balanceThroughputService.adjustCollectors(cluster, collectors);
         }
@@ -99,23 +98,24 @@ public class ClusterService implements BeanFactoryAware {
         return collectors;
     }
 
+    /**
+     * find related collector cluster by appId according `collector.cluster` configuration
+     * if not found, fall back to `collector.defaultCluster`.
+     */
     private String getClusterByAppId(String appId) {
         try {
-            if (!Strings.isNullOrEmpty(appId)) {
-                if (null != collectorProperties.getCluster().getMapping()) {
-                    for (CollectorProperties.Mapping mapping : collectorProperties.getCluster().getMapping()) {
-                        if (MatchType.match(appId, mapping.getAppId(), mapping.getType())) {
-                            if (!Strings.isNullOrEmpty(mapping.getCluster())) {
-                                return mapping.getCluster();
-                            }
-                        }
+            if (!Strings.isNullOrEmpty(appId) && null != collectorProperties.getCluster().getMapping()) {
+                for (CollectorProperties.Mapping mapping : collectorProperties.getCluster().getMapping()) {
+                    if (!Strings.isNullOrEmpty(mapping.getCluster()) &&
+                        MatchType.match(appId, mapping.getAppId(), mapping.getType())) {
+                        return mapping.getCluster();
                     }
                 }
             }
         } catch (Throwable e) {
-            LOGGER.error("error for appId:{},clusterMapping -> {}, fallback...", appId, e);
+            LOGGER.warn("error for appId: [{}] to get clusterMapping, fallback to default cluster", appId, e);
         }
-        return defaultCluster;
+        return collectorProperties.getCluster().getDefaultCluster();
     }
 
     @Override

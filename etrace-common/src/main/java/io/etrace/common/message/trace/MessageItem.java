@@ -32,8 +32,6 @@ public class MessageItem {
     private long ip;
     private int index;
 
-    private boolean isDal;
-
     public MessageItem(CallStackV1 callStack) {
         this(callStack, null);
     }

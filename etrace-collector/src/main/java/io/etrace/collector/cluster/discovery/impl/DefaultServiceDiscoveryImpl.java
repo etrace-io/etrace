@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.etrace.collector.cluster.discovery.InstanceSerializer;
 import io.etrace.collector.cluster.discovery.ServiceDiscovery;
 import io.etrace.collector.cluster.discovery.ServiceInstance;
 import io.etrace.collector.cluster.discovery.ServiceProvider;
+import io.etrace.common.util.JSONUtil;
 import io.etrace.common.util.ThreadUtil;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCache;
@@ -18,6 +18,9 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,20 +33,22 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Component
+@ConditionalOnMissingBean(name= "ServiceDiscovery")
 public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
-    public final String basePath = "/clusters";
+
+    @Value("${collector.cluster.zkPath}")
+    public String basePath;
+
     private final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceDiscoveryImpl.class);
     /**
      * key is cluster name or service name
      */
     private final ConcurrentMap<String, Set<ServiceInstance>> instances = Maps.newConcurrentMap();
     @Autowired
-    private ServiceProvider serviceProvider;
-    @Autowired
-    private InstanceSerializer serializer;
+    protected ServiceProvider serviceProvider;
     private volatile boolean running = false;
     private ConnectionStateListener listener;
-    private Set<ServiceInstance> currentInstances = Sets.newHashSet();
+    protected Set<ServiceInstance> currentInstances = Sets.newHashSet();
 
     public void changeState(ConnectionState connectionState) {
         if (connectionState == ConnectionState.RECONNECTED) {
@@ -85,22 +90,23 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
     @Override
     public void register(ServiceInstance instance) throws Exception {
         // Ensure the parent paths exist persistently
-        checkParentPathExists(instance);
+        checkParentPathExists(basePath);
+        checkParentPathExists(basePath + "/" + instance.getCluster());
 
         final int MAX_TRIES = 2;
-        String path = pathForInstance(instance);
+        String path = pathForInstance(basePath, instance);
         for (int i = 0; i < MAX_TRIES; ++i) {
             try {
                 serviceProvider.deleteNode(path);
-                serviceProvider.createEphemeralNode(path, serializer.serialize(instance));
+                serviceProvider.createEphemeralNode(path, JSONUtil.toBytes(instance) );
 
                 currentInstances.add(instance);
-                LOGGER.info("Register success [cluster:{},ip:{},port:{}]", instance.getName(), instance.getAddress(),
+                LOGGER.info("Register success [cluster:{},ip:{},port:{}]", instance.getCluster(), instance.getAddress(),
                     instance.getPort());
                 break;
             } catch (Exception e) {
-                LOGGER.error("register failed:", e);
-                ThreadUtil.sleep(1);
+                LOGGER.error("Register failed:", e);
+                ThreadUtil.sleep(10);
             }
         }
     }
@@ -109,7 +115,7 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
     public void unregister() {
         currentInstances.forEach(this::unregister);
         for (ServiceInstance instance : currentInstances) {
-            Set<ServiceInstance> instanceSet = instances.get(instance.getName());
+            Set<ServiceInstance> instanceSet = instances.get(instance.getCluster());
             if (null != instanceSet && instanceSet.size() > 0) {
                 instanceSet.remove(instance);
             }
@@ -117,16 +123,14 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
         currentInstances.clear();
     }
 
-    private void checkParentPathExists(ServiceInstance instance) throws Exception {
-        // Ensure the parent paths exist persistently
-        serviceProvider.createPersistNode(basePath);
-        String clusterPath = basePath + "/" + instance.getName();
-        serviceProvider.createPersistNode(clusterPath);
+    // Ensure the parent paths exist persistently
+    protected void checkParentPathExists(String path) throws Exception {
+        serviceProvider.createPersistNode(path);
     }
 
     @Override
     public void unregister(ServiceInstance instance) {
-        String path = pathForInstance(instance);
+        String path = pathForInstance(basePath, instance);
         final int MAX_TRIES = 2;
         for (int i = 0; i < MAX_TRIES; ++i) {
             try {
@@ -138,15 +142,6 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
                 ThreadUtil.sleep(1);
             }
         }
-    }
-
-    @Override
-    public boolean updateInstance(String name, ServiceInstance instance) {
-        Set<ServiceInstance> serviceInstances = instances.get(name);
-        if (null == serviceInstances || serviceInstances.isEmpty()) {
-            return false;
-        }
-        return serviceInstances.contains(instance) && serviceInstances.add(instance);
     }
 
     @Override
@@ -170,23 +165,23 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
         return builder.build();
     }
 
-    private String pathForInstance(ServiceInstance instance) {
-        return basePath + "/" + instance.getName() + "/" + instance.getAddress() + ":" + instance.getPort();
+    protected String pathForInstance(String path, ServiceInstance instance) {
+        return path + "/" + instance.getCluster() + "/" + instance.getAddress() + ":" + instance.getPort();
     }
 
     public synchronized void addInstance(ServiceInstance instance) {
-        Set<ServiceInstance> collectorMap = instances.computeIfAbsent(instance.getName(), k -> new HashSet<>());
+        Set<ServiceInstance> collectorMap = instances.computeIfAbsent(instance.getCluster(), k -> new HashSet<>());
         collectorMap.add(instance);
     }
 
     public synchronized void removeInstance(ServiceInstance instance) {
-        Set<ServiceInstance> collectorSet = instances.computeIfAbsent(instance.getName(), k -> new HashSet<>());
+        Set<ServiceInstance> collectorSet = instances.computeIfAbsent(instance.getCluster(), k -> new HashSet<>());
         collectorSet.remove(instance);
     }
 
     public void updateListener(TreeCacheEvent event) throws Exception {
         String path = event.getData().getPath();
-        ServiceInstance instance = serializer.deserialize(event.getData().getData());
+        ServiceInstance instance =  JSONUtil.toObject(event.getData().getData(), ServiceInstance.class);
         switch (event.getType()) {
             case NODE_ADDED:
                 LOGGER.info("Collector node added: {}.", path);

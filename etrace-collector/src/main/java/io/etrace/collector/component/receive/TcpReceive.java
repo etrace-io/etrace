@@ -40,7 +40,7 @@ public class TcpReceive extends DefaultSyncTask implements Receiver {
     public TcpReceive(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
 
-        this.port = Integer.parseInt(params.get("port").toString());
+        this.port = Integer.parseInt(String.valueOf(params.get("port")));
         this.workerNum = (int)Optional.ofNullable(params.get("workers")).orElse(8);
         this.maxFrameSize = (int)Optional.ofNullable(params.get("maxFrameSize")).orElse(15 * 1024 * 1024);
     }

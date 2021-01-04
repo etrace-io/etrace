@@ -124,6 +124,7 @@ public class TimeHelper {
         return calendar.getTime().getTime();
     }
 
+
     public static long getDateLong(String timeStr, Date date) throws ParseException {
         if (timeStr.contains(key)) {
             String[] timer = timeStr.split("/");

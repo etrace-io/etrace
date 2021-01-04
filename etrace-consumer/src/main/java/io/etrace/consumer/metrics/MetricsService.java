@@ -19,6 +19,7 @@ package io.etrace.consumer.metrics;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.micrometer.core.instrument.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -31,13 +32,13 @@ import static io.etrace.consumer.metrics.MetricName.*;
 @Service
 public class MetricsService {
 
-    private Cache<String, Counter> invaliCache;
+    private Cache<String, Counter> invalidCache;
     private Map<String, Timer> hBaseWriteTimer;
     private Map<String, Counter> hBaseWriteCounter;
     private Counter hbaseWriteErrorCounter;
 
     public MetricsService() {
-        invaliCache = CacheBuilder.newBuilder().maximumSize(512).expireAfterAccess(5, TimeUnit.MINUTES).build();
+        invalidCache = CacheBuilder.newBuilder().maximumSize(512).expireAfterAccess(5, TimeUnit.MINUTES).build();
         hBaseWriteCounter = new HashMap<>();
         hBaseWriteTimer = new HashMap<>();
 
@@ -45,10 +46,10 @@ public class MetricsService {
     }
 
     public void invalidCallStack(String type, String appId) {
-        Counter counter = invaliCache.getIfPresent(type.concat("#").concat(appId));
+        Counter counter = invalidCache.getIfPresent(type.concat("#").concat(appId));
         if (null == counter) {
             counter = Metrics.counter(CALLSTACK_CHECK_INVALID, Tags.of(Tag.of("type", type), Tag.of("agent", appId)));
-            invaliCache.put(appId, counter);
+            invalidCache.put(appId, counter);
         }
         counter.increment();
     }

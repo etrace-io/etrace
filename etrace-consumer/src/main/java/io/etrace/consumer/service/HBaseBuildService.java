@@ -19,8 +19,8 @@ package io.etrace.consumer.service;
 import com.google.common.base.Strings;
 import io.etrace.common.message.metric.Metric;
 import io.etrace.common.util.Pair;
-import io.etrace.consumer.storage.hbase.HBaseClientFactory;
-import io.etrace.consumer.storage.hbase.PutBuilder;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseStorageService;
 import io.etrace.consumer.storage.hbase.impl.MetricImpl;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -33,24 +33,27 @@ import java.io.IOException;
 public class HBaseBuildService {
 
     @Autowired
-    private HBaseClientFactory hBaseClientFactory;
+    private IHBaseClientFactory IHBaseClientFactory;
     @Autowired
     private MetricImpl metricImpl;
+    @Autowired
+    private IHBaseStorageService ihBaseStorageService;
 
     public Pair<Short, Put> buildMetricIndex(Metric metric) throws IOException {
         if (Strings.isNullOrEmpty(metric.getSampling())) {
             return null;
         }
 
-        short shard = hBaseClientFactory.getShardId(metric.getMetricName().hashCode());
+        short shard = IHBaseClientFactory.getShardIdByLogicalTableName(metricImpl.getLogicalTableName(),
+            metric.getTimestamp(), metric.getMetricName().hashCode());
         byte[] samplingKey = metricImpl.buildRowKey(shard, metric);
         byte[] samplingValue = metricImpl.buildQualifierValue(metric);
         if (null == samplingKey || null == samplingValue) {
             return null;
         }
 
-        Put put = PutBuilder.createPut(samplingKey, metric.getTimestamp());
-        put.addImmutable(metricImpl.getCf(), Bytes.toBytes(metric.getMetricType().code()), samplingValue);
+        Put put = ihBaseStorageService.createPut(samplingKey, metric.getTimestamp());
+        put.addImmutable(metricImpl.getColumnFamily(), Bytes.toBytes(metric.getMetricType().code()), samplingValue);
         return new Pair<>(shard, put);
     }
 

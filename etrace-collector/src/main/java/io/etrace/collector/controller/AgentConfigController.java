@@ -17,6 +17,7 @@
 package io.etrace.collector.controller;
 
 import io.etrace.collector.service.ClientConfigurationService;
+import io.etrace.common.message.agentconfig.TraceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,8 @@ public class AgentConfigController {
     private ClientConfigurationService clientConfigService;
 
     @GetMapping
-    public String getAgentConfig(@RequestParam("appId") String appId, @RequestParam("host") String host) {
+    public TraceConfig getAgentConfig(@RequestParam("appId") String appId,
+                                      @RequestParam(value = "host", required = false) String host) {
         return clientConfigService.getAgentConfig(appId, host);
     }
 }

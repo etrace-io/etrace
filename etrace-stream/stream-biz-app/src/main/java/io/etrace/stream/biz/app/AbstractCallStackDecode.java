@@ -180,9 +180,10 @@ public abstract class AbstractCallStackDecode implements CallStackDecode {
                                 break;
                             case 12:
                                 header.setInstance(parser.getText());
+                                break;
                             default:
                                 throw new IllegalArgumentException("Bad json data of open-source version: invalid "
-                                    + "index over 12");
+                                    + "index over 12. current token: " + parser.getText());
                         }
                     }
                     token = parser.nextToken();//move to next value

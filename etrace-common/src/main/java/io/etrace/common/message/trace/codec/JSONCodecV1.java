@@ -199,12 +199,12 @@ public class JSONCodecV1 {
     /**
      * 解析 Array格式的 原始数据
      */
-    public static CallStackV1 decodeToV1FromArrayFormatTo(byte[] data) throws IOException {
+    public static CallStackV1 decodeToV1FromArrayFormat(byte[] data) throws IOException {
         JsonParser parser = null;
         try {
             ByteArrayInputStream input = new ByteArrayInputStream(data);
             parser = jsonFactory.createParser(input);
-            return decodeToV1FromArrayFormatTo(parser);
+            return decodeToV1FromArrayFormat(parser);
         } finally {
             if (parser != null) {
                 parser.close();
@@ -212,7 +212,7 @@ public class JSONCodecV1 {
         }
     }
 
-    private static CallStackV1 decodeToV1FromArrayFormatTo(JsonParser parser) throws IOException {
+    private static CallStackV1 decodeToV1FromArrayFormat(JsonParser parser) throws IOException {
         JsonToken token = parser.nextToken();
         if (token == JsonToken.VALUE_NULL) {
             return null;
@@ -416,7 +416,7 @@ public class JSONCodecV1 {
                 throw new IllegalArgumentException("Bad json array data");
             }
             while (token != JsonToken.END_ARRAY && token != null) {
-                callStacks.add(decodeToV1FromArrayFormatTo(parser));
+                callStacks.add(decodeToV1FromArrayFormat(parser));
                 //move to next call stack
                 token = parser.nextToken();
             }
@@ -426,6 +426,141 @@ public class JSONCodecV1 {
             if (parser != null) {
                 parser.close();
             }
+        }
+    }
+
+    /**
+     * 用于在 collector中将agent发送过来的 Callstack Array 解析成 List<byte[]>，再发送到kafka 这一步其实可以省略，直接将agent原始数据发送即可。但是，为了兼容性，先如此处理。
+     * 待此版本完成替代老版本后，可移除此步骤（若移除，需要调整consumer/stream的处理逻辑）
+     */
+    @Deprecated
+    public static List<byte[]> decodeAgentDataToList(byte[] data) throws IOException {
+        List<byte[]> callStacks = new ArrayList<>();
+        JsonParser parser = null;
+        try {
+            ByteArrayInputStream input = new ByteArrayInputStream(data);
+            ByteArrayInputStream rawInput = new ByteArrayInputStream(data);
+            parser = jsonFactory.createJsonParser(input);
+            JsonToken token = parser.nextToken();
+            if (token == JsonToken.VALUE_NULL) {
+                return Collections.emptyList();
+            }
+            if (token != JsonToken.START_ARRAY) {
+                throw new IllegalArgumentException("Bad json array data");
+            }
+            JsonLocation location = parser.getCurrentLocation();
+            int offset = location.getColumnNr();
+            rawInput.skip(offset - 1);
+            token = parser.nextToken();//move to first object
+            while (token != JsonToken.END_ARRAY && token != null) {
+                if (token == JsonToken.START_ARRAY) {
+                    token = parser.nextToken();//move to first value
+
+                    if (parser.getText().startsWith(CALLSTACK_PREFIX_V1)) {
+                        // skip version
+                        parser.nextToken();
+                    }
+
+                    byte index = 0;
+                    while (token != JsonToken.END_ARRAY && token != null) {
+                        if (token != JsonToken.VALUE_NULL) {
+                            switch (index) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
+                                    break;
+                                case 4:
+                                    break;
+                                case 5:
+                                    if (token != JsonToken.START_ARRAY) {
+                                        throw new IllegalArgumentException("Bad json data");
+                                    }
+                                    parseMessage(parser);
+                                    break;
+                                case 6:
+                                    break;
+                                case 7:
+                                    break;
+                                case 8:
+                                    break;
+                            }
+                        }
+                        token = parser.nextToken();//move to next value
+                        index++;
+                    }
+                }
+                location = parser.getCurrentLocation();
+                byte[] d = new byte[location.getColumnNr() - offset];
+                rawInput.read(d);
+                rawInput.skip(1);
+                callStacks.add(d);
+                offset = location.getColumnNr() + 1;
+                token = parser.nextToken();//move to next call stack
+            }
+            return callStacks;
+        } finally {
+            if (parser != null) {
+                parser.close();
+            }
+        }
+    }
+
+    private static void parseMessage(JsonParser parser) throws IOException {
+        JsonToken token = parser.nextToken();//move first filed
+        byte index = 0;
+        String type = null;
+        String eventType = null;
+        while (token != null && token != JsonToken.END_ARRAY) {
+            if (token != JsonToken.VALUE_NULL) {
+                switch (index) {
+                    case 0:
+                        type = parser.getText();
+                        break;
+                    case 1:
+                        if ("event".equals(type)) {
+                            eventType = parser.getText();
+                        }
+                        break;
+                    case 2:
+                        String name = parser.getText();
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        break;
+                    case 7:
+                        if (token == JsonToken.START_OBJECT) {
+                            token = parser.nextToken();//move first tag key
+                        }
+                        while (token != null && token != JsonToken.END_OBJECT) {
+                            String key = parser.getCurrentName();
+                            token = parser.nextToken();//move to value
+                            token = parser.nextToken();//move to next key
+                        }
+                        break;
+                    case 8:
+                        break;
+                    case 9://only for transaction children
+                        token = parser.nextToken();
+                        while (token != null && token != JsonToken.END_ARRAY) {
+                            if ("transaction".equals(type)) {
+                                parseMessage(parser);
+                            }
+                            token = parser.nextToken();//move to next message
+                        }
+                        break;
+                }
+            }
+            token = parser.nextToken();//move to next value
+            index++;
         }
     }
 }

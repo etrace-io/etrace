@@ -47,7 +47,7 @@ public class RequestIdHelper {
     public static long getTimestamp(String requestId) {
         int index = requestId.lastIndexOf("|");
         try {
-            return Long.valueOf(requestId.substring(index + 1));
+            return Long.parseLong(requestId.substring(index + 1));
         } catch (Exception ignore) {
             return 0;
         }

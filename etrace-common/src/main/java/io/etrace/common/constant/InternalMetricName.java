@@ -19,6 +19,7 @@ package io.etrace.common.constant;
 public interface InternalMetricName {
     String TASK_PENDING = "task.pending";
     String TASK_MSG_ERROR = "task.process.error";
+    String TASK_TIME_TICK = "task.process.timeTick";
     String TASK_QUEUE_REMAINING = "task.buffer.remaining";
     String TASK_PROCESS_DURATION = "task.process.duration";
 

@@ -20,12 +20,13 @@ import io.etrace.common.message.trace.MessageId;
 import io.etrace.common.util.RequestIdHelper;
 import io.etrace.common.util.TimeHelper;
 import io.etrace.consumer.model.BlockIndex;
-import io.etrace.consumer.storage.hbase.HBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseTableNameFactory;
 import io.etrace.consumer.storage.hbase.impl.StackImpl;
 import io.etrace.consumer.util.RowKeyUtil;
 import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,9 @@ import java.io.IOException;
 public class HBaseStackDao {
 
     @Autowired
-    public HBaseClientFactory hBaseClientFactory;
+    public IHBaseClientFactory ihBaseClientFactory;
+    @Autowired
+    protected IHBaseTableNameFactory ihBaseTableNameFactory;
     @Autowired
     public StackImpl stackImpl;
 
@@ -53,20 +56,24 @@ public class HBaseStackDao {
 
     public BlockIndex findBlockIndex(String requestId, String rpcId, long msgTimestamp) throws IOException {
         byte[] rpcIdBytes = Bytes.toBytes(rpcId);
-        short shard = hBaseClientFactory.getShardId(msgTimestamp, RequestIdHelper.getRequestId(requestId).hashCode());
 
-        Table table = hBaseClientFactory.getTable(stackImpl.getName(), TimeHelper.getDay(msgTimestamp));
+        HTable table = ihBaseClientFactory.getTableByPhysicalName(
+            ihBaseTableNameFactory.getPhysicalTableNameByLogicalTableName(stackImpl.getLogicalTableName(),
+                TimeHelper.getDay(msgTimestamp)));
+
+        short shard = ihBaseClientFactory.getShardIdByPhysicalTableName(table.getName().getNameAsString(),
+            RequestIdHelper.getRequestId(requestId).hashCode());
         try {
             byte[] rowKey = RowKeyUtil.build(shard, requestId);
             Get get = new Get(rowKey);
-            get.addColumn(stackImpl.getCf(), rpcIdBytes);
+            get.addColumn(stackImpl.getColumnFamily(), rpcIdBytes);
             Result result = table.get(get);
             if (!result.isEmpty()) {
-                byte[] data = result.getValue(stackImpl.getCf(), rpcIdBytes);
+                byte[] data = result.getValue(stackImpl.getColumnFamily(), rpcIdBytes);
                 return stackImpl.decode(data);
             }
         } finally {
-            hBaseClientFactory.closeHTable(table);
+            ihBaseClientFactory.closeHTable(table);
         }
         return null;
 

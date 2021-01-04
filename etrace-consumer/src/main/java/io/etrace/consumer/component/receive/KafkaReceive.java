@@ -21,24 +21,25 @@ import java.util.Optional;
 public class KafkaReceive extends DefaultSyncTask implements Receiver {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceive.class);
 
-    private String resourceId;
+    private final String resourceId;
     private AbstractConsumer consumer;
     private Resource resource;
-    private KafkaConsumerProp kafkaConsumerProp;
+    private final KafkaConsumerProp kafkaConsumerProp;
 
     public KafkaReceive(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
-        this.resourceId = Optional.of(params.get("resourceId")).get().toString();
+        this.resourceId = String.valueOf(params.get("resourceId"));
 
         kafkaConsumerProp = new KafkaConsumerProp();
-        kafkaConsumerProp.setGroup((String)params.get("group"));
+        kafkaConsumerProp.setGroup(String.valueOf(params.get("group")));
 
-        kafkaConsumerProp.setTopics(params.get("topics").toString());
-        kafkaConsumerProp.setNumStreams(Integer.valueOf(params.get("num").toString()));
+        kafkaConsumerProp.setTopics(String.valueOf(params.get("topics")));
+        kafkaConsumerProp.setNumStreams(Integer.parseInt(String.valueOf(params.get("num"))));
     }
 
     @Override
     public void init(Object... param) {
+        // todo: do parameter check
         List<Resource> resources = (List<Resource>)param[1];
         resource = resources.stream().filter(r -> r.getName().equals(resourceId)).findFirst().get();
     }

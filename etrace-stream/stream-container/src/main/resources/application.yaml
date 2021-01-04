@@ -1,4 +1,3 @@
-ezone: local-dev
 cluster: application
 metric:
   report:

@@ -15,8 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @Ignore("无法正常工作")
 @SpringBootTest(classes = {ClusterService.class, CollectorProperties.class,
-    ServiceProvider.class, ServiceDiscovery.class,
-    InstanceSerializer.class, FrontShardIngImpl.class, RestTemplateConfig.class})
+    ServiceProvider.class, ServiceDiscovery.class, FrontShardIngImpl.class, RestTemplateConfig.class})
 @RunWith(SpringRunner.class)
 public class ServiceDiscoveryTest extends BaseTest {
 

@@ -80,7 +80,7 @@ public abstract class AbstractEPTest implements BeanFactoryAware {
             Lists.newArrayList(output)
         ));
 
-        epEngine = new EPEngine("test-ep", component, new HashMap<>());
+        epEngine = new EPEngine("test-ep", true, component, new HashMap<>());
         epEngine.initialize();
 
         // add test common shaka.biz.epl.app file

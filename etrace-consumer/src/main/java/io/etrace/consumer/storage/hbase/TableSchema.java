@@ -18,8 +18,8 @@ package io.etrace.consumer.storage.hbase;
 
 public interface TableSchema {
 
-    String getName();
+    String getLogicalTableName();
 
-    byte[] getCf();
+    byte[] getColumnFamily();
 
 }

@@ -10,10 +10,8 @@ server:
 consumer:
   keeper: 7
   hbase:
-    - table: stack
-      distribution:
-        - time: "1970-01-01"
-          region: 480
+    - tableName: stack
+      regionSize: 720
   hdfs:
     path: hdfs://mycluster/etrace
 
@@ -25,4 +23,8 @@ consumer:
 
 etrace:
   appId: "etrace.consumer"
-  collector: "collector:2890"
+  backendAddress: "collector:2890"
+
+logging:
+  level:
+    root: INFO

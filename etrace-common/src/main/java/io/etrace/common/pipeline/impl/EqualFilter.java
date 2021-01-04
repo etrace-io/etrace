@@ -32,7 +32,7 @@ public class EqualFilter implements Filter {
 
     @Override
     public void init(Map<String, Object> params) {
-        key = params.get("key").toString();
+        key = String.valueOf(params.get("key"));
     }
 
     /**
@@ -48,7 +48,7 @@ public class EqualFilter implements Filter {
 
     @Override
     public boolean matchByMessageHeader(MessageHeader messageHeader) {
-        return key.toLowerCase().equals(messageHeader.getKey());
+        return key.toLowerCase().equals(messageHeader.getMessageType());
     }
 
     @Override

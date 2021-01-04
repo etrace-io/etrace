@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.Optional;
@@ -43,7 +42,7 @@ public class ThriftReceive extends DefaultSyncTask implements Receiver {
 
     public ThriftReceive(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
-        this.port = Integer.parseInt(params.get("port").toString());
+        this.port = Integer.parseInt(String.valueOf(params.get("port")));
         this.workerNum = (int)Optional.ofNullable(params.get("workers")).orElse(8);
     }
 
@@ -79,9 +78,13 @@ public class ThriftReceive extends DefaultSyncTask implements Receiver {
                     }
                 });
 
-                bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
-                bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
-                bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+                // todo: 本机 "Mac OS X"若开启这三个参数，会碰到疑似IPv6导致 warning刷屏的问题，故针对性移除
+                if (!System.getProperty("os.name").contains("Mac")) {
+                    bootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
+                    bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
+                    bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+                }
+
                 bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
                 bootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT);
 
@@ -107,13 +110,13 @@ public class ThriftReceive extends DefaultSyncTask implements Receiver {
     @Override
     public void stop() {
         super.stop();
-        System.out.println("Started shutdown netty transport server " + port);
+        LOGGER.info("Started shutdown netty transport server, port: {}", port);
         if (future != null) {
             future.channel().closeFuture();
         }
         parentGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
-        System.out.println("Shutdown netty thrift server success.");
+        LOGGER.info("Shutdown netty thrift server success.");
     }
 
     boolean getOSMatches(String osNamePrefix) {

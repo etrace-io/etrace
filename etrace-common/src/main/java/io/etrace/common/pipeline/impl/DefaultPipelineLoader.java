@@ -58,18 +58,26 @@ public class DefaultPipelineLoader implements PipelineLoader {
         List<PipelineConfiguration> pipelines = Lists.newArrayList();
         File[] files = file.listFiles();
 
-        LOGGER.info("going to load PipelineConfiguration files from {}", file.getAbsolutePath());
+        LOGGER.info("going to load PipelineConfiguration files from [{}]", file.getAbsolutePath());
 
         if (null != files) {
             for (File file : files) {
-                Yaml yaml = new Yaml();
-                InputStream initialStream = new FileInputStream(file);
-                PipelineConfiguration pipelineConfiguration = yaml.loadAs(initialStream, PipelineConfiguration.class);
-                if (null == pipelineConfiguration || !pipelineConfiguration.isEnable()) {
-                    LOGGER.warn("won't load pipeline from {}", file.getName());
+                if (file.getName() .endsWith(".yaml") || file.getName() .endsWith(".yml")) {
+                    Yaml yaml = new Yaml();
+                    InputStream initialStream = new FileInputStream(file);
+                    PipelineConfiguration pipelineConfiguration = yaml.loadAs(initialStream,
+                        PipelineConfiguration.class);
+                    if (null == pipelineConfiguration) {
+                        LOGGER.warn("won't load pipeline from {} as its configuration is null.", file.getName());
+                    } else if (!pipelineConfiguration.isEnable()) {
+                        LOGGER.warn("won't load pipeline from {} as its configuration is disabled", file.getName());
+                    } else {
+                        pipelineConfiguration.setName(file.getName().substring(0, file.getName().indexOf(".")));
+                        pipelines.add(pipelineConfiguration);
+                    }
                 } else {
-                    pipelineConfiguration.setName(file.getName().substring(0, file.getName().indexOf(".")));
-                    pipelines.add(pipelineConfiguration);
+                    LOGGER.warn("File [{}] ignored. Only accept '*.yaml' or '*.yml' yaml configuration file.",
+                        file.getName());
                 }
             }
         }

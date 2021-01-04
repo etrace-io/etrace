@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,7 +48,7 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
     @Autowired
     ChannelManager channelManager;
     private FramedMetricMessageCodec metricMessageCodec = new FramedMetricMessageCodec();
-    private String source;
+    private String topic;
     private HashStrategy hashStrategy;
     private Map<String, Counter> blockToSend = new ConcurrentHashMap<>();
     private Map<String, Counter> throughput = new ConcurrentHashMap<>();
@@ -66,7 +65,7 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
         Object shardingType = Optional.ofNullable(params.get("shardingStrategy")).orElseGet(
             (Supplier<Object>)() -> HashFactory.HashType.HASHING.name());
         hashStrategy = HashFactory.newInstance(shardingType.toString());
-        source = params.get("source").toString();
+        topic = String.valueOf(params.get("source"));
 
         resourceId = String.valueOf(params.get("resourceId"));
         int blockSize = (int)Optional.ofNullable(params.get("blockSize")).orElse(64 * 1024);
@@ -116,7 +115,7 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
 
         KafkaCluster kafkaCluster = channelManager.createCluster(resourceId, resource);
 
-        KafkaManager.getInstance().register(source, kafkaCluster);
+        KafkaManager.getInstance().register(topic, kafkaCluster);
     }
 
     @Override
@@ -156,18 +155,14 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
                 flush(blockStoreManagerThreadLocal.get().getBlocksIfNeedFlush(false));
                 continue;
             }
-            //            if (SwitchManager.kafkaLoseDataSwitch) {
-            //                loseDataCounter.increment();
-            //                continue;
-            //            }
 
             if (metric.getSource() == null) {
                 throw new RuntimeException("metric source is null!");
             }
 
             try {
-                int hash = hashStrategy.hash(source, metric);
-                List<PartitionInfo> partitionInfos = KafkaEmitter.getPartitionsByTopic(source);
+                int hash = hashStrategy.hash(topic, metric);
+                List<PartitionInfo> partitionInfos = KafkaEmitter.getPartitionsByTopic(topic);
 
                 PartitionInfo partitionInfo = partitionInfos.get(Math.abs(hash) % partitionInfos.size());
                 Partition partition = new Partition(partitionInfo.partition(), partitionInfo.leader().id());
@@ -175,7 +170,7 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
                 List<Metric> metricList = metricGroups.computeIfAbsent(partition, t -> newArrayList());
                 metricList.add(metric);
             } catch (Exception e) {
-                LOGGER.error("", e);
+                LOGGER.error("fail to process metric events, Topic [{}]", topic, e);
             }
         }
         if (metricGroups.size() <= 0) {
@@ -195,7 +190,7 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
                         sendToKafka(entry.getKey(), metricCompressor.flush());
                     }
                 }
-                getMetricCounter(metricToSend, source, InternalMetricName.KAFKA_PRODUCER_METRIC_SEND).increment(
+                getMetricCounter(metricToSend, topic, InternalMetricName.KAFKA_PRODUCER_METRIC_SEND).increment(
                     entry.getValue().size());
             }
 
@@ -222,36 +217,20 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
         if (null == data) {
             return;
         }
-        Counter throughputCounter = getMetricCounter(throughput, source, InternalMetricName.KAFKA_PRODUCER_THROUGHPUT);
+        Counter throughputCounter = getMetricCounter(throughput, topic, InternalMetricName.KAFKA_PRODUCER_THROUGHPUT);
 
         try {
-            Map<String, Object> key = new HashMap<>();
-            key.put("timestamp", System.currentTimeMillis());
-            byte[] keyBytes = JSONUtil.toJsonAsBytes(key);
-            throughputCounter.increment(keyBytes.length);
-
             RecordInfo recordInfo = new RecordInfo(partition.getLeader(), null,
-                new ProducerRecord(source, partition.getPartition(),
+                new ProducerRecord(topic, partition.getPartition(),
                     JSONUtil.toBytes(new HeaderKey(System.currentTimeMillis())), data));
-            //            LOGGER.info("topic["+source+"]:"+new String(data));
 
             if (!KafkaEmitter.send(recordInfo)) {
-                try {
-                    String msg = "send to kafka <" + JSONUtil.toJson(partition) + "> failed";
-                    LOGGER.error(msg);
-                    //                setMsg(msg);
-                } catch (IOException ex) {
-                    LOGGER.error("", ex);
-                    //                setThrowable(ex);
-                }
-                return;
+                LOGGER.error("send to kafka [{}] failed", JSONUtil.toJson(partition));
             }
+            throughputCounter.increment(data.length);
+            getMetricCounter(blockToSend, topic, InternalMetricName.KAFKA_BLOCK_STORE_SEND).increment();
         } catch (Exception e) {
-            LOGGER.error("", e);
+            LOGGER.error("failed to send kafka. Topic: [{}]", topic, e);
         }
-
-        throughputCounter.increment(data.length);
-        getMetricCounter(blockToSend, source, InternalMetricName.KAFKA_BLOCK_STORE_SEND).increment();
     }
-
 }

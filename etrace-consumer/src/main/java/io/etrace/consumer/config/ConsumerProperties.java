@@ -17,7 +17,9 @@
 package io.etrace.consumer.config;
 
 import io.etrace.common.pipeline.Resource;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -28,25 +30,23 @@ import java.util.List;
 @Data
 public class ConsumerProperties {
     private int keeper;
-    private List<Table> hbase;
+    private List<TableAndRegion> hbase;
     private HDFS hdfs;
     private List<Resource> resources;
 
+    /**
+     * 用于配置 hbase特定的 tableName会配置成特殊的 region 数量
+     */
     @Data
-    public static class Table {
-        private String table;
-        private List<Shard> distribution;
-    }
-
-    @Data
-    public static class Shard {
-        private String time;
-        private short region;
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TableAndRegion {
+        private String tableName;
+        private Integer regionSize;
     }
 
     @Data
     public static class HDFS {
         private String path;
     }
-
 }

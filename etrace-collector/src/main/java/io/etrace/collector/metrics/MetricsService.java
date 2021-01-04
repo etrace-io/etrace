@@ -44,7 +44,7 @@ public class MetricsService {
 
     public void httpRequestCounter(String appId, String url) {
         dynamicRegistry.counter(COLLECTOR_ADDRESS_LIST,
-            Tags.of("appId", !Strings.isNullOrEmpty(appId) ? "unknown" : appId, "url", url)).increment();
+            Tags.of("appId", Strings.isNullOrEmpty(appId) ? "unknown" : appId, "url", url)).increment();
     }
 
     public void forbiddenThoughPut(String appId, int size) {

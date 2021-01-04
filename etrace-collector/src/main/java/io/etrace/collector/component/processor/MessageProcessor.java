@@ -76,13 +76,13 @@ public class MessageProcessor extends DefaultSyncTask implements Processor {
             throughput.increment(size);
             balanceThroughputService.add(size);
 
-            messageType = messageHeader.getMessageType();
             appId = messageHeader.getAppId();
             if (!Strings.isNullOrEmpty(appId)) {
                 if (collectorConfigurationService.isForbiddenAppId(appId)) {
                     metricsService.forbiddenThoughPut(appId, size);
                     return;
                 }
+                messageType = messageHeader.getMessageType();
                 messageType = Strings.isNullOrEmpty(messageType) ? "trace" : messageType;
                 messageHeader.setMessageType(messageType);
 
@@ -92,7 +92,7 @@ public class MessageProcessor extends DefaultSyncTask implements Processor {
                 }
             }
             messageHeader.setCrt(current);
-            component.routeToFirstComponent(messageHeader, body);
+            component.dispatchWithFilter(messageHeader, body, messageHeader);
         } catch (Throwable e) {
             LOGGER.error("process agent:[{}] message type:[{}] error", appId, messageType, e);
         }

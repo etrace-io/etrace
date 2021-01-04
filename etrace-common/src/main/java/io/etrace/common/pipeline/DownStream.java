@@ -18,11 +18,13 @@ package io.etrace.common.pipeline;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@ToString
 public class DownStream {
     private Filter filter;
     private List<Component> component;

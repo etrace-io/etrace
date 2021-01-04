@@ -23,10 +23,8 @@ import io.etrace.common.util.RequestIdHelper;
 import io.etrace.consumer.controller.CallStackController;
 import io.etrace.consumer.model.BlockIndex;
 import io.etrace.consumer.service.HBaseStackDao;
-import io.etrace.consumer.storage.hbase.HBaseClient;
-import io.etrace.consumer.storage.hbase.HBaseClientFactory;
-import io.etrace.consumer.storage.hbase.PutBuilder;
-import io.etrace.consumer.storage.hbase.StackTable;
+import io.etrace.consumer.storage.hbase.*;
+import io.etrace.consumer.storage.hbase.impl.DefaultHBaseClient;
 import io.etrace.consumer.storage.hbase.impl.StackImpl;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -45,13 +43,15 @@ import static org.junit.Assert.assertEquals;
 public class HBaseTestIT {
 
     @Autowired
-    private HBaseClient hBaseClient;
+    private DefaultHBaseClient hBaseClient;
     @Autowired
     private StackTable stackSchema;
     @Autowired
     private HBaseStackDao hBaseStackDao;
     @Autowired
-    private HBaseClientFactory hBaseClientFactory;
+    private IHBaseClientFactory IHBaseClientFactory;
+    @Autowired
+    private IHBaseStorageService ihBaseStorageService;
 
     @Autowired
     private CallStackController callStackController;
@@ -65,15 +65,15 @@ public class HBaseTestIT {
         int ts = 6001;
 
         // write
-        short shard = hBaseClientFactory.getShardId(ts, RequestIdHelper.getRequestId(requestId).hashCode());
-        Put put = PutBuilder.createPut(PutBuilder.createRowKey(shard, requestId), ts);
+        short shard = IHBaseClientFactory.getShardIdByPhysicalTableName("default", RequestIdHelper.getRequestId(requestId).hashCode());
+        Put put = ihBaseStorageService.createPut("some, row key".getBytes(),  ts);
         CallStackV1 callstack = new CallStackV1();
         callstack.setId(rpcId);
 
         byte[] qualifierValue = stackSchema.buildQualifierValue(callstack, 22, 11, 3,
             IPUtil.ipToLong("127.0.0.1"), (short)4);
-        put.addColumn(stackSchema.getCf(), Bytes.toBytes(callstack.getId()), qualifierValue);
-        hBaseClient.executeBatch(stack.getName(), 1, Lists.newArrayList(put));
+        put.addColumn(stackSchema.getColumnFamily(), Bytes.toBytes(callstack.getId()), qualifierValue);
+        hBaseClient.executeBatch(stack.getLogicalTableName(),  stack.getLogicalTableName(), Lists.newArrayList(put));
         // query
         BlockIndex result = hBaseStackDao.findBlockIndex(requestId, rpcId, ts);
 

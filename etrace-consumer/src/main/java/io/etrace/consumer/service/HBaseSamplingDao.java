@@ -21,14 +21,15 @@ import io.etrace.common.message.metric.field.MetricType;
 import io.etrace.common.util.JSONUtil;
 import io.etrace.common.util.TimeHelper;
 import io.etrace.consumer.model.SamplingResponse;
-import io.etrace.consumer.storage.hbase.HBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseTableNameFactory;
 import io.etrace.consumer.storage.hbase.impl.MetricImpl;
 import io.etrace.consumer.util.RegexpBuilder;
 import io.etrace.consumer.util.RowKeyUtil;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
@@ -47,9 +48,11 @@ public class HBaseSamplingDao {
     private final Logger LOGGER = LoggerFactory.getLogger(HBaseStackDao.class);
 
     @Autowired
-    private HBaseClientFactory hBaseClientFactory;
+    private IHBaseClientFactory IHBaseClientFactory;
     @Autowired
     private MetricImpl metricImpl;
+    @Autowired
+    private IHBaseTableNameFactory IHBaseTableNameFactory;
 
     public List<SamplingResponse> sampling(String metricType, String name, long timestamp, int interval,
                                            Map<String, Object> tags) throws IOException {
@@ -62,13 +65,14 @@ public class HBaseSamplingDao {
         }
 
         int day = TimeHelper.getDay(timestamp);
-        Table table = hBaseClientFactory.getTable(metricImpl.getName(), day);
+        HTable table = IHBaseClientFactory.getTableByPhysicalName(
+            IHBaseTableNameFactory.getPhysicalTableNameByLogicalTableName(metricImpl.getLogicalTableName(), day));
 
         ResultScanner resultScanner = null;
         try {
             MetricType type = MetricType.fromIdentifier(metricType);
 
-            short shard = hBaseClientFactory.getShardId(name.hashCode());
+            short shard = IHBaseClientFactory.getShardIdByPhysicalTableName(table.getName().getNameAsString(), name.hashCode());
             byte[] prefixKey = RowKeyUtil.build(shard, type.code(), name);
             byte[] startKey = RowKeyUtil.build(shard, type.code(), name, timestamp);
             byte[] endKey;
@@ -97,7 +101,7 @@ public class HBaseSamplingDao {
             filterList.addFilter(filter);
 
             Scan scan = new Scan();
-            scan.setCaching(100);
+            //scan.setCaching(100);
             scan.setStartRow(startKey);
             scan.setStopRow(endKey);
             scan.setFilter(filterList);
@@ -105,7 +109,7 @@ public class HBaseSamplingDao {
             resultScanner = table.getScanner(scan);
             try {
                 for (Result r : resultScanner) {
-                    NavigableMap<byte[], byte[]> familyMap = r.getFamilyMap(metricImpl.getCf());
+                    NavigableMap<byte[], byte[]> familyMap = r.getFamilyMap(metricImpl.getColumnFamily());
                     for (Map.Entry<byte[], byte[]> qualifier : familyMap.entrySet()) {
                         SamplingResponse bean = new SamplingResponse();
                         bean.setSamplings(JSONUtil.toObject(qualifier.getValue(), Map.class));
@@ -134,7 +138,8 @@ public class HBaseSamplingDao {
         } catch (Exception e) {
             LOGGER.error("", e);
         } finally {
-            hBaseClientFactory.closeResource(table, resultScanner);
+            IHBaseClientFactory.closeHTable(table);
+            IHBaseClientFactory.closeScanner(resultScanner);
         }
         return samplingList;
     }

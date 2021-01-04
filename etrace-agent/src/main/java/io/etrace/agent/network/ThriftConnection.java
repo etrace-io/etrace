@@ -99,4 +99,8 @@ public class ThriftConnection extends AbstractConnection {
         return collector;
     }
 
+    @Override
+    public Collector getCollector() {
+        return currentCollector;
+    }
 }

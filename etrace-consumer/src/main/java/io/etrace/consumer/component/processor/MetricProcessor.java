@@ -10,6 +10,7 @@ import io.etrace.common.util.Pair;
 import io.etrace.consumer.service.HBaseBuildService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
+import kafka.message.MessageAndMetadata;
 import org.apache.hadoop.hbase.client.Put;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +47,10 @@ public class MetricProcessor extends DefaultAsyncTask implements Processor {
 
     @Override
     public void processEvent(Object key, Object obj) throws Exception {
-        if (!(obj instanceof byte[])) {
+        if (!(obj instanceof MessageAndMetadata)) {
             return;
         }
-        byte[] data = (byte[])obj;
+        byte[] data = ((MessageAndMetadata<byte[], byte[]>)obj).message();
         for (byte[] messageData : BlockStoreReader.newSnappyIterator(data)) {
             try {
                 List<Metric> metrics = codec.decode(messageData).getMetrics();

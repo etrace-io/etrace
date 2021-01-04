@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package io.etrace.consumer.storage.hbase.impl;
+package io.etrace.consumer.storage.hbase;
 
-import io.etrace.consumer.storage.hbase.TimeSharding;
-import org.springframework.stereotype.Component;
+import org.apache.hadoop.hbase.util.Bytes;
 
-import java.util.Calendar;
+public class PartitionRowKeyHelper {
 
-@Component
-public class WeekSharding implements TimeSharding {
-
-    @Override
-    public int sharding(long timestamp) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
-        return calendar.get(Calendar.WEEK_OF_YEAR);
+    public static byte[][] calcSplitKeys(int partition) {
+        byte[][] splitKeys = new byte[partition - 1][];
+        for (short i = 1; i < partition; i++) {
+            splitKeys[i - 1] = Bytes.toBytes(i);
+        }
+        return splitKeys;
     }
 }

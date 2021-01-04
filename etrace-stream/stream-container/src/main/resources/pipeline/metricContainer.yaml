@@ -20,7 +20,7 @@ processors:
     clazz: io.etrace.stream.aggregator.EPTask
     props:
       shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
-      source: opensouce_metric
+      source: open_source_metric
       taskSize: 1
       bufferSize: 2048
       epls: biz.epl.metric

@@ -16,6 +16,8 @@
 
 package io.etrace.agent.network;
 
+import io.etrace.common.message.agentconfig.Collector;
+
 public interface Connection {
 
     void openConnection();
@@ -26,4 +28,5 @@ public interface Connection {
 
     Object getSocketClient();
 
+    Collector getCollector();
 }

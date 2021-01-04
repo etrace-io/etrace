@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
 @EqualsAndHashCode
@@ -43,9 +44,10 @@ public class Component {
     @EqualsAndHashCode.Include
     private String name;
     private List<DownStream> downstreams = new ArrayList<>();
-    private boolean timeTick;
     @Autowired
     private TaskPool taskPool;
+
+    private AtomicBoolean alreadStarted = new AtomicBoolean(false);
 
     public Component(String pipeline, String name) {
         this.pipeline = pipeline;
@@ -62,15 +64,19 @@ public class Component {
         }
 
         this.taskPool.init2(param);
-        if (null != taskProp.getProps()) {
-            timeTick = (boolean)Optional.ofNullable(taskProp.getProps().get("timeTick")).orElse(false);
-        }
+
 
     }
 
     public void startup() {
-        taskPool.startup();
-        LOGGER.info("Startup pipeline [{}] system component [{}] successfully!", pipeline, name);
+        if (!alreadStarted.get()) {
+            taskPool.startup();
+            alreadStarted.set(true);
+            LOGGER.info("Startup pipeline [{}] system component [{}] successfully!", pipeline, name);
+        } else {
+            LOGGER.warn("Trying to start Component [{}], but it has already started. "
+                + "(equivalent component name will definitely share the component.)", this.getName());
+        }
     }
 
     public void emit(Object key, Object event) {
@@ -94,6 +100,7 @@ public class Component {
 
     // todo:  待梳理
 
+    private int warnCounter = 1;
     /**
      * 无视条件， dispatch 到所有下游  COMPONENT
      */
@@ -105,7 +112,10 @@ public class Component {
                 }
             }
         } else {
-            LOGGER.warn("Pipeline [{}], downstreams are empty. You should check the its configuration", pipeline);
+            if (warnCounter++ % 10000 == 1) {
+                LOGGER.warn("Component [{}] of Pipeline [{}], its downstreams are empty. You should check the its "
+                    + "configuration", this.getName(), pipeline);
+            }
         }
     }
 
@@ -119,7 +129,9 @@ public class Component {
                 }
             }
         } else {
-            LOGGER.warn("Pipeline [{}], downstreams are empty. You should check the its configuration", pipeline);
+            if (warnCounter++ % 10000 == 1) {
+                LOGGER.warn("Pipeline [{}], downstreams are empty. You should check the its configuration", pipeline);
+            }
         }
     }
 

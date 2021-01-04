@@ -42,9 +42,14 @@ import java.util.Set;
 public class PipelineRepository implements BeanFactoryAware {
     public static final String PIPELINE_PATH = "pipeline";
     private final Logger LOGGER = LoggerFactory.getLogger(PipelineRepository.class);
+
+    @Deprecated
     private final Map<String, Component> components = Maps.newHashMap();
+    @Deprecated
     private final Map<String, Filter> filterMap = Maps.newHashMap();
+    @Deprecated
     private final Set<Component> roots = Sets.newHashSet();
+
     @Getter
     private List<PipelineConfiguration> pipelines;
     @Getter
@@ -111,8 +116,9 @@ public class PipelineRepository implements BeanFactoryAware {
             pipelineConfiguration.getPipelines());
         currentComponents.forEach(root -> {
             roots.add(buildPipeline(root, filterMap, routes));
-            printPipelineInfo(pipelineConfiguration.getName(), root);
         });
+
+        printPipeline(pipelineConfiguration, currentComponents);
     }
 
     private synchronized Component initComponent(String pipeline, TaskProp taskProp, List<Resource> resources) {
@@ -120,7 +126,11 @@ public class PipelineRepository implements BeanFactoryAware {
         if (null == component) {
             component = beanFactory.getBean(Component.class, pipeline, taskProp.getName());
             component.init(taskProp, resources);
-            components.put(taskProp.getName(), component);
+            if (components.containsKey(taskProp.getName())) {
+                LOGGER.error("==initComponent== {}", taskProp.getName());
+            } else {
+                components.put(taskProp.getName(), component);
+            }
         }
         return component;
     }
@@ -162,18 +172,35 @@ public class PipelineRepository implements BeanFactoryAware {
         Map<String, List<DownStreamProp>> routes = Maps.newHashMap();
         routeProps.forEach(routeProp -> {
             routes.put(routeProp.getName(), routeProp.getDownstreams());
-            routeProp.getDownstreams()
-                .forEach(downStreamProp -> downStreamProp.getComponents().forEach(currentComponents::remove));
+            routeProp.getDownstreams().forEach(downStreamProp ->
+                downStreamProp.getComponents().forEach(currentComponents::remove));
         });
         return routes;
     }
 
-    private void printPipelineInfo(String name, String root) {
-        LOGGER.info("************* Pipeline[" + name + "] ***************");
+    private void printPipeline(PipelineConfiguration pipelineConfiguration, Set<String> currentComponents) {
+        StringBuilder sb = new StringBuilder();
+        for (String currentComponent : currentComponents) {
+            sb.append(printPipelineInfo(currentComponent));
+        }
+
+        LOGGER.info("list the topology of this pipeline:\n"
+                + "************* Pipeline [{}] ***************\n\n"
+                + "{}\n"
+                + "************* Pipeline [{}] ***************",
+            pipelineConfiguration.getName(), sb.toString(), pipelineConfiguration.getName());
+
+        LOGGER.info("************* Pipeline[" + pipelineConfiguration.getName() + "] ***************");
+    }
+
+    private StringBuilder printPipelineInfo(String root) {
         StringBuilder sb = new StringBuilder(128);
-        sb.append(root);
-        printComponent(sb, components.get(root));
-        LOGGER.info("\n{}", sb.toString());
+        Component r = components.get(root);
+        sb.append("(ROOT) ").append(root).append(" (").append(Integer.toHexString(r.hashCode())).append(")\t");
+        printComponent(sb, r);
+
+        sb.append("\n");
+        return sb;
     }
 
     private void printComponent(StringBuilder sb, Component component) {
@@ -192,7 +219,8 @@ public class PipelineRepository implements BeanFactoryAware {
                         .append("(")
                         .append(filter)
                         .append(")")
-                        .append(output.getName());
+                        .append(output.getName())
+                        .append(" (").append(Integer.toHexString(output.hashCode())).append(")\t");
                     printComponent(sb, output);
                     printNewLine(sb, i, downStreamComponent.size(), len2);
                 }
@@ -215,6 +243,10 @@ public class PipelineRepository implements BeanFactoryAware {
     @PreDestroy
     public void stop() {
         roots.forEach(this::shutdownComponent);
+    }
+
+    public Component findComponent(String name) {
+        return components.get(name);
     }
 
     private void shutdownComponent(Component component) {
