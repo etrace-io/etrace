@@ -57,7 +57,8 @@ public class MetricExporterTask extends DefaultSyncTask implements Exporter {
         if (event instanceof Collection) {
             Collection<Metric> collection = (Collection<Metric>)event;
             Map<String, List<Metric>> metricGroups = collection.stream().filter(
-                m -> !Strings.isNullOrEmpty(m.getSource())).collect(Collectors.groupingBy(Metric::getSource));
+                m -> !Strings.isNullOrEmpty(m.getSource()) && !m.getMetricName().equals("stream.esper.check.flush.event")
+            ).collect(Collectors.groupingBy(Metric::getSource));
             for (Map.Entry<String, List<Metric>> entry : metricGroups.entrySet()) {
                 String database = forcedDatabase != null ? forcedDatabase : entry.getKey();
                 channelManager.writeData(resourceId, database, entry.getValue());
