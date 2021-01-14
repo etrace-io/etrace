@@ -77,38 +77,25 @@ public class EPTask extends DefaultAsyncTask implements Processor {
                             String jarPath = uri.getSchemeSpecificPart();
                             String jarPathPath = jarPath.substring(jarPath.indexOf("!/") + 2);
                             Path path = fileSystem.getPath(jarPathPath);
-                            if (Files.isDirectory(path)) {
-                                eplModels.addAll(Files.list(path)
-                                    .map(p -> epl + File.separator + p.getFileName().toString())
-                                    .collect(Collectors.toList()));
-                            } else {
-                                LOGGER.info("[{}] going to load epl [{}] from jar [{}]", this.getName(), epl, jarPath);
-                                // relative path
-                                eplModels.add(epl);
-                            }
+                            eplModels.addAll(loadFile(epl, path));
+                            //if (Files.isDirectory(path)) {
+                            //    eplModels.addAll(Files.list(path)
+                            //        .map(p -> epl + File.separator + p.getFileName().toString())
+                            //        .collect(Collectors.toList()));
+                            //} else {
+                            //    LOGGER.info("[{}] going to load epl [{}] from jar [{}]", this.getName(), epl, jarPath);
+                            //    // relative path
+                            //    eplModels.add(epl);
+                            //}
                         }
                     } else {
                         Path path = Paths.get(resource.toURI());
                         eplModels.addAll(loadFile(epl, path));
-                        //if (Files.isDirectory(path)) {
-                        //    eplModels.addAll(Files.list(path)
-                        //        .map(p -> {
-                        //            String file = epl + File.separator + p.getFileName().toString();
-                        //            LOGGER.info("[{}] going to load epl [{}] from file [{}] in directory [{}]",
-                        //                this.getName(), epl, file, path);
-                        //            return file;
-                        //        })
-                        //        .collect(Collectors.toList()));
-                        //} else {
-                        //    LOGGER.info("[{}] going to load epl [{}] from file [{}]", this.getName(), epl, path);
-                        //    eplModels.add(epl);
-                        //}
                     }
                 }
             }
 
             LOGGER.info("[{}] loaded epl modules are: \n{}", this.getName(), eplModels);
-
             epEngine.deployModules(eplModels);
         } catch (Exception ex) {
             throw new RuntimeException("deploy modules failed:" + name, ex);
