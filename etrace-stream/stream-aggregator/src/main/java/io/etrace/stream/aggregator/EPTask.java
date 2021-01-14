@@ -124,8 +124,12 @@ public class EPTask extends DefaultAsyncTask implements Processor {
                 if (Files.isDirectory(path1)) {
                     files.addAll(loadFile(epl + File.separator + path1.getFileName(), path1));
                 } else {
-
-                    String file = epl + File.separator + path1.getFileName().toString();
+                    String file;
+                    if (epl.endsWith(File.separator)) {
+                        file = epl + path1.getFileName().toString();
+                    } else {
+                        file = epl + File.separator + path1.getFileName().toString();
+                    }
                     LOGGER.info("[{}] going to load epl [{}] from file [{}] in directory [{}]",
                         this.getName(), epl, file, path);
                     files.add(file);
