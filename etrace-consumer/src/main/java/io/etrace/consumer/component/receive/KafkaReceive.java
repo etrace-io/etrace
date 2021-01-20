@@ -34,7 +34,7 @@ public class KafkaReceive extends DefaultSyncTask implements Receiver {
         kafkaConsumerProp.setGroup(String.valueOf(params.get("group")));
 
         kafkaConsumerProp.setTopics(String.valueOf(params.get("topics")));
-        kafkaConsumerProp.setNumStreams(Integer.parseInt(String.valueOf(params.get("num"))));
+        kafkaConsumerProp.setNumStreams(Integer.parseInt(String.valueOf(params.get("streamSize"))));
     }
 
     @Override

@@ -5,7 +5,7 @@ receivers:
     props:
       resourceId: kafka_trace
       topics: &CALLSTACK_TOPIC callstack
-      num: 2
+      streamSize: 2
       group: consumer_tracing
   - name: metric_receive
     type: KAFKA
@@ -13,28 +13,28 @@ receivers:
     props:
       resourceId: kafka_trace
       topics: &METRIC_TOPIC trace_metric_aggregation_output
-      num: 2
+      streamSize: 2
       group: consumer_metrics
 
 processors:
   - name: decode_processor
     clazz: io.etrace.consumer.component.processor.TraceDecodeProcessor
     props:
-      workerNum: 4
+      taskSize: 4
       bufferSize: 64
-      shardingStrategy: io.etrace.common.sharding.RoundRobinStrategy
+      shardingStrategy: io.etrace.common.sharding.impl.RoundRobinStrategy
   - name: hdfs_processor
     clazz: io.etrace.consumer.component.processor.HDFSProcessor
     props:
-      workerNum: 2
+      taskSize: 2
       bufferSize: 32
-      shardingStrategy: io.etrace.common.sharding.RoundRobinStrategy
+      shardingStrategy: io.etrace.common.sharding.impl.RoundRobinStrategy
   - name: metric_processor
     clazz: io.etrace.consumer.component.processor.MetricProcessor
     props:
-      workerNum: 2
+      taskSize: 2
       bufferSize: 32
-      shardingStrategy: io.etrace.common.sharding.RoundRobinStrategy
+      shardingStrategy: io.etrace.common.sharding.impl.RoundRobinStrategy
 
 exporters:
   - name: stack_exporter
@@ -42,10 +42,10 @@ exporters:
     clazz: io.etrace.consumer.component.exporter.HBaseExporter
     props:
       tableName: stack
-      workerNum: 4
+      taskSize: 4
       bufferSize: 256
       timeTick: 5000
-      shardingStrategy: io.etrace.common.sharding.HashingStrategy
+      shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
       #      flushSize should be 256
       flushSize: 1
   - name: metric_exporter
@@ -53,10 +53,10 @@ exporters:
     clazz: io.etrace.consumer.component.exporter.HBaseExporter
     props:
       tableName: metric
-      workerNum: 2
+      taskSize: 2
       bufferSize: 256
       timeTick: 5000
-      shardingStrategy: io.etrace.common.sharding.HashingStrategy
+      shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
       #      flushSize should be 128
       flushSize: 1
 

@@ -113,7 +113,7 @@ public class HBaseExporter extends DefaultAsyncTask implements Exporter {
         });
         //flush
         if (putListToFlush.size() >= flushThreshold) {
-            flushAndClean(day, new ArrayList<>(putListToFlush));
+            flushAndClean(day, putListToFlush);
         }
     }
 

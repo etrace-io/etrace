@@ -184,7 +184,7 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
     }
 
     @Override
-    public void handleEvent(Object key, Object event) {
+    public void handleEvent0(Object key, Object event) {
         final long sequence = buffer.next();
 
         final MutableEvent mutableEvent = buffer.get(sequence);
