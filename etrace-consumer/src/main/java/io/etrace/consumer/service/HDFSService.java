@@ -47,8 +47,8 @@ import java.util.zip.GZIPInputStream;
 public class HDFSService {
     private final static Logger LOGGER = LoggerFactory.getLogger(HDFSService.class);
 
-    private String stackPath;
-    private Cache<String, DataReader> dataReaderCache;
+    protected String stackPath;
+    protected Cache<String, DataReader> dataReaderCache;
     @Autowired
     private ConsumerProperties consumerProperties;
 

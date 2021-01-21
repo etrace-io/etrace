@@ -26,11 +26,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableWebMvc
 public class WebConfig {
+    // todo: "$" 这个配置没有生效
     @Bean
     public ConfigurableServletWebServerFactory webServerFactory() {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
         factory.addConnectorCustomizers(
-            (TomcatConnectorCustomizer)connector -> connector.setProperty("relaxedQueryChars", "|^"));
+            (TomcatConnectorCustomizer)connector -> connector.setAttribute("relaxedQueryChars", "$|^"));
         return factory;
     }
 }
