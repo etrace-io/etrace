@@ -49,6 +49,7 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
     private Timer pendingTimer;
     private Timer processTimer;
     private Counter processErrorCounter;
+    private ScheduledExecutorService scheduledExecutorService;
 
     public DefaultAsyncTask(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
@@ -121,7 +122,7 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
 
         // set up scheduled flush() thread
         if (timeTick > 0) {
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1,
+            scheduledExecutorService = Executors.newScheduledThreadPool(1,
                 new ThreadFactoryBuilder()
                     .setNameFormat(String.format("Component-%s-Timetick-%d-Thread", name, timeTick) + "-%d")
                     .setDaemon(true).build()
@@ -155,7 +156,7 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
         }
     }
 
-    public void processEvent(Object key, Object event) throws Exception {
+    protected void processEvent(Object key, Object event) throws Exception {
         component.dispatchAll(key, event);
     }
 
@@ -196,6 +197,9 @@ public abstract class DefaultAsyncTask extends Task implements EventHandler<Muta
     public void stop() {
         try {
             if (disruptor != null) {
+                if (scheduledExecutorService != null) {
+                    scheduledExecutorService.shutdown();
+                }
                 disruptor.shutdown(10, TimeUnit.SECONDS);
             }
         } catch (Throwable e) {

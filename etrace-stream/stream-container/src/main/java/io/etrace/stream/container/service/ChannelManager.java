@@ -51,7 +51,6 @@ public class ChannelManager implements BeanFactoryAware {
 
     @PreDestroy
     public void stop() throws Exception {
-        repository.stop();
         LOGGER.info("Shutdown Stream Manager");
     }
 
