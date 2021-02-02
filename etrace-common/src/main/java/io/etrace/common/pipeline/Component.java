@@ -130,7 +130,8 @@ public class Component {
             }
         } else {
             if (warnCounter++ % 10000 == 1) {
-                LOGGER.warn("Pipeline [{}], downstreams are empty. You should check the its configuration", pipeline);
+                LOGGER.warn("Component [{}] of Pipeline [{}], its downstreams are empty. You should check the its "
+                    + "configuration", this.getName(), pipeline);
             }
         }
     }

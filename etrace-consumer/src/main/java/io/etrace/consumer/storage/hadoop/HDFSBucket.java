@@ -64,7 +64,7 @@ public class HDFSBucket implements Bucket {
                     dataStream = fileSystem.append(path);//start write data from the end of file
                     break;
                 } catch (Throwable e) {
-                    LOGGER.warn("append hdfs file error, file name {}.", path, e);
+                    LOGGER.warn("append hdfs file error, file name [{}].", path, e);
                     now = System.currentTimeMillis();
                 }
             }

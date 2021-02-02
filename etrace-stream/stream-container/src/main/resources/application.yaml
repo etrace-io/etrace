@@ -22,5 +22,5 @@ resources:
   - name: application_datasource
     type: PROMETHEUS
     props:
-      servers: "pushgateway:9001"
+      servers: "pushgateway:9091"
 

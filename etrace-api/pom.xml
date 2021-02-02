@@ -70,7 +70,6 @@
         <dependency>
             <groupId>io.etrace</groupId>
             <artifactId>datasource-prometheus</artifactId>
-            <version>0.0.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

@@ -18,7 +18,9 @@ package io.etrace.common.constant;
 
 public interface Constants {
     String ROOT_RPC_ID = "1";
-    String AGENT_EVENT_TYPE = "Trace";
+    String AGENT_EVENT_TYPE_TRACE = "Trace";
+    String AGENT_EVENT_TYPE_METRIC = "Metric";
+
     String UNKNOWN_APP_ID = "unknown";
 
     String UNSET = "unset";

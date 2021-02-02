@@ -73,7 +73,7 @@ public class DefaultHBaseClientFactory implements IHBaseClientFactory {
     /**
      * 实际的 hbase table（非逻辑的）与其 region数量的映射表
      */
-    private Map<String, Integer> tableNameAndRegionSizeMap;
+    private Map<String, Integer> tableNameAndRegionSizeMap = Maps.newConcurrentMap();
 
     private Configuration configuration;
     private Connection connection;

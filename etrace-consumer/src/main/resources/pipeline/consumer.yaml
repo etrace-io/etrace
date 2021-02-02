@@ -46,8 +46,9 @@ exporters:
       bufferSize: 256
       timeTick: 5000
       shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
-      #      flushSize should be 256
+      #      flushSize should be 128
       flushSize: 1
+      logicalTable: stack
   - name: metric_exporter
     type: HBASE
     clazz: io.etrace.consumer.component.exporter.HBaseExporter
@@ -59,6 +60,7 @@ exporters:
       shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
       #      flushSize should be 128
       flushSize: 1
+      logicalTable: metric
 
 pipelines:
   - name: trace_receive

@@ -148,7 +148,7 @@ public class EPTask extends DefaultAsyncTask implements Processor {
 
         if (epEngine != null) {
             epEngine.stop(); //ep engine destroy after some time
-            LOGGER.info(" ep task <{}> shutdown successfully!", this.getName());
+            LOGGER.info("Esper task <{}> shutdown successfully!", this.getName());
         }
     }
 }

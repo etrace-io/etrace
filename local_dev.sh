@@ -1,6 +1,8 @@
 #!/bin/sh
 #set -xv
 
+Requirement="HBase/Hdfs/ZK/Kafka/Mysql/Prometheus/PushGateway"
+
 echo "### Welcome! Your can use this script to build your local development environment.
 Your should have cloned this git repository. Then your need:
 
@@ -14,10 +16,10 @@ Run 'mvn clean install' first to compile all codes.
 while true; do
 echo "#### choose the profile you want to build: [Input the number]
 
-[1]. All in One: whole etrace project (include front-end and back-end services) and related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
+[1]. All in One: whole etrace project (include front-end and back-end services) and related requirements ($Requirement)
 [2]. Only front-end project
-[3]. all back-end projects (collector, consumer, computer, api) and related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
-[4]. All related requirements (HBase/Hdfs/ZK/Kafka/Mysql)
+[3]. all back-end projects (collector, consumer, stream, api) and related requirements ($Requirement)
+[4]. All related requirements ($Requirement)
 [5]. Only Mysql
 
 [7]. Prometheus and Grafana.
@@ -32,14 +34,14 @@ Input number: "
   case $num in
   [1]*) echo 1 ;;
   [2]*)
-    echo "run yarn start"
+    echo "todo: run yarn start"
      ;;
   [3]*)
     docker-compose  -f docker-compose-etrace.yml build
-    docker-compose  -f docker-compose-etrace.yml -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml up
+    docker-compose  -f docker-compose-etrace.yml -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml -f docker-compose-prometheus-grafana.yml up
     ;;
   [4]*)
-    docker-compose -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml up
+    docker-compose -f docker-compose-mysql.yml -f docker-compose-kafka-hadoop.yml -f docker-compose-prometheus-grafana.yml up
     ;;
   [5]*)
     docker-compose -f docker-compose-mysql.yml up

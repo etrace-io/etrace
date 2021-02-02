@@ -14,7 +14,7 @@ processors:
     clazz: io.etrace.stream.biz.app.CallStackTask
     props:
       bufferSize: 16
-      taskSize: 8
+      taskSize: 1
       appType: Application
       shardingStrategy: io.etrace.common.sharding.impl.RoundRobinStrategy
       decode: io.etrace.stream.biz.app.ApplicationCallStackDecode
@@ -22,7 +22,7 @@ processors:
     clazz: io.etrace.stream.aggregator.EPTask
     props:
       bufferSize: 2048
-      taskSize: 8
+      taskSize: 1
       shardingStrategy: io.etrace.common.sharding.impl.HashingStrategy
       source: open_source_trace
       epls: biz.epl.app
@@ -34,6 +34,11 @@ exporters:
     props:
       resourceId: kafka_to_produce
       source: trace_metric_aggregation_output
+  - name: &METRICS_EXPORTER metrics_exporter
+    type: PROMETHEUS
+    clazz: io.etrace.stream.container.exporter.metric.MetricExporterTask
+    props:
+      resourceId: application_datasource
 
 filters:
   - name: app_filter
@@ -57,3 +62,6 @@ pipelines:
       - filter: default
         components:
           - *CALLSTACK_EXPORTER
+      - filter: default
+        components:
+          - *METRICS_EXPORTER

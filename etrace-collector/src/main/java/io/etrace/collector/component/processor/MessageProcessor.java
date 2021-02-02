@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import io.etrace.collector.metrics.MetricsService;
 import io.etrace.collector.service.CollectorConfigurationService;
 import io.etrace.collector.sharding.impl.FrontShardIngImpl;
+import io.etrace.common.constant.Constants;
 import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.pipeline.Component;
 import io.etrace.common.pipeline.Processor;
@@ -68,7 +69,6 @@ public class MessageProcessor extends DefaultSyncTask implements Processor {
             if (null == messageHeader) {
                 LOGGER.warn("header deserialization exception. header:{}",
                     new String(header, 0, Math.min(1024, header.length), Bytes.UTF8_CHARSET));
-
                 return;
             }
 
@@ -83,7 +83,7 @@ public class MessageProcessor extends DefaultSyncTask implements Processor {
                     return;
                 }
                 messageType = messageHeader.getMessageType();
-                messageType = Strings.isNullOrEmpty(messageType) ? "trace" : messageType;
+                messageType = Strings.isNullOrEmpty(messageType) ? Constants.AGENT_EVENT_TYPE_TRACE : messageType;
                 messageHeader.setMessageType(messageType);
 
                 metricsService.agentThoughPut(appId, messageType, size);
