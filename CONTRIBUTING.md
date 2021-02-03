@@ -161,4 +161,3 @@ So, you need to add `schema/pipeline-schema.json` to *Preferences | Languages & 
 How to update `pipeline-schema.json`? [Learn Json Schema](https://json-schema.org/learn/)
 
 [Understanding JSON Schema](https://json-schema.org/understanding-json-schema/)
-  
