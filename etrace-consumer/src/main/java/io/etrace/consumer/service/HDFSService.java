@@ -47,14 +47,15 @@ import java.util.zip.GZIPInputStream;
 public class HDFSService {
     private final static Logger LOGGER = LoggerFactory.getLogger(HDFSService.class);
 
-    private String stackPath;
-    private Cache<String, DataReader> dataReaderCache;
+    protected String stackPath;
+    protected Cache<String, DataReader> dataReaderCache;
     @Autowired
     private ConsumerProperties consumerProperties;
 
     @PostConstruct
     public void startup() {
-        stackPath = consumerProperties.getHdfs().getPath() + File.separator + HDFSBucket.MESSAGE_TRACE_PATH + File.separator;
+        stackPath = consumerProperties.getHdfs().getPath() + File.separator + HDFSBucket.MESSAGE_TRACE_PATH
+            + File.separator;
         dataReaderCache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .expireAfterAccess(5, TimeUnit.MINUTES)

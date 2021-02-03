@@ -24,6 +24,7 @@ import io.etrace.agent.config.AgentConfiguration;
 import io.etrace.agent.config.CollectorRegistry;
 import io.etrace.agent.message.event.DataEvent;
 import io.etrace.agent.stat.TCPStats;
+import io.etrace.common.constant.Constants;
 import io.etrace.common.message.trace.MessageHeader;
 import io.etrace.common.util.JSONUtil;
 import io.etrace.common.util.NetworkInterfaceHelper;
@@ -32,8 +33,8 @@ import io.etrace.common.util.ThreadUtil;
 import java.util.concurrent.TimeUnit;
 
 public class TcpMessageSender implements MessageSender {
-    public static final String TRACE = "Trace";
-    public static final String Metric = "Metric";
+    public static final String TRACE = Constants.AGENT_EVENT_TYPE_TRACE;
+    public static final String Metric = Constants.AGENT_EVENT_TYPE_METRIC;
 
     public static final String METRIC_TCP_MESSAGE_SENDER = "metricTCPMessageSender";
 
@@ -218,11 +219,10 @@ public class TcpMessageSender implements MessageSender {
                 messageHeader.setInstance(AgentConfiguration.getInstance());
                 boolean success = socketClient.send(JSONUtil.toBytes(messageHeader), data);
 
-                if(AgentConfiguration.isDebugMode()) {
+                if (AgentConfiguration.isDebugMode()) {
                     System.out.printf("TcpMessageSender: Connection [%s], Result [%s]. Data: %s%n",
                         socketClient.getConnection().getCollector(), success, new String(data));
                 }
-
 
                 if (success) {
                     stats.incSuccessCount(count);

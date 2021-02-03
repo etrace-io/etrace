@@ -3,15 +3,14 @@ package io.etrace.stream.core.util;
 import com.google.common.base.Strings;
 
 public class ObjectUtil {
-    public static double toDouble(String val) {
+    public static double toDoubleOrDefault(String val, double defaultValue) {
         if (val == null) {
-            return 0;
+            return defaultValue;
         }
         try {
-            return Double.valueOf(val);
+            return Double.parseDouble(val);
         } catch (Exception ignore) {
-            //todo zun.li  default is zero??
-            return 0;
+            return defaultValue;
         }
     }
 
@@ -35,7 +34,7 @@ public class ObjectUtil {
             String v = toString(obj);
             if (!Strings.isNullOrEmpty(v)) {
                 try {
-                    return Double.valueOf(v);
+                    return Double.parseDouble(v);
                 } catch (Exception ignore) {
                 }
             }
@@ -63,7 +62,7 @@ public class ObjectUtil {
             String v = toString(obj);
             if (!Strings.isNullOrEmpty(v)) {
                 try {
-                    return Long.valueOf(v);
+                    return Long.parseLong(v);
                 } catch (Exception ignore) {
                 }
             }

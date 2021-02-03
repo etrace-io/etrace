@@ -67,8 +67,7 @@ public class MetricProcessor extends DefaultAsyncTask implements Processor {
                     }
                 }
             } catch (Exception e) {
-                //LOGGER.error("decode metric error,message is{}", StringUtils.toString(data, 0, Math.min(1024, data
-                // .length)), e);
+                LOGGER.error("decode metric error,message is{}", new String(data), e);
             }
         }
     }

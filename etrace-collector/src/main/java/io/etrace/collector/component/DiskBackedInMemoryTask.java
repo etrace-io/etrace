@@ -86,7 +86,7 @@ public abstract class DiskBackedInMemoryTask extends Task implements Runnable {
     }
 
     @Override
-    public void handleEvent(Object key, Object event) {
+    public void handleEvent0(Object key, Object event) {
         MessageHeader messageHeader = (MessageHeader)key;
         Pair<MessageHeader, byte[]> pair = new Pair<>(messageHeader, (byte[])event);
         boolean success = inMemoryQueue.offer(pair);

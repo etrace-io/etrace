@@ -11,7 +11,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 public class EtraceHelper {
-    public static List<AbstractMetric> convertPrometheusMetricToEtraceMetric(List<PrometheusMetricV1> prometheusMetricV1List) {
+    public static List<AbstractMetric> convertPrometheusMetricToEtraceMetric(
+        List<PrometheusMetricV1> prometheusMetricV1List) {
         if (CollectionUtils.isEmpty(prometheusMetricV1List)) {
             return Collections.emptyList();
         }
@@ -24,17 +25,17 @@ public class EtraceHelper {
                     case GAUGE:
                         abstractMetric = new GaugeImpl(null, sample.name);
                         addMetricTags(abstractMetric, traceTags);
-                        ((GaugeImpl) abstractMetric).value(sample.value);
+                        ((GaugeImpl)abstractMetric).value(sample.value);
                     case COUNTER:
                         abstractMetric = new CounterImpl(null, sample.name);
                         addMetricTags(abstractMetric, traceTags);
                         // 可能会丢失精度
-                        ((CounterImpl) abstractMetric).value((long) sample.value);
+                        ((CounterImpl)abstractMetric).value((long)sample.value);
                     case SUMMARY:
                         abstractMetric = new CounterImpl(null, sample.name);
                         addMetricTags(abstractMetric, traceTags);
                         // 可能会丢失精度
-                        ((CounterImpl) abstractMetric).value((long) sample.value);
+                        ((CounterImpl)abstractMetric).value((long)sample.value);
                     default:
                         break;
 

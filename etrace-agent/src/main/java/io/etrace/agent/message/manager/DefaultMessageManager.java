@@ -367,7 +367,8 @@ public class DefaultMessageManager implements TraceManager {
                 if (current != transaction) {
                     while (transaction != current && !stack.isEmpty()) {
                         if (!current.isBadTransaction()) {
-                            Event event = new EventImpl(Constants.AGENT_EVENT_TYPE, Constants.NAME_BAD_TRANSACTION);
+                            Event event = new EventImpl(Constants.AGENT_EVENT_TYPE_TRACE,
+                                Constants.NAME_BAD_TRANSACTION);
                             event.setStatus("TransactionNotCompleted");
                             event.complete();
                             current.addChild(event);
@@ -404,10 +405,10 @@ public class DefaultMessageManager implements TraceManager {
 
         private void truncateAndFlush(Transaction parent) {
             String childId = RequestIdAndRpcIdFactory.buildTruncatedRpcId(rpcId, this.next);
-            Transaction target = new TransactionImpl("Trace", Constants.NAME_TRUNCATE);
+            Transaction target = new TransactionImpl(Constants.AGENT_EVENT_TYPE_TRACE, Constants.NAME_TRUNCATE);
             target.setStatus(Message.SUCCESS);
 
-            Event event = new EventImpl(Constants.AGENT_EVENT_TYPE, Constants.NAME_BAD_TRANSACTION);
+            Event event = new EventImpl(Constants.AGENT_EVENT_TYPE_TRACE, Constants.NAME_BAD_TRANSACTION);
             event.setStatus("TransactionLongerChildren");
             event.complete();
             target.addChild(event);

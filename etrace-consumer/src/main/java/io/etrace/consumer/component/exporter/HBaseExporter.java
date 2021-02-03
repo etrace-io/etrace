@@ -17,10 +17,11 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -29,17 +30,13 @@ public class HBaseExporter extends DefaultAsyncTask implements Exporter {
 
     @Autowired
     public IHBaseClient client;
-
-    @Autowired
-    private IHBaseTableNameFactory ihBaseTableNameFactory;
-
-    @Autowired
-    private CleanHBaseAndHDFSTask cleanHBaseAndHDFSTask;
-
     @Autowired
     public ConsumerProperties consumerProperties;
-
-    private Map<Integer, List<Put>> putMapToFlush = new HashMap<>();
+    @Autowired
+    private IHBaseTableNameFactory ihBaseTableNameFactory;
+    @Autowired
+    private CleanHBaseAndHDFSTask cleanHBaseAndHDFSTask;
+    private Map<Integer, BlockingQueue<Put>> putMapToFlush = new HashMap<>();
 
     private String tableNamePrefix;
     /**
@@ -103,9 +100,11 @@ public class HBaseExporter extends DefaultAsyncTask implements Exporter {
         Put put = (Put)event;
         int day = timeSharding.sharding(put.getTimeStamp());
 
-        List<Put> putListToFlush = putMapToFlush.compute(day, (k, oldValue) -> {
+        BlockingQueue<Put> putListToFlush = putMapToFlush.compute(day, (k, oldValue) -> {
             if (oldValue == null) {
-                return Lists.newArrayList(put);
+                BlockingQueue<Put> blockingQueue = new ArrayBlockingQueue<>(flushThreshold);
+                blockingQueue.add(put);
+                return blockingQueue;
             } else {
                 oldValue.add(put);
                 return oldValue;
@@ -113,7 +112,9 @@ public class HBaseExporter extends DefaultAsyncTask implements Exporter {
         });
         //flush
         if (putListToFlush.size() >= flushThreshold) {
-            flushAndClean(day, new ArrayList<>(putListToFlush));
+            List<Put> puts = Lists.newArrayListWithCapacity(flushThreshold);
+            putListToFlush.drainTo(puts);
+            flushAndClean(day, puts);
         }
     }
 
@@ -123,7 +124,13 @@ public class HBaseExporter extends DefaultAsyncTask implements Exporter {
     }
 
     public void flushAll() {
-        putMapToFlush.forEach(this::flushAndClean);
+        for (Map.Entry<Integer, BlockingQueue<Put>> entry : putMapToFlush.entrySet()) {
+            Integer day = entry.getKey();
+            BlockingQueue<Put> queue = entry.getValue();
+            List<Put> puts = Lists.newArrayListWithCapacity(queue.size());
+            queue.drainTo(puts);
+            flushAndClean(day, puts);
+        }
         putMapToFlush.clear();
     }
 

@@ -26,8 +26,8 @@ public interface IHBaseClientFactory {
     void deleteTable(String tableName) throws IOException;
 
     /**
-     * 根据 table和 table的region size 计算出shard。放到 rowkey的前缀中，来做balance
-     * region size 会尝试从 table description中的key_region_size去读取，来实现动态调整region size的功能。
+     * 根据 table和 table的region size 计算出shard。放到 rowkey的前缀中，来做balance region size 会尝试从 table
+     * description中的key_region_size去读取，来实现动态调整region size的功能。
      */
     short getShardIdByPhysicalTableName(String physicalTableName, int hashcode);
 
@@ -35,7 +35,6 @@ public interface IHBaseClientFactory {
      * logicalName的表名
      */
     short getShardIdByLogicalTableName(String logicalTableName, long timestamp, int hashcode);
-
 
     void closeCurrentThreadHTable(String tableName);
 

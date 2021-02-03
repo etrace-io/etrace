@@ -36,7 +36,7 @@ public abstract class DefaultSyncTask extends Task {
     }
 
     @Override
-    public void handleEvent(Object key, Object event) {
+    public void handleEvent0(Object key, Object event) {
         try {
             processEvent(key, event);
         } catch (Throwable ex) {

@@ -17,32 +17,46 @@
 package io.etrace.common.pipeline.impl;
 
 import io.etrace.common.pipeline.Component;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.Timer;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Task {
     protected String name;
     protected Map<String, Object> params;
     protected Component component;
+    Timer timer;
     private volatile boolean running = false;
 
     public Task(String name, Component component, Map<String, Object> params) {
         this.name = name;
         this.component = component;
         this.params = params;
+        timer = Timer.builder("task.processTime")
+            .tag("component", component.getName())
+            .tag("pipeline", component.getPipeline())
+            .tag("name", name)
+            .register(Metrics.globalRegistry);
     }
 
     public abstract void init(Object... param);
 
-    public abstract void handleEvent(Object key, Object event);
+    public void handleEvent(Object key, Object event) {
+        long start = System.currentTimeMillis();
+        handleEvent0(key, event);
+        timer.record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
+    }
+
+    protected abstract void handleEvent0(Object key, Object event);
 
     public String getName() {
         return name;
     }
 
     /**
-     * 所有的Task 会被 TaskPool 手动starUp
-     * 因此子类，不需要手动自学starup，包括不需要@PostConstruct
+     * 所有的Task 会被 TaskPool 手动starUp 因此子类，不需要手动自学starup，包括不需要@PostConstruct
      */
     public void startup() {
         this.running = true;

@@ -23,7 +23,9 @@ import io.etrace.common.util.RequestIdHelper;
 import io.etrace.consumer.controller.CallStackController;
 import io.etrace.consumer.model.BlockIndex;
 import io.etrace.consumer.service.HBaseStackDao;
-import io.etrace.consumer.storage.hbase.*;
+import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
+import io.etrace.consumer.storage.hbase.IHBaseStorageService;
+import io.etrace.consumer.storage.hbase.StackTable;
 import io.etrace.consumer.storage.hbase.impl.DefaultHBaseClient;
 import io.etrace.consumer.storage.hbase.impl.StackImpl;
 import org.apache.hadoop.hbase.client.Put;
@@ -65,15 +67,16 @@ public class HBaseTestIT {
         int ts = 6001;
 
         // write
-        short shard = IHBaseClientFactory.getShardIdByPhysicalTableName("default", RequestIdHelper.getRequestId(requestId).hashCode());
-        Put put = ihBaseStorageService.createPut("some, row key".getBytes(),  ts);
+        short shard = IHBaseClientFactory.getShardIdByPhysicalTableName("default",
+            RequestIdHelper.getRequestId(requestId).hashCode());
+        Put put = ihBaseStorageService.createPut("some, row key".getBytes(), ts);
         CallStackV1 callstack = new CallStackV1();
         callstack.setId(rpcId);
 
         byte[] qualifierValue = stackSchema.buildQualifierValue(callstack, 22, 11, 3,
             IPUtil.ipToLong("127.0.0.1"), (short)4);
         put.addColumn(stackSchema.getColumnFamily(), Bytes.toBytes(callstack.getId()), qualifierValue);
-        hBaseClient.executeBatch(stack.getLogicalTableName(),  stack.getLogicalTableName(), Lists.newArrayList(put));
+        hBaseClient.executeBatch(stack.getLogicalTableName(), stack.getLogicalTableName(), Lists.newArrayList(put));
         // query
         BlockIndex result = hBaseStackDao.findBlockIndex(requestId, rpcId, ts);
 

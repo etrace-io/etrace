@@ -41,8 +41,8 @@ services:
       dockerfile: Dockerfile
     image: etrace-api:local
     container_name: etrace_stream
-#    ports:
-#      - 9000:9001
+    #    ports:
+    #      - 9000:9001
     networks:
       - backend
 
@@ -51,7 +51,7 @@ services:
       context: ./etrace-plugins/etrace-prometheus-pushgateway
       dockerfile: Dockerfile
     image: etrace-prometheus-pushgateway:local
-    container_name: etrace-prometheus-pushgateway-pushgateway
+    container_name: etrace_prometheus_pushgateway_pushgateway
     ports:
       - 19091:19091
     networks:

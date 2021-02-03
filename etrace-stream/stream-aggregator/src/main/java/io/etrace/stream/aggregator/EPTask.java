@@ -77,38 +77,26 @@ public class EPTask extends DefaultAsyncTask implements Processor {
                             String jarPath = uri.getSchemeSpecificPart();
                             String jarPathPath = jarPath.substring(jarPath.indexOf("!/") + 2);
                             Path path = fileSystem.getPath(jarPathPath);
-                            if (Files.isDirectory(path)) {
-                                eplModels.addAll(Files.list(path)
-                                    .map(p -> epl + File.separator + p.getFileName().toString())
-                                    .collect(Collectors.toList()));
-                            } else {
-                                LOGGER.info("[{}] going to load epl [{}] from jar [{}]", this.getName(), epl, jarPath);
-                                // relative path
-                                eplModels.add(epl);
-                            }
+                            eplModels.addAll(loadFile(epl, path));
+                            //if (Files.isDirectory(path)) {
+                            //    eplModels.addAll(Files.list(path)
+                            //        .map(p -> epl + File.separator + p.getFileName().toString())
+                            //        .collect(Collectors.toList()));
+                            //} else {
+                            //    LOGGER.info("[{}] going to load epl [{}] from jar [{}]", this.getName(), epl,
+                            //    jarPath);
+                            //    // relative path
+                            //    eplModels.add(epl);
+                            //}
                         }
                     } else {
                         Path path = Paths.get(resource.toURI());
                         eplModels.addAll(loadFile(epl, path));
-                        //if (Files.isDirectory(path)) {
-                        //    eplModels.addAll(Files.list(path)
-                        //        .map(p -> {
-                        //            String file = epl + File.separator + p.getFileName().toString();
-                        //            LOGGER.info("[{}] going to load epl [{}] from file [{}] in directory [{}]",
-                        //                this.getName(), epl, file, path);
-                        //            return file;
-                        //        })
-                        //        .collect(Collectors.toList()));
-                        //} else {
-                        //    LOGGER.info("[{}] going to load epl [{}] from file [{}]", this.getName(), epl, path);
-                        //    eplModels.add(epl);
-                        //}
                     }
                 }
             }
 
             LOGGER.info("[{}] loaded epl modules are: \n{}", this.getName(), eplModels);
-
             epEngine.deployModules(eplModels);
         } catch (Exception ex) {
             throw new RuntimeException("deploy modules failed:" + name, ex);
@@ -120,8 +108,7 @@ public class EPTask extends DefaultAsyncTask implements Processor {
         });
 
         scheduledExecutorService.scheduleAtFixedRate(() -> {
-            // todo:
-            // soa_proxy, star events由于collector sharding策略  shaka esper处理的数据时有时无 需要定时flush
+            // 某些罕见的 events由于collector sharding策略  shaka esper处理的数据时有时无 需要定时flush
             // handleEvent event放入ringbuffer中 由sender线程执行checkFlush
             // 直接调用esper checkFlushEvent会有线程问题 flushCounter kafkaSink blockStore 都是threadLocal
             handleEvent("checkFlushEvent", new CheckFlushEvent());
@@ -137,8 +124,12 @@ public class EPTask extends DefaultAsyncTask implements Processor {
                 if (Files.isDirectory(path1)) {
                     files.addAll(loadFile(epl + File.separator + path1.getFileName(), path1));
                 } else {
-
-                    String file = epl + File.separator + path1.getFileName().toString();
+                    String file;
+                    if (epl.endsWith(File.separator)) {
+                        file = epl + path1.getFileName().toString();
+                    } else {
+                        file = epl + File.separator + path1.getFileName().toString();
+                    }
                     LOGGER.info("[{}] going to load epl [{}] from file [{}] in directory [{}]",
                         this.getName(), epl, file, path);
                     files.add(file);
@@ -157,7 +148,7 @@ public class EPTask extends DefaultAsyncTask implements Processor {
 
         if (epEngine != null) {
             epEngine.stop(); //ep engine destroy after some time
-            LOGGER.info(" ep task <{}> shutdown successfully!", this.getName());
+            LOGGER.info("Esper task <{}> shutdown successfully!", this.getName());
         }
     }
 }

@@ -15,8 +15,8 @@ select header.ezone                    as ezone,
        trunc_sec(timestamp, 10)        as timestamp,
        f_sum(count(1))                 as count,
        sampling('Counter', header.msg) as sampling
-from exception( name != 'io.netty.channel.unix.Errors$NativeIoException')
-    group by header.appId, name, type, header.ezone, header.hostName, header.cluster, trunc_sec(timestamp, 10);
+from exception(name != 'io.netty.channel.unix.Errors$NativeIoException')
+group by header.appId, name, type, header.ezone, header.hostName, header.cluster, trunc_sec(timestamp, 10);
 
 
 @ Name ('service_exception')
@@ -32,5 +32,5 @@ select header.ezone                    as ezone,
        trunc_sec(timestamp, 10)        as timestamp,
        f_sum(count(1))                 as count,
        sampling('Counter', header.msg) as sampling
-from exception( name != 'io.netty.channel.unix.Errors$NativeIoException' and method != 'unknown')
-    group by header.appId, name, type, method, sourceType, header.ezone, header.cluster, trunc_sec(timestamp, 10);
+from exception(name != 'io.netty.channel.unix.Errors$NativeIoException' and method != 'unknown')
+group by header.appId, name, type, method, sourceType, header.ezone, header.cluster, trunc_sec(timestamp, 10);

@@ -11,5 +11,6 @@ public interface IHBaseStorageService {
      */
     Put createPut(byte[] row, long ts);
 
-    Put buildHbasePut(long timestamp, String requestId, short shard, byte[] columnFamily, byte[] qualifier, byte[] qualifierValue) ;
+    Put buildHbasePut(long timestamp, String requestId, short shard, byte[] columnFamily, byte[] qualifier,
+                      byte[] qualifierValue);
 }

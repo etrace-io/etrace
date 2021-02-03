@@ -58,9 +58,7 @@ public interface MetricDatasourceService {
     List<MetricQLBean> generateQLBean(MetricBean bean, Date date) throws Exception;
 
     // ===  这里应改成和  doConnect 一样的 初始化方式
-    void initResource(List<Resource> resources);
-
-    void start();
+    void initResourceAndStart(List<Resource> resources);
 
     void registerDatasourceCluster(String resourceId, Resource resource) throws EsperConfigException;
 

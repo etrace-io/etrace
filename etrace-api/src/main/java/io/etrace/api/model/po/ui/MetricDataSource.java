@@ -26,6 +26,7 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "datasource")
 @Data

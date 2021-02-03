@@ -71,8 +71,8 @@ public class HBaseSamplingDao {
         ResultScanner resultScanner = null;
         try {
             MetricType type = MetricType.fromIdentifier(metricType);
-
-            short shard = IHBaseClientFactory.getShardIdByPhysicalTableName(table.getName().getNameAsString(), name.hashCode());
+            short shard = IHBaseClientFactory.getShardIdByPhysicalTableName(table.getName().getNameAsString(),
+                metricImpl.metricHashcode(name));
             byte[] prefixKey = RowKeyUtil.build(shard, type.code(), name);
             byte[] startKey = RowKeyUtil.build(shard, type.code(), name, timestamp);
             byte[] endKey;

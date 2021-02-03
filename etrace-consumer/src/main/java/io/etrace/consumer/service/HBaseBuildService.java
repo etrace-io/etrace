@@ -45,7 +45,8 @@ public class HBaseBuildService {
         }
 
         short shard = IHBaseClientFactory.getShardIdByLogicalTableName(metricImpl.getLogicalTableName(),
-            metric.getTimestamp(), metric.getMetricName().hashCode());
+            metric.getTimestamp(),
+            metricImpl.metricHashcode(metric.getMetricName()));
         byte[] samplingKey = metricImpl.buildRowKey(shard, metric);
         byte[] samplingValue = metricImpl.buildQualifierValue(metric);
         if (null == samplingKey || null == samplingValue) {

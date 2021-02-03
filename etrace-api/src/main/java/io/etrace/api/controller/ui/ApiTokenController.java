@@ -12,7 +12,6 @@ import io.etrace.api.service.ApiTokenService;
 import io.etrace.api.service.ApplyTokenLogService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

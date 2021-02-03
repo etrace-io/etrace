@@ -43,7 +43,7 @@ public class EqualFilter implements Filter {
      */
     @Override
     public boolean match(Filterable filterable) {
-        return key.toLowerCase().equals(filterable.filterKey());
+        return key.toLowerCase().equals(filterable.filterKey().toLowerCase());
     }
 
     @Override

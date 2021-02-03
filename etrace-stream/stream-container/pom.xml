@@ -4,7 +4,7 @@
     <parent>
         <artifactId>etrace-stream</artifactId>
         <groupId>io.etrace</groupId>
-        <version>0.0.8-SNAPSHOT</version>
+        <version>0.0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>io.etrace</groupId>
             <artifactId>stream-biz-app</artifactId>
-            <version>0.0.8-SNAPSHOT</version>
+            <version>0.0.9-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.etrace</groupId>
@@ -74,6 +74,16 @@
             <groupId>io.etrace</groupId>
             <artifactId>datasource-prometheus</artifactId>
         </dependency>
+
+        <!-- Pushgateway exposition-->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_pushgateway</artifactId>
+            <!-- todo: 先  手动-->
+            <version>0.10.0</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <plugins>

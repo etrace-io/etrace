@@ -36,14 +36,11 @@ public class EtracePrometheusDataSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EtracePrometheusDataSender.class);
 
-
     @Value("${etrace.collector}")
     private String collectrAddress;
 
-
     @Value("${etrace.appId}")
     private String appId;
-
 
     private CollectorSocket collectorSocket;
 
@@ -52,7 +49,6 @@ public class EtracePrometheusDataSender {
         CollectorTcpAddressRegistry.build(collectrAddress, appId);
         collectorSocket = new CollectorSocket();
     }
-
 
     @PreDestroy
     public void shutdown() {
@@ -77,7 +73,6 @@ public class EtracePrometheusDataSender {
         EtraceMessage etraceMessage = new EtraceMessage(messageHeader, metricHeaderV1, metricList);
         return sendData(etraceMessage);
     }
-
 
     private boolean sendData(EtraceMessage message) {
         if (null == message) {
@@ -109,8 +104,8 @@ public class EtracePrometheusDataSender {
         return false;
     }
 
-
-    public void wirteBody(JsonGenerator generator, MetricHeaderV1 metricHeaderV1, List<AbstractMetric> metricList) throws IOException {
+    public void wirteBody(JsonGenerator generator, MetricHeaderV1 metricHeaderV1, List<AbstractMetric> metricList)
+        throws IOException {
         generator.writeStartArray();
         generator.writeString(JSONCodecV1.METRIC_PREFIX_V1);
         generator.writeString(AgentConfiguration.getTenant());

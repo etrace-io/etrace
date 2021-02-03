@@ -1,5 +1,5 @@
 # whether to enable this pipeline
-enable: false
+enable: true
 
 receivers:
   - name: &METRIC_KAFKA_RECEIVER metric_kafka_receiver
@@ -7,7 +7,7 @@ receivers:
     clazz: io.etrace.stream.container.receiver.kafka.KafkaConsumeTask
     props:
       resourceId: kafka_to_consumer
-      topics: metric,1;
+      topics: metric,1
 
 processors:
   - name: &METRIC_DECODER metric_decoder

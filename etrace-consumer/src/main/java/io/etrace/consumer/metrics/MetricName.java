@@ -22,10 +22,11 @@ public interface MetricName {
      */
     String CALLSTACK_PARSE_ERROR = "callstack.parse.error";
     String CALLSTACK_CHECK_INVALID = "callstack.check.invalid";
-    String TASK_DURATION = "task.duration";
     String HDFS_ERROR = "hdfs.error";
     String HDFS_THROUGHPUT = "hdfs.throughput";
     String METRIC_NO_SAMPLING = "metric.no.sampling";
+
+    String TASK_DURATION = "task.duration";
 
     /**
      * sink

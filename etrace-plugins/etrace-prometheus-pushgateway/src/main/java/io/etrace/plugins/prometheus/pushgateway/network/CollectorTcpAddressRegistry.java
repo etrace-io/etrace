@@ -1,6 +1,5 @@
 package io.etrace.plugins.prometheus.pushgateway.network;
 
-
 import io.etrace.common.message.agentconfig.Collector;
 import io.etrace.common.message.agentconfig.CollectorItem;
 import io.etrace.common.util.NetworkInterfaceHelper;
@@ -19,32 +18,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CollectorTcpAddressRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectorTcpAddressRegistry.class);
-
-    private String collectorAddress;
-
-    private RestTemplate restTemplate;
-
     private static CollectorTcpAddressRegistry instance;
-
-
     private static AtomicLong collectorIndex = new AtomicLong(0);
-
     private static List<Collector> collectorList = Collections.emptyList();
-
+    private String collectorAddress;
+    private RestTemplate restTemplate;
     private String appId;
-
-
-    public static CollectorTcpAddressRegistry getInstance() {
-        return instance;
-    }
-
-
-    public synchronized static void build(String address, String appId) {
-        if (null != instance) {
-            return;
-        }
-        instance = new CollectorTcpAddressRegistry(address, appId);
-    }
 
     private CollectorTcpAddressRegistry(String address, String appId) {
         this.collectorAddress = address;
@@ -57,6 +36,21 @@ public class CollectorTcpAddressRegistry {
 
     }
 
+    public static CollectorTcpAddressRegistry getInstance() {
+        return instance;
+    }
+
+    public synchronized static void build(String address, String appId) {
+        if (null != instance) {
+            return;
+        }
+        instance = new CollectorTcpAddressRegistry(address, appId);
+    }
+
+    public static Collector getTcpCollector() {
+        long next = collectorIndex.getAndAdd(1) % collectorList.size();
+        return collectorList.get((int)next);
+    }
 
     private void pollCollectorItemList() {
         try {
@@ -70,17 +64,14 @@ public class CollectorTcpAddressRegistry {
         }
     }
 
-
-
     private String getCollectorAddressUrl() {
         String collecorConfigPollUrl = String.format("http://%s/collector/item?appId=%s&host=%s&hostName=%s",
-                collectorAddress,
-                appId, NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(),
-                NetworkInterfaceHelper.INSTANCE.getLocalHostName());
+            collectorAddress,
+            appId, NetworkInterfaceHelper.INSTANCE.getLocalHostAddress(),
+            NetworkInterfaceHelper.INSTANCE.getLocalHostName());
         return collecorConfigPollUrl;
 
     }
-
 
     private CollectorItem getcollectorAddressFromHttp(String url) {
         CollectorItem collectorItem = null;
@@ -94,11 +85,6 @@ public class CollectorTcpAddressRegistry {
 
     public List<Collector> getCollectorList() {
         return collectorList;
-    }
-
-    public static Collector getTcpCollector() {
-        long next = collectorIndex.getAndAdd(1) % collectorList.size();
-        return collectorList.get((int) next);
     }
 
 }

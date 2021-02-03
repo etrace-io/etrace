@@ -1,0 +1,489 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "main pipeline",
+  "title": "ETrace pipeline schema",
+  "description": "add this schema to your IDE. make it is easier to write pipeline configuration",
+  "type": "object",
+  "properties": {
+    "receivers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Receiver"
+      }
+    },
+    "processors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Processor"
+      }
+    },
+    "exporters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Exporter"
+      }
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Filter"
+      }
+    },
+    "pipelines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Pipeline"
+      }
+    }
+  },
+  "required": [
+    "exporters",
+    "pipelines",
+    "processors",
+    "receivers"
+  ],
+  "definitions": {
+    "Filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "key"
+          ]
+        }
+      },
+      "required": [
+        "clazz",
+        "name",
+        "props"
+      ]
+    },
+    "Exporter": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/HBaseExporter"
+        },
+        {
+          "$ref": "#/definitions/DatasourceExporter"
+        },
+        {
+          "$ref": "#/definitions/KafkaExporter"
+        }
+      ]
+    },
+    "HBaseExporter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HBASE"
+          ]
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tableName": {
+              "type": "string"
+            },
+            "taskSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "bufferSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "timeTick": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "shardingStrategy": {
+              "type": "string"
+            },
+            "flushSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "logicalTable": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "tableName",
+            "taskSize",
+            "bufferSize",
+            "shardingStrategy",
+            "flushSize",
+            "logicalTable"
+          ]
+        }
+      },
+      "required": [
+        "clazz",
+        "name",
+        "props",
+        "type"
+      ]
+    },
+    "DatasourceExporter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "PROMETHEUS",
+            "LINDB"
+          ]
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "resourceId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "resourceId"
+          ]
+        }
+      },
+      "required": [
+        "clazz",
+        "name",
+        "props",
+        "type"
+      ]
+    },
+    "KafkaExporter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "KAFKA"
+          ]
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "resourceId": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            },
+            "shardingStrategy": {
+              "enum": [
+                "ROUND_ROBIN",
+                "HASHING"
+              ]
+            },
+            "blockSize": {
+              "type": "integer",
+              "minimum": 1000
+            },
+            "flushInterval": {
+              "type": "integer"
+              "minimum": 1000
+            }
+          },
+          "required": [
+            "resourceId"
+          ]
+        }
+      },
+      "required": [
+        "clazz",
+        "name",
+        "props",
+        "type"
+      ]
+    },
+    "Pipeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "downstreams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Downstream"
+          }
+        }
+      },
+      "required": [
+        "downstreams",
+        "name"
+      ],
+      "title": "Pipeline"
+    },
+    "Downstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "filter": {
+          "type": "string"
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "components",
+        "filter"
+      ],
+      "title": "Downstream"
+    },
+    "Processor": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DecodeProcessor"
+        },
+        {
+          "$ref": "#/definitions/EPTask"
+        }
+      ]
+    },
+    "DecodeProcessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "taskSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "bufferSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "shardingStrategy": {
+              "type": "string"
+            },
+            "appType": {
+              "type": "string"
+            },
+            "decode": {
+              "type": "string"
+            },
+            "topic": {
+              "type": "string"
+            },
+            "flushThreshold": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "bufferSize",
+            "taskSize"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "clazz"
+      ]
+    },
+    "EPTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "taskSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "bufferSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "shardingStrategy": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            },
+            "epls": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "bufferSize",
+            "shardingStrategy",
+            "taskSize",
+            "source",
+            "epls"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "clazz",
+        "props"
+      ]
+    },
+    "Receiver": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/CollectorReceiver"
+        },
+        {
+          "$ref": "#/definitions/KafkaReceiver"
+        }
+      ]
+    },
+    "CollectorReceiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "TCP",
+            "THRIFT"
+          ]
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "properties": {
+            "port": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "workers": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "port",
+            "workers"
+          ]
+        }
+      },
+      "required": [
+        "clazz",
+        "name",
+        "props",
+        "type"
+      ]
+    },
+    "KafkaReceiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "KAFKA"
+          ]
+        },
+        "clazz": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "properties": {
+            "resourceId": {
+              "type": "string"
+            },
+            "topics": {
+              "type": "string"
+            },
+            "group": {
+              "type": "string"
+            },
+            "streamSize": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "resourceId",
+            "topics",
+            "group",
+            "streamSize"
+          ]
+        }
+      },
+      "required": [
+        "clazz",
+        "name",
+        "props",
+        "type"
+      ]
+    }
+  }
+}

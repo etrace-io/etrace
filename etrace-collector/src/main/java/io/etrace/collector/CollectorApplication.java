@@ -16,11 +16,13 @@
 
 package io.etrace.collector;
 
+import io.etrace.agent.Trace;
 import io.etrace.agent.config.AgentConfiguration;
 import io.etrace.collector.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
@@ -45,5 +47,11 @@ public class CollectorApplication {
         AgentConfiguration.setCollectorIp(config.getBackendAddress());
 
         //AgentConfiguration.setDebugMode(true);
+    }
+
+    @Scheduled(initialDelay = 1000, fixedRate = 10 * 1000)
+    public void t() {
+        Trace.logEvent("type", "name");
+        Trace.newCounter("debug-test").once();
     }
 }

@@ -61,26 +61,23 @@ public class CleanHBaseAndHDFSTask {
     @Autowired
     public StackImpl stackImpl;
     @Autowired
+    ApplicationContext context;
+    Map<String, Integer> hbaseTableToClean = Maps.newHashMap();
+    @Autowired
     private IHBaseClientFactory iHBaseClientFactory;
-
     @Autowired
     private IHBaseTableNameFactory ihBaseTableNameFactory;
-
-    @Autowired
-    ApplicationContext context;
-
-    Map<String, Integer> hbaseTableToClean = Maps.newHashMap();
 
     private static void deleteByPath(FileSystem fs, Path path) throws IOException {
         LOGGER.info("{} will be deleted", path);
         fs.delete(path, true);
     }
 
-    public void registerTableToDelete (String logicHBaseTableName, int daysToClean) {
+    public void registerTableToDelete(String logicHBaseTableName, int daysToClean) {
         hbaseTableToClean.put(logicHBaseTableName, daysToClean);
     }
 
-    @Scheduled(initialDelay = 10 * 60 * 1000 , fixedRate = 24 * 60 * 60 * 1000)
+    @Scheduled(initialDelay = 10 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000)
     public void cleanHBaseTables() {
         hbaseTableToClean.forEach(this::deleteHBaseTable);
     }
@@ -102,12 +99,13 @@ public class CleanHBaseAndHDFSTask {
             LOGGER.info("going to retain hbase table {}, other days will be deleted.", retainedTables);
 
             // Tables to delete
-            IntStream.rangeClosed(1,31)
+            IntStream.rangeClosed(1, 31)
                 .filter(day -> !retainedTables.contains(day))
                 .forEach(day -> {
-                String tableName = ihBaseTableNameFactory.getPhysicalTableNameByTableNamePrefix(logicHBaseTableName, day);
-                tryDeleteTable(tableName);
-            });
+                    String tableName = ihBaseTableNameFactory.getPhysicalTableNameByTableNamePrefix(logicHBaseTableName,
+                        day);
+                    tryDeleteTable(tableName);
+                });
         } catch (Throwable e) {
             LOGGER.error("==deleteHBaseTable==", e);
         }

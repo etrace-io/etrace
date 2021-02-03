@@ -17,7 +17,8 @@ import java.util.Map;
  */
 public class PrometheusPushgatewayWriter {
 
-    public static String buildPushGatewayUrl(String job, Map<String, String> groupingKey) throws UnsupportedEncodingException {
+    public static String buildPushGatewayUrl(String job, Map<String, String> groupingKey)
+        throws UnsupportedEncodingException {
         String url = "/metrics/";
         if (job.contains("/")) {
             url += "job@base64/" + base64url(job);

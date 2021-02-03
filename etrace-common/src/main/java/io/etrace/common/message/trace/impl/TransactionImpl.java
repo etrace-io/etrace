@@ -46,7 +46,7 @@ public class TransactionImpl extends AbstractMessage implements Transaction {
         if (children == null) {
             children = new ArrayList<>();
         }
-        if (message instanceof Event && Constants.AGENT_EVENT_TYPE.equals(message.getType())
+        if (message instanceof Event && Constants.AGENT_EVENT_TYPE_TRACE.equals(message.getType())
             && Constants.NAME_BAD_TRANSACTION.equals(message.getName())) {
             isBadTransaction = true;
         }

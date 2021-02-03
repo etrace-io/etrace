@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Scope;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -101,6 +100,7 @@ public abstract class AbstractTraceWorker extends DiskBackedInMemoryTask {
             LOGGER.error("send to kafka throw a exception:", e);
         }
     }
+
     public String getTopic() {
         return topic;
     }

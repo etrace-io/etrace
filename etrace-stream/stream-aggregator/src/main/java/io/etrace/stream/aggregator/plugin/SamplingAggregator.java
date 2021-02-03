@@ -33,7 +33,6 @@ public class SamplingAggregator implements AggregationMethod {
         }
         if (type == null) {
             String typeStr = (String)values[0];
-            //todo zun.li  ??为什么这里是字符串呢？
             MetricType metricType = MetricType.fromIdentifier(typeStr.toLowerCase());
             if (metricType == null) {
                 return;

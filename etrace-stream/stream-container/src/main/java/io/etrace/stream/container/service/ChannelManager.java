@@ -40,8 +40,7 @@ public class ChannelManager implements BeanFactoryAware {
         try {
             repository = beanFactory.getBean(PipelineRepository.class, new DefaultPipelineLoader().load(),
                 configProp.getResources());
-            metricDatasourceService.initResource(repository.getResources());
-            metricDatasourceService.start();
+            metricDatasourceService.initResourceAndStart(repository.getResources());
             repository.initAndStartUp();
         } catch (Exception e) {
             LOGGER.error("start up pipeline error: ", e);
@@ -51,7 +50,6 @@ public class ChannelManager implements BeanFactoryAware {
 
     @PreDestroy
     public void stop() throws Exception {
-        repository.stop();
         LOGGER.info("Shutdown Stream Manager");
     }
 

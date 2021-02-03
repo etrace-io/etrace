@@ -3,6 +3,7 @@ package io.etrace.stream.biz.app;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import io.etrace.common.constant.Constants;
 import io.etrace.common.message.trace.codec.JSONCodecV1;
 import io.etrace.stream.biz.app.event.AbstractTransaction;
 import io.etrace.stream.biz.app.event.EventType;
@@ -20,8 +21,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
-import static io.etrace.stream.biz.app.EventConstant.DEFAULT_RMQ_CONSUMER_QUEUE;
-import static io.etrace.stream.biz.app.EventConstant.DEFAULT_SOA_SERVICE_METHOD;
 
 public abstract class AbstractCallStackDecode implements CallStackDecode {
     JsonFactory jsonFactory;
@@ -117,7 +116,7 @@ public abstract class AbstractCallStackDecode implements CallStackDecode {
                                     throw new IllegalArgumentException("Bad json data with bad message data");
                                 }
                                 decodeMessageJson(parser, events, newEvents, dependenciesCost, header.getAppId(),
-                                    DEFAULT_SOA_SERVICE_METHOD, DEFAULT_RMQ_CONSUMER_QUEUE);
+                                    Constants.UNKNOWN, Constants.UNKNOWN);
                                 break;
                             case 7:
                                 Map<String, String> extraProperties = JSONCodecV1.decodeExtraProperties(parser);
@@ -161,7 +160,7 @@ public abstract class AbstractCallStackDecode implements CallStackDecode {
                                     throw new IllegalArgumentException("Bad json data with bad message data");
                                 }
                                 decodeMessageJson(parser, events, newEvents, dependenciesCost, header.getAppId(),
-                                    DEFAULT_SOA_SERVICE_METHOD, DEFAULT_RMQ_CONSUMER_QUEUE);
+                                    Constants.UNKNOWN, Constants.UNKNOWN);
                                 break;
                             case 6:
                                 header.setCluster(parser.getText());
@@ -324,7 +323,7 @@ public abstract class AbstractCallStackDecode implements CallStackDecode {
                 Event parent = null;
                 Event root = null;
                 /**
-                 * todo parent可能不准确
+                 * parent可能不准确
                  * 例如一个transaction包含一组children
                  * 只有第一个child parent是root 其他都是前序的兄弟
                  */

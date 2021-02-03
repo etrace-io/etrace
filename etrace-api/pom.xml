@@ -3,7 +3,7 @@
     <parent>
         <artifactId>etrace</artifactId>
         <groupId>io.etrace</groupId>
-        <version>0.0.8-SNAPSHOT</version>
+        <version>0.0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -70,7 +70,6 @@
         <dependency>
             <groupId>io.etrace</groupId>
             <artifactId>datasource-prometheus</artifactId>
-            <version>0.0.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

@@ -92,7 +92,6 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
 
     @Override
     public void processEvent(Object key, Object obj) throws Exception {
-
         if (obj instanceof MessageBlock) {
             MessageBlock messageBlock = (MessageBlock)obj;
             long lastPos = -1;

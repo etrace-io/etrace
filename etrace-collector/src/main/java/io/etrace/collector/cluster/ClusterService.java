@@ -99,8 +99,8 @@ public class ClusterService implements BeanFactoryAware {
     }
 
     /**
-     * find related collector cluster by appId according `collector.cluster` configuration
-     * if not found, fall back to `collector.defaultCluster`.
+     * find related collector cluster by appId according `collector.cluster` configuration if not found, fall back to
+     * `collector.defaultCluster`.
      */
     private String getClusterByAppId(String appId) {
         try {

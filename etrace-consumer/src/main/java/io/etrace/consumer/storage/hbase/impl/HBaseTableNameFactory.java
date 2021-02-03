@@ -22,7 +22,8 @@ public class HBaseTableNameFactory implements IHBaseTableNameFactory {
 
     @Override
     public String getPhysicalTableNameByLogicalTableName(String logicalTableName, int day) {
-        return getPhysicalTableNameByTableNamePrefix(logicTableNameToTableNamePrefixMapping.getOrDefault(logicalTableName,
-            logicalTableName), day);
+        return getPhysicalTableNameByTableNamePrefix(
+            logicTableNameToTableNamePrefixMapping.getOrDefault(logicalTableName,
+                logicalTableName), day);
     }
 }

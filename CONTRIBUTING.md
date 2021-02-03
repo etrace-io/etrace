@@ -138,3 +138,26 @@ this project adopt **[Example](https://docs.spring.io/spring-data/jpa/docs/curre
 Go to io/etrace/api/service/DashboardService.java:52 for reference.
 
 Also, keep watching Jira issue [Improve handling of null query method parameter values](https://jira.spring.io/browse/DATAJPA-209) and hope official team could support this via annotation. 
+
+---
+
+# Configuration and Pipeline Schema
+
+## 1. utilize "Spring Configuration Metadata" to write *correct* `application.yml`
+
+Approach 1: Define `@ConfigurationProperties` to related ETrace configuration. Your IDE will detect them automatically. 
+
+Approach 2: Write your own `META-INF/spring-configuration-metadata.json` to define the properties.
+
+Reference: [Configuration Metadata](https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-configuration-metadata.html)
+
+# 2. utilize `JSON schema` to validate pipeline yaml configuration.
+
+How it works? [Boost your YAML with autocompletion and validation](https://medium.com/@alexmolev/boost-your-yaml-with-autocompletion-and-validation-b74735268ad7)
+
+So, you need to add `schema/pipeline-schema.json` to *Preferences | Languages & Frameworks | Schemas and DTDs | JSON
+ Schema Mappings*, and apply to all file pattern of `*/pipeline/*.yml`
+ 
+How to update `pipeline-schema.json`? [Learn Json Schema](https://json-schema.org/learn/)
+
+[Understanding JSON Schema](https://json-schema.org/understanding-json-schema/)

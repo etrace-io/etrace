@@ -29,11 +29,12 @@ public class EtraceAgentConfiguration {
                 "ETrace agent auto configuration fail, you need config `etrace.appId` and `etrace.backendAddress` in "
                     + "`application.yaml`.");
         } else {
-            LOGGER.info("ETrace agent auto configuration success. AppId: [{}], BackendAddress: [{}]",
-                etraceConfig.getAppId(),
-                etraceConfig.getBackendAddress());
             AgentConfiguration.setAppId(etraceConfig.getAppId());
             AgentConfiguration.setCollectorIp(etraceConfig.getBackendAddress());
+            LOGGER.info("ETrace agent auto configuration success, AppId: [{}], BackendAddress: [{}](from 'etrace"
+                    + ".backendAddress'). Indeed CollectorIp [{}], CollectorPort [{}]",
+                etraceConfig.getAppId(), etraceConfig.getBackendAddress(), AgentConfiguration.getCollectorIp(),
+                AgentConfiguration.getCollectorPort());
         }
     }
 }

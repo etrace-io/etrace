@@ -6,7 +6,7 @@
     <groupId>io.etrace</groupId>
     <artifactId>etrace</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.9-SNAPSHOT</version>
 
     <name>ETrace</name>
     <description>A robust and functional Application Performance Monitor (APM) system</description>
@@ -561,5 +561,4 @@
             </distributionManagement>
         </profile>
     </profiles>
-
 </project>

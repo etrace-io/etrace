@@ -13,10 +13,9 @@ services:
       - ./temp/mysql:/var/lib/mysql
       # Initializing a fresh instance: https://hub.docker.com/_/mysql/
       - ./etrace-api/mysql:/docker-entrypoint-initdb.d/:ro
-#    restart: always
+    #    restart: always
     networks:
       - backend
-#
 networks:
   backend:
     driver: bridge
