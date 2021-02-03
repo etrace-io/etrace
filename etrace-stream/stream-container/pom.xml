@@ -74,6 +74,16 @@
             <groupId>io.etrace</groupId>
             <artifactId>datasource-prometheus</artifactId>
         </dependency>
+
+        <!-- Pushgateway exposition-->
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_pushgateway</artifactId>
+            <!-- todo: 先  手动-->
+            <version>0.10.0</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <plugins>

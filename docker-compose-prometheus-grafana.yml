@@ -1,9 +1,19 @@
 version: '3.8'
 services:
+
+#  proemtheus:
+#    image: "prom/prometheus:v2.20.1"
+#    ports:
+#      - 9090:9090
+#    networks:
+#      - backend
+
   proemtheus:
-    image: "prom/prometheus:v2.20.1"
+    image: "bitnami/prometheus"
     ports:
       - 9090:9090
+    volumes:
+      - ./conf/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
     networks:
       - backend
 
