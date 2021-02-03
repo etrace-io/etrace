@@ -36,6 +36,7 @@ processors:
 exporters:
   - name: application_exporter
     clazz: io.etrace.collector.component.exporter.KafkaExporter
+    type: KAFKA
     props:
       resourceId: &MAIN_CLUSTER main_cluster
 
