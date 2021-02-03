@@ -1,6 +1,5 @@
 package io.etrace.plugins.prometheus.pushgateway.network;
 
-
 import io.etrace.common.message.agentconfig.Collector;
 
 import java.net.InetSocketAddress;
@@ -10,12 +9,10 @@ import java.util.List;
 
 public class CollectorConnection {
 
+    protected int timeout = 5 * 1000;
     private Selector selector;
     private SocketChannel socketChannel;
-
     private Collector currentCollector;
-    protected int timeout = 5 * 1000;
-
 
     public CollectorConnection() {
     }
@@ -40,7 +37,7 @@ public class CollectorConnection {
                 socketChannel.socket().setKeepAlive(true);
                 socketChannel.socket().setSoTimeout(timeout);
                 socketChannel.socket().connect(
-                        new InetSocketAddress(currentCollector.getIp(), currentCollector.getPort()), timeout);
+                    new InetSocketAddress(currentCollector.getIp(), currentCollector.getPort()), timeout);
                 return;
             } catch (Throwable ignore) {
                 closeConnection();
@@ -50,7 +47,7 @@ public class CollectorConnection {
 
     public boolean isOpen() {
         return null != selector && selector.isOpen() && null != socketChannel && socketChannel.isConnected()
-                && socketChannel.isOpen();
+            && socketChannel.isOpen();
     }
 
     public void closeConnection() {
@@ -78,7 +75,6 @@ public class CollectorConnection {
     public SocketChannel getSocketClient() {
         return socketChannel;
     }
-
 
 }
 

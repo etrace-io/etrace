@@ -21,5 +21,4 @@ public class EtraceMessage {
         this.metricList = metricList;
     }
 
-
 }

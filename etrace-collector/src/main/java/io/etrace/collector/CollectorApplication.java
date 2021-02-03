@@ -49,7 +49,6 @@ public class CollectorApplication {
         //AgentConfiguration.setDebugMode(true);
     }
 
-
     @Scheduled(initialDelay = 1000, fixedRate = 10 * 1000)
     public void t() {
         Trace.logEvent("type", "name");

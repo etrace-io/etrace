@@ -241,7 +241,7 @@ public class HeartbeatUploadTask {
     }
 
     private void logMessageStats(CallstackStats callstackStats, MetricStats metricStats) {
-        Heartbeat heartbeatMsg = producer.newHeartbeat("agent-stat", HOST_IP);
+        Heartbeat heartbeatMsg = producer.newHeartbeat(Constants.HEARTBEAT_TYPE_AGENT, HOST_IP);
         try {
             Map<String, Map<String, Object>> stats = new HashMap<>();
             stats.put("message-stats", callstackStats.toStatMap());

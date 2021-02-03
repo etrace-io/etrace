@@ -1,4 +1,5 @@
 cluster: application
+
 metric:
   report:
     cluster: application_datasource

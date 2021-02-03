@@ -24,7 +24,7 @@ public class SingleRowExpressionWrapper<E extends Expression> extends Expression
      * 子表达式中 存在property 返回整个表达式 trunc_sec(timestamp, 10)  -> trunc_sec(timestamp, 10) f_sum(sum(fields('count'))) ->
      * empty
      * <p>
-     * todo metric_key特殊处理 metric_key(tag1, tag2) -> tag1, tag2
+     * metric_key特殊处理 metric_key(tag1, tag2) -> tag1, tag2
      *
      * @return
      */

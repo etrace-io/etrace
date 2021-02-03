@@ -43,6 +43,7 @@ public class EPEngine {
     private final static String COMMON_EPL = "common.epl";
     private final static int DEFAULT_TIME_WINDOW = 5;
     EPAdministrator epAdmin;
+    boolean outputDetailEpl;
     private long flushSize;
     private int flushInterval;
     private long timestamp = System.currentTimeMillis();
@@ -56,9 +57,7 @@ public class EPEngine {
     private EPAnnotationProcessorManager epAnnotationProcessorManager;
     private AtomicBoolean initialised;
     private Map<String, Object> params;
-
     private Map<Class, String> eventTypeCache;
-    boolean outputDetailEpl;
 
     EPEngine(String name, boolean outputDetailEpl, Component component, Map<String, Object> params) {
         this.name = name;
@@ -279,7 +278,6 @@ public class EPEngine {
 
     private void addGroupCount(EPStatementObjectModel model, EPClause epClause) {
         if (!hasGroupCountMethod(epClause)) {
-            //todo group_count的作用不是特别理解
             PlugInProjectionExpression plugInProjectionExpression = new PlugInProjectionExpression();
             plugInProjectionExpression.setFunctionName(GroupCountAggregatorFactory.METHOD_NAME);
             SelectClauseExpression selectClauseExpression = new SelectClauseExpression();

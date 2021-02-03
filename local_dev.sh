@@ -52,6 +52,7 @@ Input number: "
     docker-compose -f docker-compose-prometheus-grafana.yml up
     ;;
   [8]*)
+#    mvn clean install
     docker-compose  -f docker-compose-etrace.yml build
     docker-compose -f docker-compose-etrace.yml  up
     ;;

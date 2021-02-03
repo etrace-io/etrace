@@ -34,20 +34,18 @@ import java.util.TreeMap;
 public class MetricImpl extends MetricTable {
 
     /**
-     * 避免相同的Metric数据都写到相同的Shard上。
-     * 目前的问题：大量相同MetricName的写入，会hash到同一个shard上。
-     */
-    public int metricHashcode(String name) {
-        return  name.hashCode();
-    }
-
-    /**
      * shard(2) + metricType(1) + time(8)
      */
     private final static int MAGIC_SIZE = Bytes.SIZEOF_SHORT + Bytes.SIZEOF_BYTE + Bytes.SIZEOF_LONG;
-
     private final static String SAMPLING_MAX = "max";
     private final static String SAMPLING_VALUE = "value";
+
+    /**
+     * 避免相同的Metric数据都写到相同的Shard上。 目前的问题：大量相同MetricName的写入，会hash到同一个shard上。
+     */
+    public int metricHashcode(String name) {
+        return name.hashCode();
+    }
 
     @Override
     public byte[] buildRowKey(short shard, Metric metric) {

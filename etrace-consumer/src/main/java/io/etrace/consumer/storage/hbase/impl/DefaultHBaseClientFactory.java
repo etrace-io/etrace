@@ -54,10 +54,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 //@ConditionalOnMissingBean(IHBaseClientFactory.class)
 public class DefaultHBaseClientFactory implements IHBaseClientFactory {
-    private final Logger LOGGER = LoggerFactory.getLogger(DefaultHBaseClientFactory.class);
-
     public static String KEY_REGION_SIZE = "key_region_size";
-
+    private final Logger LOGGER = LoggerFactory.getLogger(DefaultHBaseClientFactory.class);
     private final short defaultRegionNum = 60;
     private final Object lock = new Object();
     private Map<String, byte[]> columnFamilyByLogicalTableName = Maps.newHashMap();
@@ -111,7 +109,6 @@ public class DefaultHBaseClientFactory implements IHBaseClientFactory {
 
         loadAllTableColumnFamily();
     }
-
 
     @PreDestroy
     public void preDestroy() {
@@ -292,7 +289,8 @@ public class DefaultHBaseClientFactory implements IHBaseClientFactory {
 
     @Override
     public short getShardIdByLogicalTableName(String logicalTableName, long timestamp, int hashcode) {
-        String physicalTableName =  ihBaseTableNameFactory.getPhysicalTableNameByTableNamePrefix(logicalTableName, TimeHelper.getDay(timestamp));
+        String physicalTableName = ihBaseTableNameFactory.getPhysicalTableNameByTableNamePrefix(logicalTableName,
+            TimeHelper.getDay(timestamp));
         return getShardIdByPhysicalTableName(physicalTableName, hashcode);
     }
 

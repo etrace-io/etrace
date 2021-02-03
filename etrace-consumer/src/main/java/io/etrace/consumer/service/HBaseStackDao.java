@@ -39,15 +39,14 @@ public class HBaseStackDao {
     @Autowired
     public IHBaseClientFactory ihBaseClientFactory;
     @Autowired
-    protected IHBaseTableNameFactory ihBaseTableNameFactory;
-    @Autowired
     public StackImpl stackImpl;
+    @Autowired
+    protected IHBaseTableNameFactory ihBaseTableNameFactory;
 
     /**
      * RowKey: shard + reqId
      * <p>
-     * Column(t): key: rpcId
-     * 老版本是 Column(t): key: # + rpcId 2019-10-10
+     * Column(t): key: rpcId 老版本是 Column(t): key: # + rpcId 2019-10-10
      * <p>
      * Column(t): value: hour + ip + index + blockOffset + messageOffset + appId + RPC
      */

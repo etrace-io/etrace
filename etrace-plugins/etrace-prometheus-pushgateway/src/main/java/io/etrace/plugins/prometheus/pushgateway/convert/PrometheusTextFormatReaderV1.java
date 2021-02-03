@@ -18,7 +18,6 @@ import static io.etrace.plugins.prometheus.pushgateway.constants.PushGatewayCons
  */
 public class PrometheusTextFormatReaderV1 {
 
-
     public static Map<String, String> parseLables(String requestURI) {
         Map<String, String> groupingMap = new HashMap<>();
         String[] splits = requestURI.split("/");
@@ -105,11 +104,9 @@ public class PrometheusTextFormatReaderV1 {
         return line.substring(7, line.indexOf(' ', 7));
     }
 
-
     private static String parseHelp(String line) {
         return line.substring(line.lastIndexOf(' ') + 1);
     }
-
 
     private static PrometheusTypeEnumV1 paseType(String line) {
         String typeString = line.substring(line.lastIndexOf(' ') + 1);
@@ -152,14 +149,12 @@ public class PrometheusTextFormatReaderV1 {
         return new PrometheusMetricSampleV1(sampleName, tagKeyList, tagValueList, value, ms);
     }
 
-
     private static PrometheusMetricSampleV1 parseMetricWithNoTags(String line, long ms) {
         int index = line.indexOf(" ");
         Double value = Double.valueOf(line.substring(index + 1, line.length()));
         String sampleName = line.substring(0, index);
         return new PrometheusMetricSampleV1(sampleName, null, null, value, ms);
     }
-
 
     public static String decodeBase64(String value) {
         try {

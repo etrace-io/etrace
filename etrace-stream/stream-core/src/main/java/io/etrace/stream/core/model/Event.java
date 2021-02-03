@@ -30,5 +30,7 @@ public interface Event extends Filterable {
     @Override
     default String getAppId() {
         return getHeader().getAppId();
-    };
+    }
+
+    ;
 }

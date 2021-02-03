@@ -16,11 +16,9 @@
 
 package io.etrace.consumer.storage.hbase;
 
-import com.google.common.collect.Lists;
 import io.etrace.common.message.metric.Metric;
 
 import java.io.IOException;
-import java.util.List;
 
 public abstract class MetricTable implements TableSchema {
 

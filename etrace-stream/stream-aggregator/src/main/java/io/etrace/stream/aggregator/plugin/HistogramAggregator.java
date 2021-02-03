@@ -13,7 +13,6 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class HistogramAggregator implements AggregationMethod {
     private static PercentileBucketFunction percentileBucketFunction = PercentileBucketFunction.getFunctions(0);
-    // todo replace with IntMap?
     private Map<Integer, Integer> slots;
 
     @Override

@@ -1,0 +1,39 @@
+{
+  "properties": [
+    {
+      "name": "config.queue.path",
+      "type": "java.lang.String",
+      "description": "Description for config.queue.path."
+    },
+    {
+      "name": "config.queue.maxFileSize",
+      "type": "java.lang.String",
+      "description": "Description for config.queue.maxFileSize."
+    },
+    {
+      "name": "config.queue.memoryCapacity",
+      "type": "java.lang.String",
+      "description": "Description for config.queue.memoryCapacity."
+    },
+    {
+      "name": "collector.cluster.zkPath",
+      "type": "java.lang.String",
+      "description": "Description for collector.cluster.zkPath."
+    },
+    {
+      "name": "collector.cluster.register.zkAddress",
+      "type": "java.lang.String",
+      "description": "Description for collector.cluster.register.zkAddress."
+    },
+    {
+      "name": "collector.cluster.register.namespace",
+      "type": "java.lang.String",
+      "description": "Description for collector.cluster.register.namespace."
+    },
+    {
+      "name": "collector.cluster.mapping",
+      "type": "java.lang.String",
+      "description": "Description for collector.cluster.mapping."
+    }
+  ]
+}

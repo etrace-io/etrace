@@ -142,10 +142,11 @@ public class CallStackHelper {
         return requestId;
     }
 
+    /**
+     * can apply hostName transformation via your CMDB info.
+     */
     public static String transferHostName(String hostName) {
-        String result = hostName;
-        // todo: custom host transfer logic
-        return result;
+        return hostName;
     }
 
     public static String transferId(String id) {

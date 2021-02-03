@@ -19,7 +19,6 @@ package io.etrace.consumer.storage.hbase;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.consumer.model.BlockIndex;
 
-
 public abstract class StackTable implements TableSchema {
 
     /**

@@ -3,7 +3,7 @@ package io.etrace.plugins.prometheus.pushgateway.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrometheusMetricSampleV1 implements PrometheusMetricSample{
+public class PrometheusMetricSampleV1 implements PrometheusMetricSample {
 
     public final String name;
     public final List<String> labelNames;
@@ -13,8 +13,8 @@ public class PrometheusMetricSampleV1 implements PrometheusMetricSample{
     // It's an epoch format with milliseconds value included (this field is subject to change).
     public final Long timestampMs;
 
-
-    public PrometheusMetricSampleV1(String name, List<String> labelNames, List<String> labelValues, double value, Long timestampMs) {
+    public PrometheusMetricSampleV1(String name, List<String> labelNames, List<String> labelValues, double value,
+                                    Long timestampMs) {
         this.name = name;
         if (null == labelNames) {
             labelNames = new ArrayList<>();

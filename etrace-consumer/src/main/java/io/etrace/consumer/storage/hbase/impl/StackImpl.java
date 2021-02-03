@@ -22,7 +22,6 @@ import io.etrace.common.util.IPUtil;
 import io.etrace.consumer.model.BlockIndex;
 import io.etrace.consumer.storage.hbase.StackTable;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component

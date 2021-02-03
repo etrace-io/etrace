@@ -87,7 +87,7 @@ public class ApplicationCallStackDecode extends AbstractCallStackDecode {
             jvmEvent = new JVM();
         }
         jvmEvent.setTimestamp(timestamp);
-        jvmEvent.setValue(ObjectUtil.toDouble(value));
+        jvmEvent.setValue(ObjectUtil.toDoubleOrDefault(value, 0));
         if (key.contains(" ")) {
             key = REMOVE_SPACE.matcher(key).replaceAll("");
         }

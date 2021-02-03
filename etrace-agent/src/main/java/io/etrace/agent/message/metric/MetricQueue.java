@@ -359,6 +359,5 @@ public class MetricQueue {
             return sendCount;
         }
 
-
     }
 }

@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
@@ -48,6 +47,7 @@ public class Component {
     private TaskPool taskPool;
 
     private AtomicBoolean alreadStarted = new AtomicBoolean(false);
+    private int warnCounter = 1;
 
     public Component(String pipeline, String name) {
         this.pipeline = pipeline;
@@ -64,7 +64,6 @@ public class Component {
         }
 
         this.taskPool.init2(param);
-
 
     }
 
@@ -87,6 +86,8 @@ public class Component {
         downstreams.add(downStream);
     }
 
+    // todo:  待梳理
+
     public void stop() {
         // ensure inputs all closed
         //todo 这里有点不一样
@@ -98,9 +99,6 @@ public class Component {
         LOGGER.info("Shutdown pipeline [{}] system component [{}] successfully!", pipeline, name);
     }
 
-    // todo:  待梳理
-
-    private int warnCounter = 1;
     /**
      * 无视条件， dispatch 到所有下游  COMPONENT
      */

@@ -62,7 +62,7 @@ public class DefaultPipelineLoader implements PipelineLoader {
 
         if (null != files) {
             for (File file : files) {
-                if (file.getName() .endsWith(".yaml") || file.getName() .endsWith(".yml")) {
+                if (file.getName().endsWith(".yaml") || file.getName().endsWith(".yml")) {
                     Yaml yaml = new Yaml();
                     InputStream initialStream = new FileInputStream(file);
                     PipelineConfiguration pipelineConfiguration = yaml.loadAs(initialStream,

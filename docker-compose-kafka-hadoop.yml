@@ -42,14 +42,14 @@ services:
     image: dajobe/hbase
     container_name: etrace_hbase
     hostname: hbase
-#        volumes:
-#          - ./temp/hbase/data:/data
+    #        volumes:
+    #          - ./temp/hbase/data:/data
     ports:
       - 16000:16000
       - 16010:16010  # UI port
       - 16020:16020
       - 16030:16030
-#      - 9090:9090  # thrift server port
+      #      - 9090:9090  # thrift server port
       - 9095:9095
       - 8085:8085
       - 2888:2888

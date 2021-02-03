@@ -1,5 +1,3 @@
-
-
 @Name('dashboard')
 @Metric(name='{name}', fields={'count'})
 @Metric(name='dashboard', fields={'count'})

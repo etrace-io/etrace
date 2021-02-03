@@ -27,8 +27,8 @@ public abstract class Task {
     protected String name;
     protected Map<String, Object> params;
     protected Component component;
-    private volatile boolean running = false;
     Timer timer;
+    private volatile boolean running = false;
 
     public Task(String name, Component component, Map<String, Object> params) {
         this.name = name;

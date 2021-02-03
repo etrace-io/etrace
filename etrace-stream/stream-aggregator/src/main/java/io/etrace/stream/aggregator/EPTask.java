@@ -83,7 +83,8 @@ public class EPTask extends DefaultAsyncTask implements Processor {
                             //        .map(p -> epl + File.separator + p.getFileName().toString())
                             //        .collect(Collectors.toList()));
                             //} else {
-                            //    LOGGER.info("[{}] going to load epl [{}] from jar [{}]", this.getName(), epl, jarPath);
+                            //    LOGGER.info("[{}] going to load epl [{}] from jar [{}]", this.getName(), epl,
+                            //    jarPath);
                             //    // relative path
                             //    eplModels.add(epl);
                             //}
@@ -107,8 +108,7 @@ public class EPTask extends DefaultAsyncTask implements Processor {
         });
 
         scheduledExecutorService.scheduleAtFixedRate(() -> {
-            // todo:
-            // soa_proxy, star events由于collector sharding策略  shaka esper处理的数据时有时无 需要定时flush
+            // 某些罕见的 events由于collector sharding策略  shaka esper处理的数据时有时无 需要定时flush
             // handleEvent event放入ringbuffer中 由sender线程执行checkFlush
             // 直接调用esper checkFlushEvent会有线程问题 flushCounter kafkaSink blockStore 都是threadLocal
             handleEvent("checkFlushEvent", new CheckFlushEvent());

@@ -66,7 +66,6 @@ public class DiskBackedInMemoryBlockingQueue<T> implements PersistentQueue<T> {
         try {
             data = this.inMemoryQueue.poll(5, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            // todo: 确认下，ignore InterruptedException 是否ok
             // ignore
         }
         if (data == null) {

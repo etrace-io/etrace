@@ -7,22 +7,20 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 /**
+ *
  */
 public class CollectorSocket {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectorSocket.class);
-
 
     private final static long LONG_TIME_CLOSE = 330 * 1000;
     private long lastVisitTime = System.currentTimeMillis();
 
     private CollectorConnection connection;
 
-
     public boolean send(byte[] head, byte[] chunk) {
         return sendTryTwice(head, chunk);
     }
-
 
     public void shutdown() {
         closeConnection();
@@ -34,18 +32,17 @@ public class CollectorSocket {
             CollectorConnection newConnect = new CollectorConnection();
             newConnect.openConnection();
             this.connection = newConnect;
-//        } else {
-//            closeConnection();
-//            CollectorConnection newConnect = new CollectorConnection();
-//            newConnect.openConnection();
-//            this.connection = newConnect;
+            //        } else {
+            //            closeConnection();
+            //            CollectorConnection newConnect = new CollectorConnection();
+            //            newConnect.openConnection();
+            //            this.connection = newConnect;
         }
 
         if (!connection.isOpen()) {
             connection.openConnection();
         }
     }
-
 
     private boolean openConnection() {
         getConnection();
@@ -60,7 +57,6 @@ public class CollectorSocket {
         return connection.getSocketClient();
     }
 
-
     private boolean isOpen() {
         return connection != null && connection.isOpen();
     }
@@ -71,14 +67,12 @@ public class CollectorSocket {
         }
     }
 
-
     public void tryCloseConnWhenLongTime() {
         if (System.currentTimeMillis() - lastVisitTime > LONG_TIME_CLOSE && connection != null && connection.isOpen()) {
             connection.closeConnection();
             lastVisitTime = System.currentTimeMillis();
         }
     }
-
 
     private boolean sendTryTwice(byte[] head, byte[] chunk) {
         //when send error will try send again
@@ -99,7 +93,6 @@ public class CollectorSocket {
 
     }
 
-
     private boolean tcpSend(SocketChannel socketChannel, byte[] head, byte[] chunk) {
         if (null == socketChannel) {
             return false;
@@ -113,7 +106,7 @@ public class CollectorSocket {
             buffer.put(chunk);
             buffer.flip();
             while (buffer.hasRemaining()) {
-                if (socketChannel.write(buffer) == 0){
+                if (socketChannel.write(buffer) == 0) {
                     break;
                 }
             }

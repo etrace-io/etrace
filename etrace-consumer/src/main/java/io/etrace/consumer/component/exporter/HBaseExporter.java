@@ -30,16 +30,12 @@ public class HBaseExporter extends DefaultAsyncTask implements Exporter {
 
     @Autowired
     public IHBaseClient client;
-
-    @Autowired
-    private IHBaseTableNameFactory ihBaseTableNameFactory;
-
-    @Autowired
-    private CleanHBaseAndHDFSTask cleanHBaseAndHDFSTask;
-
     @Autowired
     public ConsumerProperties consumerProperties;
-
+    @Autowired
+    private IHBaseTableNameFactory ihBaseTableNameFactory;
+    @Autowired
+    private CleanHBaseAndHDFSTask cleanHBaseAndHDFSTask;
     private Map<Integer, BlockingQueue<Put>> putMapToFlush = new HashMap<>();
 
     private String tableNamePrefix;

@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -22,9 +21,9 @@ public class KafkaReceive extends DefaultSyncTask implements Receiver {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceive.class);
 
     private final String resourceId;
+    private final KafkaConsumerProp kafkaConsumerProp;
     private AbstractConsumer consumer;
     private Resource resource;
-    private final KafkaConsumerProp kafkaConsumerProp;
 
     public KafkaReceive(String name, Component component, Map<String, Object> params) {
         super(name, component, params);

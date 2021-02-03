@@ -29,9 +29,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HDFSBucket implements Bucket {
-    private final static Logger LOGGER = LoggerFactory.getLogger(HDFSBucket.class);
-
     public final static String MESSAGE_TRACE_PATH = "message_trace";
+    private final static Logger LOGGER = LoggerFactory.getLogger(HDFSBucket.class);
     private final AtomicBoolean isClose = new AtomicBoolean(false);
     private final String dataFile;
     private FSDataOutputStream dataStream;

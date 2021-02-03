@@ -54,7 +54,8 @@ public class HDFSService {
 
     @PostConstruct
     public void startup() {
-        stackPath = consumerProperties.getHdfs().getPath() + File.separator + HDFSBucket.MESSAGE_TRACE_PATH + File.separator;
+        stackPath = consumerProperties.getHdfs().getPath() + File.separator + HDFSBucket.MESSAGE_TRACE_PATH
+            + File.separator;
         dataReaderCache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .expireAfterAccess(5, TimeUnit.MINUTES)

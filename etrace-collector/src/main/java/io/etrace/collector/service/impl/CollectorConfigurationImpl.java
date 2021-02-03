@@ -14,6 +14,7 @@ import java.util.Set;
 
 @Service
 public class CollectorConfigurationImpl implements CollectorConfigurationService {
+
     @Autowired
     private ForbiddenConfig forbiddenConfig;
 

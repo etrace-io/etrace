@@ -367,7 +367,8 @@ public class DefaultMessageManager implements TraceManager {
                 if (current != transaction) {
                     while (transaction != current && !stack.isEmpty()) {
                         if (!current.isBadTransaction()) {
-                            Event event = new EventImpl(Constants.AGENT_EVENT_TYPE_TRACE, Constants.NAME_BAD_TRANSACTION);
+                            Event event = new EventImpl(Constants.AGENT_EVENT_TYPE_TRACE,
+                                Constants.NAME_BAD_TRANSACTION);
                             event.setStatus("TransactionNotCompleted");
                             event.complete();
                             current.addChild(event);

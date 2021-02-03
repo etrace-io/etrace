@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 public class PrometheusDatasource implements MetricDatasourceService {
 
     Map<String, RegistryAndPushGateway> pushGatewayMap = Maps.newConcurrentMap();
+    private Map<String, Collector> collectorMap = Maps.newConcurrentMap();
 
     @Override
     public boolean connected(Long datasourceUniqueId) {
@@ -108,8 +109,6 @@ public class PrometheusDatasource implements MetricDatasourceService {
     public void registerDatasourceCluster(String resourceId, Resource resource) throws EsperConfigException {
 
     }
-
-    private Map<String, Collector> collectorMap = Maps.newConcurrentMap();
 
     @Override
     public void writeData(String datasourceUniqueId, String database, List<Metric> metrics) throws Exception {

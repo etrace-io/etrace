@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 public class PrometheusPushGatewayController {
 
@@ -35,7 +34,8 @@ public class PrometheusPushGatewayController {
     }
 
     @RequestMapping(value = "/metrics/**", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseEntity postMetric(HttpServletRequest request, @RequestBody(required = false) String json) throws IOException {
+    public ResponseEntity postMetric(HttpServletRequest request, @RequestBody(required = false) String json)
+        throws IOException {
         if (null == json) {
             return ResponseEntity.accepted().build();
         }
@@ -63,6 +63,5 @@ public class PrometheusPushGatewayController {
         }
         return ResponseEntity.badRequest().build();
     }
-
 
 }

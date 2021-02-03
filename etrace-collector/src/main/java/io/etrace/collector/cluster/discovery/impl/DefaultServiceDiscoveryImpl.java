@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -33,22 +32,21 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Component
-@ConditionalOnMissingBean(name= "ServiceDiscovery")
+@ConditionalOnMissingBean(name = "ServiceDiscovery")
 public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
-
-    @Value("${collector.cluster.zkPath}")
-    public String basePath;
 
     private final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceDiscoveryImpl.class);
     /**
      * key is cluster name or service name
      */
     private final ConcurrentMap<String, Set<ServiceInstance>> instances = Maps.newConcurrentMap();
+    @Value("${collector.cluster.zkPath}")
+    public String basePath;
     @Autowired
     protected ServiceProvider serviceProvider;
+    protected Set<ServiceInstance> currentInstances = Sets.newHashSet();
     private volatile boolean running = false;
     private ConnectionStateListener listener;
-    protected Set<ServiceInstance> currentInstances = Sets.newHashSet();
 
     public void changeState(ConnectionState connectionState) {
         if (connectionState == ConnectionState.RECONNECTED) {
@@ -98,7 +96,7 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
         for (int i = 0; i < MAX_TRIES; ++i) {
             try {
                 serviceProvider.deleteNode(path);
-                serviceProvider.createEphemeralNode(path, JSONUtil.toBytes(instance) );
+                serviceProvider.createEphemeralNode(path, JSONUtil.toBytes(instance));
 
                 currentInstances.add(instance);
                 LOGGER.info("Register success [cluster:{},ip:{},port:{}]", instance.getCluster(), instance.getAddress(),
@@ -181,7 +179,7 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
 
     public void updateListener(TreeCacheEvent event) throws Exception {
         String path = event.getData().getPath();
-        ServiceInstance instance =  JSONUtil.toObject(event.getData().getData(), ServiceInstance.class);
+        ServiceInstance instance = JSONUtil.toObject(event.getData().getData(), ServiceInstance.class);
         switch (event.getType()) {
             case NODE_ADDED:
                 LOGGER.info("Collector node added: {}.", path);

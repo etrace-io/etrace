@@ -40,4 +40,7 @@ public interface Constants {
 
     String SUCCESS_STR = "success";
     String UNKNOWN = "unknown";
+
+    String HEARTBEAT_TYPE_AGENT = "agent-stat";
+
 }

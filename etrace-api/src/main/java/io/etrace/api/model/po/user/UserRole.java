@@ -24,7 +24,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity

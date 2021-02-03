@@ -8,11 +8,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 
-
 @SpringBootApplication
 @EnableWebMvc
 public class Application {
-
 
     @Value("${etrace.collector}")
     private String collector;

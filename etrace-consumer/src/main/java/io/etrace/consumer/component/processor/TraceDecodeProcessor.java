@@ -53,6 +53,24 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
         super(name, component, params);
     }
 
+    private static boolean validateCallStack(CallStackV1 callStack) {
+        if (callStack == null) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getAppId())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getHostIp())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getHostName())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getRequestId())) {
+            return false;
+        } else if (Strings.isNullOrEmpty(callStack.getId())) {
+            return false;
+        } else {
+            return callStack.getMessage() != null;
+        }
+    }
+
     @Override
     public void startup() {
         super.startup();
@@ -79,10 +97,10 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
     public void error(byte[] body, Exception e) {
         if (AgentConfiguration.isDebugMode()) {
             try {
-            ByteArrayInputStream bain = new ByteArrayInputStream(body);
-            SnappyInputStream in = new SnappyInputStream(bain);
-            String result = new BufferedReader(new InputStreamReader(in))
-                .lines().collect(Collectors.joining("\n"));
+                ByteArrayInputStream bain = new ByteArrayInputStream(body);
+                SnappyInputStream in = new SnappyInputStream(bain);
+                String result = new BufferedReader(new InputStreamReader(in))
+                    .lines().collect(Collectors.joining("\n"));
 
                 LOGGER.error("fail to processEvent: data:\n {}", result, e);
             } catch (IOException ioException) {
@@ -151,28 +169,10 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
             Trace.newCounter(INVALID_MESSAGE)
                 .addTag("name", component.getName())
                 .addTag("type", "invalidCallstack")
-                .addTag("appId", item.getCallStack() == null ? "nullCallstack":
+                .addTag("appId", item.getCallStack() == null ? "nullCallstack" :
                     Optional.ofNullable(item.getCallStack().getAppId()).orElse("nullAppId"))
                 .once();
         }
         return valid;
-    }
-
-    private static boolean validateCallStack(CallStackV1 callStack) {
-        if (callStack == null) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getAppId())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getHostIp())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getHostName())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getRequestId())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getId())) {
-            return false;
-        } else {
-            return callStack.getMessage() != null;
-        }
     }
 }
