@@ -6,7 +6,6 @@ import io.etrace.common.pipeline.Receiver;
 import io.etrace.common.pipeline.Resource;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.common.util.JSONUtil;
-import io.etrace.stream.container.StreamContainer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Timer;
@@ -17,6 +16,7 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -42,7 +42,10 @@ public class KafkaConsumeTask extends DefaultSyncTask implements Receiver {
     private Counter consumeError;
     private Timer pendingTimer;
     private Resource resource;
-    private Map<String, Integer> topicAndFetchNums;
+    private final Map<String, Integer> topicAndFetchNums;
+
+    @Value("${server.port}")
+    private int serverPort;
 
     public KafkaConsumeTask(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
@@ -56,7 +59,7 @@ public class KafkaConsumeTask extends DefaultSyncTask implements Receiver {
         });
     }
 
-    static ConsumerConnector createKafkaConsumer(Resource resource, String pipeline) throws Exception {
+    private ConsumerConnector createKafkaConsumer(Resource resource, String pipeline) throws Exception {
         Properties props = new Properties();
         props.putAll(resource.getProps());
         props.put("group.id", pipeline);
@@ -64,7 +67,7 @@ public class KafkaConsumeTask extends DefaultSyncTask implements Receiver {
         UUID uuid = UUID.randomUUID();
         props.put("consumer.id", String.format("%s-%s--%s--%s",
             InetAddress.getLocalHost().getHostName(),
-            Optional.ofNullable(System.getProperty(StreamContainer.HTTP_PORT)).orElse("9000"),
+            serverPort,
             System.currentTimeMillis(),
             Long.toHexString(uuid.getMostSignificantBits()).substring(0, 8)));
         LOGGER.info(props.toString() + " =====");

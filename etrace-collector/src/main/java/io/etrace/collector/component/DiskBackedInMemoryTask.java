@@ -1,7 +1,7 @@
 package io.etrace.collector.component;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import io.etrace.collector.config.Config;
+import io.etrace.collector.config.CollectorProperties;
 import io.etrace.collector.metrics.MetricsService;
 import io.etrace.collector.model.BinaryPairCodec;
 import io.etrace.common.message.trace.MessageHeader;
@@ -40,7 +40,7 @@ public abstract class DiskBackedInMemoryTask extends Task implements Runnable {
     private final AtomicLong overflowCount = new AtomicLong(0);
     private final Timer processTimer;
     @Autowired
-    private Config config;
+    private CollectorProperties collectorProperties;
     //in memory queue
     private BlockingQueue<Pair<MessageHeader, byte[]>> inMemoryQueue;
     //on disk persistent queue
@@ -70,8 +70,8 @@ public abstract class DiskBackedInMemoryTask extends Task implements Runnable {
 
         //DiskQueue
         QueueConfig queueConfig = new QueueConfig();
-        queueConfig.setMaxFileSize(config.getQueue().getMaxFileSize() * 1024);
-        queueConfig.setRootPath(config.getQueue().getPath());
+        queueConfig.setMaxFileSize(collectorProperties.getQueue().getMaxFileSize() * 1024);
+        queueConfig.setRootPath(collectorProperties.getQueue().getPath());
         queueConfig.setName(name);
         queueConfig.setIdx(idx);
 

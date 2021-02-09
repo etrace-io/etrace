@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import io.etrace.collector.cluster.discovery.ServiceDiscovery;
 import io.etrace.collector.cluster.discovery.ServiceInstance;
 import io.etrace.collector.cluster.discovery.ServiceProvider;
+import io.etrace.collector.config.CollectorProperties;
 import io.etrace.common.util.JSONUtil;
 import io.etrace.common.util.ThreadUtil;
 import org.apache.curator.framework.CuratorFramework;
@@ -18,7 +19,6 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
@@ -40,8 +40,11 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
      * key is cluster name or service name
      */
     private final ConcurrentMap<String, Set<ServiceInstance>> instances = Maps.newConcurrentMap();
-    @Value("${collector.cluster.zkPath}")
     public String basePath;
+
+    @Autowired
+    CollectorProperties collectorProperties;
+
     @Autowired
     protected ServiceProvider serviceProvider;
     protected Set<ServiceInstance> currentInstances = Sets.newHashSet();
@@ -65,6 +68,7 @@ public class DefaultServiceDiscoveryImpl implements ServiceDiscovery {
 
     @PostConstruct
     public void startup() {
+        this.basePath = collectorProperties.getCluster().getZkPath();
         try {
             this.listener = (curatorFramework, connectionState) -> changeState(connectionState);
             serviceProvider.getClient().getConnectionStateListenable().addListener(listener);

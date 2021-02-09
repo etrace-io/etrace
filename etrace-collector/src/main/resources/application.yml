@@ -13,68 +13,68 @@ SECOND_KAFKA_TOPIC: &SECOND_KAFKA_TOPIC dal_application
 # spring-web
 server:
   port: 2890
-  connection-timeout: 5000
-  tomcat:
-    accept-count: 64
-    max-threads: 8
-    min-spare-threads: 4
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 etrace:
   appId: etrace.collector
   backendAddress: localhost:2890
 
-config:
-  queue:
-    path: "temp/collector-queue"
-    maxFileSize: 128
-    memoryCapacity: 1024
-
-collector:
-  # cluster
-  cluster:
-    name: *MAIN_CLUSTER
-    defaultCluster: *MAIN_CLUSTER
-    zkPath: /etrace-opensource-collector-cluster
-    register:
-      zkAddress: zookeeper:2181
-      namespace: etrace/collector
-    mapping:
-      - appId: one-equal-appId
-        type: EQUAL
-        cluster: *MAIN_CLUSTER
-      - appId: one-prefix-appId
-        type: PREFIX
-        cluster: *MAIN_CLUSTER
-  # sharding
-  sharding:
-    front:
-      interval: 5
-      enabled: true
-    backend:
-      interval: 30
-      enabled: true
-
-  resources:
-    - type: KAFKA
+  collector:
+    # cluster
+    cluster:
       name: *MAIN_CLUSTER
-      props:
-        topics: *MAIN_KAFKA_TOPIC
-        bootstrap.servers: kafka:9092
-        key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-        value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-        max.request.size: 10485760
-        retries: 2147483640
-        send.buffer.bytes: 1048576
-        buffer.memory: 33554432
+      defaultCluster: *MAIN_CLUSTER
+      zkPath: /etrace-opensource-collector-cluster
+      register:
+        zkAddress: zookeeper:2181
+        namespace: etrace/collector
+      mapping:
+        - appId: one-equal-appId
+          type: EQUAL
+          cluster: *MAIN_CLUSTER
+        - appId: one-prefix-appId
+          type: PREFIX
+          cluster: *MAIN_CLUSTER
+    # sharding
+    sharding:
+      front:
+        interval: 5
+        enabled: true
+      backend:
+        interval: 30
+        enabled: true
 
-    - type: KAFKA
-      name: *SECOND_CLUSTER
-      props:
-        topics: *SECOND_KAFKA_TOPIC
-        bootstrap.servers: kafka:9092
-        key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-        value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-        max.request.size: 10485760
-        retries: 2147483640
-        send.buffer.bytes: 1048576
-        buffer.memory: 33554432
+    resources:
+      - type: KAFKA
+        name: *MAIN_CLUSTER
+        props:
+          topics: *MAIN_KAFKA_TOPIC
+          bootstrap.servers: kafka:9092
+          key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+          value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+          max.request.size: 10485760
+          retries: 2147483640
+          send.buffer.bytes: 1048576
+          buffer.memory: 33554432
+
+      - type: KAFKA
+        name: *SECOND_CLUSTER
+        props:
+          topics: *SECOND_KAFKA_TOPIC
+          bootstrap.servers: kafka:9092
+          key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+          value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+          max.request.size: 10485760
+          retries: 2147483640
+          send.buffer.bytes: 1048576
+          buffer.memory: 33554432
+    # queue
+    queue:
+      path: "temp/collector-queue"
+      maxFileSize: 128
+      memoryCapacity: 1024

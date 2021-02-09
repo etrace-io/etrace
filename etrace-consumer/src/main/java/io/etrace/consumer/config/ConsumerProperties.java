@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@ConfigurationProperties(prefix = "consumer")
+@ConfigurationProperties(prefix = "etrace.consumer")
 @Data
 public class ConsumerProperties {
     private int keeper;

@@ -17,9 +17,6 @@
 package io.etrace.collector;
 
 import io.etrace.agent.Trace;
-import io.etrace.agent.config.AgentConfiguration;
-import io.etrace.collector.config.Config;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,8 +27,6 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 @EnableWebMvc
 public class CollectorApplication {
-    @Autowired
-    private Config config;
 
     public static void main(String[] args) {
         SpringApplication.run(CollectorApplication.class, args);
@@ -39,13 +34,6 @@ public class CollectorApplication {
 
     @PostConstruct
     public void startup() {
-        initAgentConfig();
-    }
-
-    private void initAgentConfig() {
-        AgentConfiguration.setAppId(config.getAppId());
-        AgentConfiguration.setCollectorIp(config.getBackendAddress());
-
         //AgentConfiguration.setDebugMode(true);
     }
 

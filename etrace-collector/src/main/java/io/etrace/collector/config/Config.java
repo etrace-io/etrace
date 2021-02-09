@@ -7,15 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "config")
 @Data
+@Deprecated
 public class Config {
     private String appId;
     private String backendAddress;
-    private QueueProperties queue;
 
-    @Data
-    public static class QueueProperties {
-        private String path;
-        private int memoryCapacity;
-        private int maxFileSize;
-    }
 }

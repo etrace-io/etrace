@@ -27,7 +27,7 @@ public class KafkaExporter extends DefaultSyncTask implements Exporter {
     ChannelManager channelManager;
     @Autowired
     MetricsService metricsService;
-    private String resourceId;
+    private final String resourceId;
     private Resource resource;
 
     public KafkaExporter(String name, Component component, Map<String, Object> params) {
@@ -40,7 +40,8 @@ public class KafkaExporter extends DefaultSyncTask implements Exporter {
 
         List<Resource> resources = (List<Resource>)param[1];
         resource = resources.stream()
-            .filter(r -> r.getName().equals(resourceId)).findFirst().get();
+            .filter(r -> r.getName().equals(resourceId)).findFirst()
+            .orElseThrow(() -> new RuntimeException("resourceId [" + resourceId + "] not found."));
     }
 
     @Override

@@ -43,19 +43,9 @@ public class ConsumerApplication implements BeanFactoryAware {
         SpringApplication.run(ConsumerApplication.class, args);
     }
 
-    public void init() {
-        //AgentConfiguration.setDebugMode(true);
-    }
-    //@Autowired
-    //IHBaseStorageService ihBaseStorageService;
-
-    //@PostConstruct
-    public void xxx() {
-    }
-
     @PostConstruct
     public void startup() {
-        init();
+        //AgentConfiguration.setDebugMode(true);
         try {
             PipelineRepository pipelineRepository = beanFactory.getBean(PipelineRepository.class,
                 new DefaultPipelineLoader().load(), consumerProperties.getResources());

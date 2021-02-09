@@ -1,0 +1,3 @@
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#  io.etrace.collector.config.CollectorProperties
+#

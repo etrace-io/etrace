@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "etrace.stream")
 @Data
-public class ConfigProp {
+public class StreamConfigProperties {
     private List<Resource> resources;
+    private boolean outputDetailEpl = false;
 }
