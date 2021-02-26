@@ -27,7 +27,7 @@ public class EtraceAgentConfiguration {
             etraceConfig.getBackendAddress())) {
             LOGGER.warn(
                 "ETrace agent auto configuration fail, you need config `etrace.appId` and `etrace.backendAddress` in "
-                    + "`application.yaml`.");
+                    + "`application.yml`.");
         } else {
             AgentConfiguration.setAppId(etraceConfig.getAppId());
             AgentConfiguration.setCollectorIp(etraceConfig.getBackendAddress());

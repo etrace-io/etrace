@@ -39,7 +39,7 @@
             <directory>${project.basedir}/src/main/resources</directory>
             <outputDirectory>/conf</outputDirectory>
             <includes>
-                <include>application.yaml</include>
+                <include>application.yml</include>
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>
