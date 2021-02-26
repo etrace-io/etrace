@@ -71,6 +71,7 @@ public class MetricImpl extends MetricTable {
         offset = Bytes.putBytes(data, offset, metricsKeyData, 0, metricsKeyData.length);
         offset = Bytes.putLong(data, offset, timestamp);
         if (null != maxValue) {
+            // to store the rowkey in descending order
             offset = Bytes.putLong(data, offset, Long.MAX_VALUE - maxValue);
         }
 
