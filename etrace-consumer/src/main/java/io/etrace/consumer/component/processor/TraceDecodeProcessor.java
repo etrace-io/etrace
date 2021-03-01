@@ -108,8 +108,11 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
                     CallStackUtil.removeClientAppId(callStack);
                 } else {
                     it.remove();
-                    LOGGER.info("Discard MessageItem: AppId[{}], RequestId[{}], Host[{}], HostName[{}].",
-                        callStack.getAppId(), callStack.getRequestId(), callStack.getHostIp(), callStack.getHostName());
+                    if (AgentConfiguration.isDebugMode()) {
+                        LOGGER.info("Discard MessageItem: AppId[{}], RequestId[{}], Host[{}], HostName[{}].",
+                            callStack.getAppId(), callStack.getRequestId(), callStack.getHostIp(),
+                            callStack.getHostName());
+                    }
                 }
             }
             if (!items.isEmpty()) {

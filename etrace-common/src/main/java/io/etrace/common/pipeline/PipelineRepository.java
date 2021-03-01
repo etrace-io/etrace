@@ -196,7 +196,10 @@ public class PipelineRepository implements BeanFactoryAware {
     private StringBuilder printPipelineInfo(String root) {
         StringBuilder sb = new StringBuilder(128);
         Component r = components.get(root);
-        sb.append("(ROOT) ").append(root).append(" (").append(Integer.toHexString(r.hashCode())).append(")\t");
+        sb.append("(ROOT) ").append(root).append(" (").append(Integer.toHexString(r.hashCode())).append(")")
+            .append("[").append(r.getTaskPool().getTaskSize()).append(" ")
+            .append(r.getTaskPool().getShardingStrategy().name()).append("]")
+            .append("\t");
         printComponent(sb, r);
 
         sb.append("\n");
@@ -220,7 +223,10 @@ public class PipelineRepository implements BeanFactoryAware {
                         .append(filter)
                         .append(")")
                         .append(output.getName())
-                        .append(" (").append(Integer.toHexString(output.hashCode())).append(")\t");
+                        .append(" (").append(Integer.toHexString(output.hashCode())).append(")")
+                        .append("[").append(output.getTaskPool().getTaskSize()).append(" ")
+                        .append(output.getTaskPool().getShardingStrategy().name()).append("]")
+                        .append("\t");
                     printComponent(sb, output);
                     printNewLine(sb, i, downStreamComponent.size(), len2);
                 }
