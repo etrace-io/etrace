@@ -1,6 +1,5 @@
 package io.etrace.consumer.component.processor;
 
-import io.etrace.agent.Trace;
 import io.etrace.agent.config.AgentConfiguration;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.common.message.trace.MessageItem;
@@ -8,6 +7,9 @@ import io.etrace.common.message.trace.codec.JSONCodecV1;
 import io.etrace.common.pipeline.Component;
 import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
+import io.etrace.common.util.RequestIdHelper;
+import io.etrace.common.util.TimeHelper;
+import io.etrace.consumer.config.ConsumerProperties;
 import io.etrace.consumer.metrics.MetricsService;
 import io.etrace.consumer.model.MessageBlock;
 import io.etrace.consumer.util.CallStackUtil;
@@ -15,7 +17,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
-import joptsimple.internal.Strings;
 import kafka.message.MessageAndMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -39,36 +39,19 @@ import static io.etrace.consumer.metrics.MetricName.*;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor {
 
-    protected static final String INVALID_MESSAGE = "invalid.message";
-
     public final Logger LOGGER = LoggerFactory.getLogger(TraceDecodeProcessor.class);
 
     @Autowired
     public MetricsService metricsService;
+
+    @Autowired
+    protected ConsumerProperties consumerProperties;
 
     public Timer hdfsTimer;
     public Counter parseError;
 
     public TraceDecodeProcessor(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
-    }
-
-    private static boolean validateCallStack(CallStackV1 callStack) {
-        if (callStack == null) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getAppId())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getHostIp())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getHostName())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getRequestId())) {
-            return false;
-        } else if (Strings.isNullOrEmpty(callStack.getId())) {
-            return false;
-        } else {
-            return callStack.getMessage() != null;
-        }
     }
 
     @Override
@@ -80,7 +63,7 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
 
     @Override
     public void processEvent(Object key, Object event) {
-        if (null == event || !(event instanceof MessageAndMetadata)) {
+        if (!(event instanceof MessageAndMetadata)) {
             return;
         }
 
@@ -120,11 +103,13 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
                 MessageItem item = it.next();
                 CallStackV1 callStack = item.getCallStack();
 
-                if (CallStackUtil.validate(callStack)) {
+                // validate message. subclass can override validateMessage()
+                if (validateMessage(item)) {
                     CallStackUtil.removeClientAppId(callStack);
                 } else {
                     it.remove();
-                    metricsService.invalidCallStack(CHECK_EXCEPTION, callStack.getAppId());
+                    LOGGER.info("Discard MessageItem: AppId[{}], RequestId[{}], Host[{}], HostName[{}].",
+                        callStack.getAppId(), callStack.getRequestId(), callStack.getHostIp(), callStack.getHostName());
                 }
             }
             if (!items.isEmpty()) {
@@ -152,10 +137,7 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
                 //set CallStack offset in message block
                 item.setOffset(offset);
 
-                // validate message. subclass can override validMessage()
-                if (validMessage(item)) {
-                    messageItems.add(item);
-                }
+                messageItems.add(item);
 
                 offset += 4 + dataLen;
             }
@@ -163,16 +145,17 @@ public class TraceDecodeProcessor extends DefaultAsyncTask implements Processor 
         }
     }
 
-    public boolean validMessage(MessageItem item) {
-        boolean valid = validateCallStack(item.getCallStack());
-        if (!valid) {
-            Trace.newCounter(INVALID_MESSAGE)
-                .addTag("name", component.getName())
-                .addTag("type", "invalidCallstack")
-                .addTag("appId", item.getCallStack() == null ? "nullCallstack" :
-                    Optional.ofNullable(item.getCallStack().getAppId()).orElse("nullAppId"))
-                .once();
+    protected boolean validateMessage(MessageItem item) {
+        long timestampInRequestId = RequestIdHelper.getTimestamp(item.getRequestId());
+        if (item.getCallStack() == null) {
+            metricsService.invalidCallStack(CHECK_DATA_INTEGRATION, "nullCallstack");
+        } else if (!CallStackUtil.validate(item.getCallStack())) {
+            metricsService.invalidCallStack(CHECK_DATA_INTEGRATION, item.getCallStack().getAppId());
+        } else if (!TimeHelper.isInPeriod(timestampInRequestId, 24 * consumerProperties.getKeeper(), 24)) {
+            metricsService.invalidCallStack(CHECK_TIMESTAMP, item.getCallStack().getAppId());
+        } else {
+            return true;
         }
-        return valid;
+        return false;
     }
 }

@@ -22,6 +22,9 @@ public interface MetricName {
      */
     String CALLSTACK_PARSE_ERROR = "callstack.parse.error";
     String CALLSTACK_CHECK_INVALID = "callstack.check.invalid";
+    String CHECK_DATA_INTEGRATION = "check_data_integration";
+    String CHECK_TIMESTAMP = "check_timestamp";
+
     String HDFS_ERROR = "hdfs.error";
     String HDFS_THROUGHPUT = "hdfs.throughput";
     String METRIC_NO_SAMPLING = "metric.no.sampling";
@@ -35,5 +38,4 @@ public interface MetricName {
     String HBASE_PUT = "hbase.put";
     String HBASE_FAIL = "hbase.fail";
 
-    String CHECK_EXCEPTION = "check";
 }
