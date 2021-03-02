@@ -58,7 +58,7 @@ public class DefaultHBaseClientFactory implements IHBaseClientFactory {
     private final Logger LOGGER = LoggerFactory.getLogger(DefaultHBaseClientFactory.class);
     private final short defaultRegionNum = 60;
     private final Object lock = new Object();
-    private Map<String, byte[]> columnFamilyByLogicalTableName = Maps.newHashMap();
+    private final Map<String, byte[]> columnFamilyByLogicalTableName = Maps.newHashMap();
     @Autowired
     private ConsumerProperties consumerProperties;
     @Autowired
@@ -66,17 +66,17 @@ public class DefaultHBaseClientFactory implements IHBaseClientFactory {
     @Autowired
     private IHBaseTableNameFactory ihBaseTableNameFactory;
 
-    private List<ConsumerProperties.TableAndRegion> tableToRegionMapping = Lists.newArrayList();
+    private final List<ConsumerProperties.TableAndRegion> tableToRegionMapping = Lists.newArrayList();
 
     /**
      * 实际的 hbase table（非逻辑的）与其 region数量的映射表
      */
-    private Map<String, Integer> tableNameAndRegionSizeMap = Maps.newConcurrentMap();
+    private final Map<String, Integer> tableNameAndRegionSizeMap = Maps.newConcurrentMap();
 
     private Configuration configuration;
     private Connection connection;
-    private Map<String, Boolean> tableExist = new ConcurrentHashMap<>();
-    private Cache<String, ThreadLocal<HTable>> tableCache = CacheBuilder.newBuilder()
+    private final Map<String, Boolean> tableExist = new ConcurrentHashMap<>();
+    private final Cache<String, ThreadLocal<HTable>> tableCache = CacheBuilder.newBuilder()
         .expireAfterWrite(30, TimeUnit.MINUTES)
         .expireAfterAccess(30, TimeUnit.MINUTES)
         .removalListener((RemovalListener<String, ThreadLocal<HTable>>)removalNotification -> {
@@ -155,10 +155,9 @@ public class DefaultHBaseClientFactory implements IHBaseClientFactory {
                         } else {
                             createTable(admin, logicTableName, tName);
                         }
-                    } catch (Exception e) {
-                        LOGGER.error("create table {} error", physicalTableName, e);
-                    } finally {
                         tableExist.put(physicalTableName, Boolean.TRUE);
+                    } catch (Exception e) {
+                        LOGGER.error("Create HTable [{}] failed.", physicalTableName, e);
                     }
                 }
             }
