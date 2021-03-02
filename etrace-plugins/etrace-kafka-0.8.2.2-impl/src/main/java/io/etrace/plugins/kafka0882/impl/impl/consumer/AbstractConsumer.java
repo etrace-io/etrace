@@ -19,10 +19,12 @@ package io.etrace.plugins.kafka0882.impl.impl.consumer;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.etrace.common.channel.KafkaConsumerProp;
+import io.etrace.common.util.JSONUtil;
 import io.etrace.plugins.kafka0882.KafkaMessageListener;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.Timer;
 import kafka.consumer.*;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
@@ -37,8 +39,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static io.etrace.plugins.kafka0882.impl.impl.metrics.MetricName.KAFKA_CONSUMER;
-import static io.etrace.plugins.kafka0882.impl.impl.metrics.MetricName.KAFKA_THROUGHPUT;
+import static io.etrace.plugins.kafka0882.impl.impl.metrics.MetricName.*;
 
 public abstract class AbstractConsumer implements KafkaMessageListener<MessageAndMetadata<byte[], byte[]>> {
     public final Logger LOGGER = LoggerFactory.getLogger(AbstractConsumer.class);
@@ -52,6 +53,7 @@ public abstract class AbstractConsumer implements KafkaMessageListener<MessageAn
     //private Counter payload;
     private final Map<String, Counter> counterMap = Maps.newHashMap();
     private final Map<String, Counter> payloadMap = Maps.newHashMap();
+    private final Map<String, Timer> latencyMap = Maps.newHashMap();
 
     public AbstractConsumer(String name) {
         this.name = name;
@@ -104,6 +106,15 @@ public abstract class AbstractConsumer implements KafkaMessageListener<MessageAn
                         Metrics.counter(KAFKA_CONSUMER, Tags.of("topic", topic)));
                     Counter payload = payloadMap.computeIfAbsent(message.topic(), topic ->
                         Metrics.counter(KAFKA_THROUGHPUT, Tags.of("topic", topic)));
+                    Timer latency = latencyMap.computeIfAbsent(message.topic(), topic ->
+                        Metrics.timer(KAFKA_LATENCY, Tags.of("topic", topic)));
+                    try {
+                        Map<String, Object> header = JSONUtil.toObject(message.key(), Map.class);
+                        long timestamp = (long)header.getOrDefault("timestamp", 0L);
+                        latency.record(System.currentTimeMillis() - timestamp, TimeUnit.MILLISECONDS);
+                    } catch (Exception e) {
+                        LOGGER.error("fail to parse Message Header for topic[{}].", message.topic(), e);
+                    }
 
                     try {
                         onMessage(message);

@@ -19,4 +19,5 @@ package io.etrace.plugins.kafka0882.impl.impl.metrics;
 public interface MetricName {
     String KAFKA_CONSUMER = "kafka.consumer";
     String KAFKA_THROUGHPUT = "kafka.throughput";
+    String KAFKA_LATENCY = "kafka.latency";
 }
