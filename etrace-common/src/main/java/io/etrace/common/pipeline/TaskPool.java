@@ -35,7 +35,7 @@ import java.util.Optional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TaskPool implements BeanFactoryAware {
     @Getter
-    private int taskSize = -1;
+    private int taskSize = 1;
     @Getter
     private ShardingStrategy shardingStrategy = new HashingStrategy();
 
