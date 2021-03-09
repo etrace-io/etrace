@@ -2,6 +2,7 @@ package io.etrace.stream.container.exporter.kafka;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import io.etrace.common.HeaderKey;
 import io.etrace.common.compression.MetricBlockManager;
 import io.etrace.common.compression.MetricCompressor;
@@ -36,7 +37,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.google.common.collect.Maps.newHashMap;
 import static io.etrace.common.constant.InternalMetricName.KAFKA_PRODUCER_LOSE_DATA;
 
@@ -47,17 +47,17 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
     private final Counter loseDataCounter;
     @Autowired
     ChannelManager channelManager;
-    private FramedMetricMessageCodec metricMessageCodec = new FramedMetricMessageCodec();
-    private String topic;
-    private HashStrategy hashStrategy;
-    private Map<String, Counter> blockToSend = new ConcurrentHashMap<>();
-    private Map<String, Counter> throughput = new ConcurrentHashMap<>();
-    private Map<String, Counter> metricToSend = new ConcurrentHashMap<>();
-    private String resourceId;
+    private final FramedMetricMessageCodec metricMessageCodec = new FramedMetricMessageCodec();
+    private final String topic;
+    private final HashStrategy hashStrategy;
+    private final Map<String, Counter> blockToSend = new ConcurrentHashMap<>();
+    private final Map<String, Counter> throughput = new ConcurrentHashMap<>();
+    private final Map<String, Counter> metricToSend = new ConcurrentHashMap<>();
+    private final String resourceId;
     private Resource resource;
-    private ThreadLocal<MetricBlockManager> blockStoreManagerThreadLocal;
+    private final ThreadLocal<MetricBlockManager> blockStoreManagerThreadLocal;
     // hold blockManager to flushAll when terminate
-    private List<MetricBlockManager> blockStoreManagerList = Collections.synchronizedList(newArrayList());
+    private final List<MetricBlockManager> blockStoreManagerList = Collections.synchronizedList(newArrayList());
 
     public KafkaExporterTask(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
@@ -82,24 +82,12 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
             .register(Metrics.globalRegistry);
     }
 
-    static List<List<Metric>> grouping(List<Metric> metrics) {
+    private static List<List<Metric>> grouping(List<Metric> metrics) {
         if (metrics == null || metrics.isEmpty()) {
             return Collections.emptyList();
+        } else {
+            return Lists.partition(metrics, 100);
         }
-        final int size = 100;
-        List<List<Metric>> groups = newArrayList();
-        List<Metric> group = newArrayListWithCapacity(size);
-        for (Metric m : metrics) {
-            group.add(m);
-            if (group.size() == size) {
-                groups.add(group);
-                group = newArrayListWithCapacity(size);
-            }
-        }
-        if (!group.isEmpty()) {
-            groups.add(group);
-        }
-        return groups;
     }
 
     @Override
