@@ -171,7 +171,6 @@ public class KafkaExporterTask extends DefaultSyncTask implements Exporter {
                 MetricMessage metricMessage = new MetricMessage();
                 List<List<Metric>> groups = grouping(entry.getValue());
                 for (List<Metric> group : groups) {
-                    //todo: set header
                     metricMessage.setMetrics(group);
                     byte[] msg = metricMessageCodec.encode(metricMessage);
                     MetricCompressor metricCompressor = blockStoreManager.store(entry.getKey(), msg);
