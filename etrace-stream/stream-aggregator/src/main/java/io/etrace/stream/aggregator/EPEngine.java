@@ -43,7 +43,13 @@ public class EPEngine {
     private final static int DEFAULT_TIME_WINDOW = 5;
     EPAdministrator epAdmin;
     boolean outputDetailEpl;
+    /*
+    进行聚合计算的数量。增大可减少输出的metrics数量，但会需要更多内存
+     */
     private int flushSize = 30000;
+    /*
+    固定的flush间隔
+     */
     private int flushInterval = 5000;
     private long timestamp = System.currentTimeMillis();
     private final EPEngineStat stat;
