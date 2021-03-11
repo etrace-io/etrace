@@ -59,10 +59,22 @@
           "properties": {
             "key": {
               "type": "string"
+            },
+            "keys": {
+              "type": "string"
             }
           },
-          "required": [
-            "key"
+          "oneOf": [
+            {
+              "required": [
+                "key"
+              ]
+            },
+            {
+              "required": [
+                "keys"
+              ]
+            }
           ]
         }
       },

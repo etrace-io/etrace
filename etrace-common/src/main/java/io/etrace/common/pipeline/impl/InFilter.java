@@ -24,10 +24,9 @@ import io.etrace.common.pipeline.Filterable;
 import java.util.Map;
 import java.util.Set;
 
-// todo: 命名重复了
 public class InFilter implements Filter {
     private Set<String> contains;
-    private String name;
+    private final String name;
 
     public InFilter(String name) {
         this.name = name;
@@ -36,7 +35,7 @@ public class InFilter implements Filter {
     @Override
     public void init(Map<String, Object> params) {
         try {
-            contains = Sets.newHashSet(params.get("key").toString().split(","));
+            contains = Sets.newHashSet(params.get("keys").toString().split(","));
         } catch (Exception ex) {
             String msg = "init InFilter error, events should be provided in params as string list, actual params: ["
                 + params + "]";
