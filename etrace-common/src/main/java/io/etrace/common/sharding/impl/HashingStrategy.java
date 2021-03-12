@@ -38,7 +38,7 @@ public class HashingStrategy implements ShardingStrategy {
 
     @Override
     public String name() {
-        return ShardingFactory.ShardingType.HASHING.name();
+        return ShardingFactory.ShardingType.HASH.name();
     }
 
     private int hashAgain(int h) {

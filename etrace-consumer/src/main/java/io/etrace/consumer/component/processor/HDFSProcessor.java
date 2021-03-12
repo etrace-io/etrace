@@ -42,10 +42,10 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
 
     private final CompressType compressType = CompressType.snappy;
 
-    private short idx;
+    private final short idx;
     private String remotePath;
-    private long ip;
-    private String prefix;
+    private final long ip;
+    private final String prefix;
     private long currentWritingHour;
     private String currentFilePath;
     private long startPos;
@@ -68,7 +68,9 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
     public HDFSProcessor(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
 
-        idx = Short.parseShort(name.split("-")[2]);
+        //todo: remove this mechanism depending on thread name
+        idx = Short.parseShort(name.substring(name.lastIndexOf("-")));
+
         String localIp = NetworkInterfaceHelper.INSTANCE.getLocalHostAddress();
         this.ip = IPUtil.ipToLong(localIp);
         this.prefix = idx + "-" + localIp;
