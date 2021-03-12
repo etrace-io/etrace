@@ -69,7 +69,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
         super(name, component, params);
 
         //todo: remove this mechanism depending on thread name
-        idx = Short.parseShort(name.substring(name.lastIndexOf("-")));
+        idx = Short.parseShort(name.substring(name.lastIndexOf("-") + 1));
 
         String localIp = NetworkInterfaceHelper.INSTANCE.getLocalHostAddress();
         this.ip = IPUtil.ipToLong(localIp);
