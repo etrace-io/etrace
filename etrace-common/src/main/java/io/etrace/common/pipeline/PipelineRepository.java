@@ -70,7 +70,11 @@ public class PipelineRepository implements BeanFactoryAware {
             throw new IllegalArgumentException("pipelines should not be null!");
         }
 
-        pipelines.forEach(this::createPipeline);
+        for (PipelineConfiguration pipeline : pipelines) {
+            components.clear();
+            createPipeline(pipeline);
+        }
+
         roots.forEach(this::startComponent);
     }
 
@@ -251,6 +255,10 @@ public class PipelineRepository implements BeanFactoryAware {
         roots.forEach(this::shutdownComponent);
     }
 
+    /*
+    不应这样使用
+     */
+    @Deprecated
     public Component findComponent(String name) {
         return components.get(name);
     }
