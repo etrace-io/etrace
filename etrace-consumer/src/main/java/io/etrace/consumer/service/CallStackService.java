@@ -34,7 +34,7 @@ public class CallStackService {
     @Autowired
     private HDFSService hdfsService;
 
-    public CallStackV1 queryByMessageId(String messageId) {
+    public CallStackV1 queryByMessageId(String messageId) throws Exception {
         MessageId id = MessageId.parse(messageId);
         if (null == id) {
             throw new CallStackNotFoundException("messageId illegal, should be '{requestId}$${rpcId}': " + messageId);

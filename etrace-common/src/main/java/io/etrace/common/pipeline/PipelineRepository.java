@@ -131,7 +131,7 @@ public class PipelineRepository implements BeanFactoryAware {
             component = beanFactory.getBean(Component.class, pipeline, taskProp.getName());
             component.init(taskProp, resources);
             if (components.containsKey(taskProp.getName())) {
-                LOGGER.error("==initComponent== {}", taskProp.getName());
+                LOGGER.error("init duplicated component: {}", taskProp.getName());
             } else {
                 components.put(taskProp.getName(), component);
             }

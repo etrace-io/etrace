@@ -33,7 +33,7 @@ public class CallStackController {
     private CallStackService callStackService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public CallStackV1 queryCallStack(@RequestParam String messageId) {
+    public CallStackV1 queryCallStack(@RequestParam String messageId) throws Exception {
         CallStackV1 callStack = callStackService.queryByMessageId(messageId);
         if (null == callStack) {
             throw new CallStackNotFoundException("未能找到对应的记录requestId:".concat(messageId));
