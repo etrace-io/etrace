@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Scope;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.etrace.consumer.metrics.MetricName.*;
 
@@ -44,6 +45,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
     private final CompressType compressType = CompressType.snappy;
 
     private final short idx;
+    private static final AtomicInteger atomicInteger = new AtomicInteger(0);
     private String remotePath;
     private final long ip;
     private final String prefix;
@@ -69,9 +71,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
     public HDFSProcessor(String name, Component component, Map<String, Object> params) {
         super(name, component, params);
 
-        //todo: remove this mechanism depending on thread name
-        idx = Short.parseShort(name.substring(name.lastIndexOf("-") + 1));
-
+        idx = (short)atomicInteger.getAndIncrement();
         String localIp = NetworkInterfaceHelper.INSTANCE.getLocalHostAddress();
         this.ip = IPUtil.ipToLong(localIp);
         this.prefix = idx + "-" + localIp;
@@ -124,6 +124,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
             } catch (Exception e) {
                 LOGGER.error("callStack write to hdfs error:", e);
                 Trace.logError("callStack write to hdfs error", e);
+                throw e;
             } finally {
                 if (lastPos > 0) {
                     startPos = lastPos;
