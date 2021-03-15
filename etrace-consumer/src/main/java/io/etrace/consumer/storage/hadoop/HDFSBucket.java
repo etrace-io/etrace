@@ -16,6 +16,7 @@
 
 package io.etrace.consumer.storage.hadoop;
 
+import io.etrace.agent.Trace;
 import io.etrace.consumer.storage.Bucket;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -34,13 +35,14 @@ public class HDFSBucket implements Bucket {
     private final AtomicBoolean isClose = new AtomicBoolean(false);
     private final String dataFile;
     private FSDataOutputStream dataStream;
-    private byte compressType;
+    private final byte compressType;
 
     public HDFSBucket(byte compressType, String remotePath, String dataFile) throws IOException {
         this.dataFile = dataFile;
         this.compressType = compressType;
         Path path = HDFSBucket.buildDataFilePath(remotePath, dataFile);
 
+        // todo: remove this
         // 由于日常环境是 admin才有权限WRITE hdfs，因此设置成它
         System.setProperty("HADOOP_USER_NAME", "admin");
 
@@ -64,6 +66,7 @@ public class HDFSBucket implements Bucket {
                     break;
                 } catch (Throwable e) {
                     LOGGER.warn("append hdfs file error, file name [{}].", path, e);
+                    Trace.logError("append hdfs file error, file name: " + path, e);
                     now = System.currentTimeMillis();
                 }
             }

@@ -1,5 +1,6 @@
 package io.etrace.consumer.component.processor;
 
+import io.etrace.agent.Trace;
 import io.etrace.common.compression.CompressType;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.common.message.trace.MessageItem;
@@ -122,6 +123,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
                 }
             } catch (Exception e) {
                 LOGGER.error("callStack write to hdfs error:", e);
+                Trace.logError("callStack write to hdfs error", e);
             } finally {
                 if (lastPos > 0) {
                     startPos = lastPos;
