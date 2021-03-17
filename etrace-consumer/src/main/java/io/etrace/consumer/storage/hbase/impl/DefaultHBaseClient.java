@@ -16,6 +16,7 @@
 
 package io.etrace.consumer.storage.hbase.impl;
 
+import io.etrace.agent.Trace;
 import io.etrace.consumer.metrics.MetricsService;
 import io.etrace.consumer.storage.hbase.IHBaseClient;
 import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
@@ -62,6 +63,8 @@ public class DefaultHBaseClient implements IHBaseClient {
                     table.batch(actions, results);
                 } catch (IOException e) {
                     LOGGER.error("==executeBatch==", e);
+                    Trace.logError(String.format("HBase storage fail. table [%s] [%s], put size [%d]", logicTableName
+                        , physicalTableName, actions.size()), e);
                     metricsService.hbaseFail();
                 }
                 for (int i = results.length - 1; i >= 0; i--) {
