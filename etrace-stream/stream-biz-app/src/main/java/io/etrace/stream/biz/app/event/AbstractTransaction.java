@@ -1,7 +1,10 @@
 package io.etrace.stream.biz.app.event;
 
+import lombok.NoArgsConstructor;
+
 import java.util.Map;
 
+@NoArgsConstructor
 public abstract class AbstractTransaction extends AbstractEvent {
     private long duration;
 

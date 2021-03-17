@@ -6,11 +6,13 @@ import io.etrace.stream.biz.app.CallStackHelper;
 import io.etrace.stream.biz.app.EventConstant;
 import io.etrace.stream.core.model.Event;
 import io.etrace.stream.core.model.Header;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
+@NoArgsConstructor
 public abstract class AbstractEvent implements Event {
     protected long timestamp;
     private Header header;

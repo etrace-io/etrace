@@ -106,6 +106,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
                     // first, write file storage
                     lastPos = retryWriteHdfs(messageBlock.getData());
                     if (lastPos < 0) {
+                        LOGGER.error("fail to write data to hdfs storage, lastPos [{}]", lastPos);
                         hdfsError.increment();
                         return;
                     }
