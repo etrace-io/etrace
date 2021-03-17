@@ -65,12 +65,10 @@ public class KafkaConsumeTask extends DefaultSyncTask implements Receiver {
         props.put("group.id", pipeline);
 
         UUID uuid = UUID.randomUUID();
-        props.put("consumer.id", String.format("%s-%s--%s--%s",
+        props.put("consumer.id", String.format("%s--%s--%s",
             InetAddress.getLocalHost().getHostName(),
-            serverPort,
             System.currentTimeMillis(),
             Long.toHexString(uuid.getMostSignificantBits()).substring(0, 8)));
-        LOGGER.info(props.toString() + " =====");
         ConsumerConfig config = new ConsumerConfig(props);
         LOGGER.info("kafka consumer [{}] config properties: {}.", resource.getName(), config.props());
         return Consumer.createJavaConsumerConnector(config);
