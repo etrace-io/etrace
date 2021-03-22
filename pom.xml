@@ -564,6 +564,7 @@
 
 
     <!--    // alibaba-->
+<!--    todo: remove this-->
     <distributionManagement>
         <repository>
             <id>releases</id>
