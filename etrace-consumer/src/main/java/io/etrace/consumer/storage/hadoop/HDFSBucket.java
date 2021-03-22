@@ -17,6 +17,7 @@
 package io.etrace.consumer.storage.hadoop;
 
 import io.etrace.agent.Trace;
+import io.etrace.common.constant.Constants;
 import io.etrace.consumer.storage.Bucket;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -37,6 +38,10 @@ public class HDFSBucket implements Bucket {
     private FSDataOutputStream dataStream;
     private final byte compressType;
 
+    public String getDataFile() {
+        return dataFile;
+    }
+
     public HDFSBucket(byte compressType, String remotePath, String dataFile) throws IOException {
         this.dataFile = dataFile;
         this.compressType = compressType;
@@ -56,10 +61,14 @@ public class HDFSBucket implements Bucket {
             while (true) {
                 try {
                     long s = System.currentTimeMillis();
-                    if (s - now > 2 * 60000) {
+                    if (s - now > 5 * 60000) {
                         throw new RuntimeException("recover file lease time out.");
                     }
-                    Thread.sleep(1000);
+
+                    Trace.logEvent("HDFSBucket", "initDataStream", Constants.SUCCESS,
+                        String.format("dataFile: %s.", getDataFile()), null);
+
+                    Thread.sleep(5000);
                     boolean isClosed = distributedFileSystem.isFileClosed(path);
                     LOGGER.warn("{} file close status {}.", path, isClosed);
                     dataStream = fileSystem.append(path);//start write data from the end of file

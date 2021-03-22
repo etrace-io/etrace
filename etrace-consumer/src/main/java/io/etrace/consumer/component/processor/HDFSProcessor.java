@@ -2,8 +2,10 @@ package io.etrace.consumer.component.processor;
 
 import io.etrace.agent.Trace;
 import io.etrace.common.compression.CompressType;
+import io.etrace.common.constant.Constants;
 import io.etrace.common.message.trace.CallStackV1;
 import io.etrace.common.message.trace.MessageItem;
+import io.etrace.common.message.trace.Transaction;
 import io.etrace.common.pipeline.Component;
 import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
@@ -106,7 +108,8 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
                     // first, write file storage
                     lastPos = retryWriteHdfs(messageBlock.getData());
                     if (lastPos < 0) {
-                        LOGGER.error("fail to write data to hdfs storage, lastPos [{}]", lastPos);
+                        LOGGER.error("fail to write data to hdfs storage, lastPos [{}]. -1 means retryWriteHdfs fail,"
+                            + " -2 means notWorking", lastPos);
                         hdfsError.increment();
                         return;
                     }
@@ -154,7 +157,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
                 return write(data);
             } catch (Exception e) {
                 if (!isRunning()) {
-                    return -1;
+                    return -2;
                 }
                 LOGGER.error("Error when write block to hdfs error for bucket[{}] .", currentFilePath, e);
             }
@@ -169,25 +172,39 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
     private void resetCurrentWritingHourIfNeeded(long startTime) throws IOException {
         long currentHour = TimeHelper.getHour(startTime);
         if (currentHour != currentWritingHour) {
-            //flush old bucket, then exchange new bucket
-            String filePath = PathBuilder.buildMessagePath(prefix, currentHour);
 
-            if (null != bucket) {
-                resetBucket();
+            Transaction t = Trace.newTransaction("HDFSProcessor", "resetCurrentWritingHourIfNeeded");
+            try {
+                //flush old bucket, then exchange new bucket
+                String filePath = PathBuilder.buildMessagePath(prefix, currentHour);
+
+                if (null != bucket) {
+                    resetBucket();
+                }
+                if (null == bucket) {
+                    //create new HDFS or reload old HDFS bucket
+                    bucket = new HDFSBucket(compressType.code(), remotePath, filePath);
+                    startPos = bucket.getLastBlockOffset();
+                }
+                currentFilePath = filePath;
+                currentWritingHour = currentHour;
+
+                t.setStatus(Constants.SUCCESS);
+            } catch (Exception e) {
+                t.setStatus(e);
+                Trace.logError(e);
+                throw e;
+            } finally {
+                t.complete();
             }
-            if (null == bucket) {
-                //create new HDFS or reload old HDFS bucket
-                bucket = new HDFSBucket(compressType.code(), remotePath, filePath);
-                startPos = bucket.getLastBlockOffset();
-            }
-            currentFilePath = filePath;
-            currentWritingHour = currentHour;
         }
     }
 
     private void resetBucket() {
         try {
             //close old bucket, because it no data to write
+            Trace.logEvent("HDFSProcessor", "resetBucket", Constants.SUCCESS,
+                String.format("dataFile: %s, prefix: %s", bucket.getDataFile(), prefix), null);
             bucket.close();
             bucket = null;
             LOGGER.info("close bucket {} done.", currentFilePath);
