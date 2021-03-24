@@ -63,7 +63,6 @@ public class TaskPool implements BeanFactoryAware {
         } else {
             tasks = new Task[taskSize];
             for (int i = 0; i < taskSize; i++) {
-                // todo: HDFSProcessor.java:69 居然依赖这里的naming pattern
                 String taskName = String.format("%s-%s-%d-%d", component.getPipeline(), component.getName(), i,
                     taskSize);
 
