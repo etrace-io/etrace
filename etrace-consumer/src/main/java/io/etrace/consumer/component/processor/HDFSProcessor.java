@@ -182,9 +182,7 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
                     resetBucket();
                 }
                 if (null == bucket) {
-                    //create new HDFS or reload old HDFS bucket
-                    bucket = new HDFSBucket(compressType.code(), remotePath, filePath);
-                    startPos = bucket.getLastBlockOffset();
+                    createNewBucket(filePath);
                 }
                 currentFilePath = filePath;
                 currentWritingHour = currentHour;
@@ -200,14 +198,24 @@ public class HDFSProcessor extends DefaultAsyncTask implements Processor {
         }
     }
 
-    private void resetBucket() {
+    private synchronized void createNewBucket(String filePath) throws IOException {
+        if (null == bucket) {
+            //create new HDFS or reload old HDFS bucket
+            bucket = new HDFSBucket(compressType.code(), remotePath, filePath);
+            startPos = bucket.getLastBlockOffset();
+        }
+    }
+
+    private synchronized void resetBucket() {
         try {
-            //close old bucket, because it no data to write
-            Trace.logEvent("HDFSProcessor", "resetBucket", Constants.SUCCESS,
-                String.format("dataFile: %s, prefix: %s", bucket.getDataFile(), prefix), null);
-            bucket.close();
-            bucket = null;
-            LOGGER.info("close bucket {} done.", currentFilePath);
+            if (null != bucket) {
+                //close old bucket, because it no data to write
+                Trace.logEvent("HDFSProcessor", "resetBucket", Constants.SUCCESS,
+                    String.format("dataFile: %s, prefix: %s", bucket.getDataFile(), prefix), null);
+                bucket.close();
+                bucket = null;
+                LOGGER.info("close bucket {} done.", currentFilePath);
+            }
         } catch (Throwable e) {
             LOGGER.error("close bucket {} error.", currentFilePath, e);
         }
