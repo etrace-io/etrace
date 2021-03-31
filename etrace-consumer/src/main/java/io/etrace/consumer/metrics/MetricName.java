@@ -28,6 +28,7 @@ public interface MetricName {
     String HDFS_ERROR = "hdfs.error";
     String HDFS_THROUGHPUT = "hdfs.throughput";
     String METRIC_NO_SAMPLING = "metric.no.sampling";
+    String METRIC_SAMPLING_COUNT = "metric.sampling.count";
 
     String TASK_DURATION = "task.duration";
 
