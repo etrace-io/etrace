@@ -1,0 +1,63 @@
+.e-monitor-yellow-pages-record {
+  @content-width: 900px;
+
+  overflow: auto;
+  padding-top: 50px;
+
+  // Header
+  .e-monitor-header.yellow-pages {
+    background: unset !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+
+    .e-monitor-header__content {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .record-result__body {
+    max-width: @content-width;
+    width: 90%;
+    margin: 0 auto;
+    font-family: Nunito;
+    padding: 0 20px 60px;
+    text-align: center;
+
+    .e-monitor-yellow-pages__search-box {
+      input {
+        border-width: 2px;
+      }
+    }
+
+    .record-result__record-info {
+      display: inline-block;
+      padding-top: 15px;
+
+      .record-info__header {
+        margin-bottom: 10px;
+      }
+
+      .record-icon {
+        border-radius: 8px;
+        width: unset;
+        border: none;
+        margin-right: 15px;
+        background: transparent;
+      }
+
+      .record-info__item {
+        padding: 10px 50px 10px 5px;
+
+        .record-info__item-content {
+          text-align: left;
+        }
+      }
+    }
+  }
+}

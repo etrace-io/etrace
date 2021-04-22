@@ -1,0 +1,16 @@
+.ant-card {
+  // card board 无间隙
+  &.body-no-padding {
+    .ant-card-body {
+      padding: 0;
+      margin: -1px; // 解决 body 内部元素 border 和 card 重叠的问题
+    }
+  }
+
+  // Tab 式 Card
+  &.tab-card {
+    & > .ant-card-body {
+      padding-top: 0; // Tab 与 Card 顶部之间太空了
+    }
+  }
+}

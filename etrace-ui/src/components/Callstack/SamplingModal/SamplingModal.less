@@ -1,0 +1,11 @@
+@import "../../../styles/index";
+
+@sampling-modal-prefix-cls: ~'@{emonitor-prefix}-sampling-modal';
+
+.@{sampling-modal-prefix-cls} {
+  &-radio-group {
+    & > * {
+      margin: 0 var(--space-between) var(--space-between) 0 !important;
+    }
+  }
+}

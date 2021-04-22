@@ -1,0 +1,22 @@
+@import "../../styles/index";
+
+.env-switcher {
+  display: inline-block;
+  line-height: @btn-height;
+  padding: 0 10px;
+  border-radius: @border-radius;
+  color: @color-success;
+  //vertical-align: middle;
+  background: @emonitor-component-background;
+  cursor: pointer;
+
+  &.prod {
+    color: @color-error;
+  }
+  &.beta {
+    color: @color-warning;
+  }
+  &.daily {
+    color: @color-info;
+  }
+}

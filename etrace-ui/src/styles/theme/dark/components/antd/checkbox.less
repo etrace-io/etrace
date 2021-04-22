@@ -1,0 +1,16 @@
+&.theme-dark {
+  .ant-checkbox-wrapper {
+    color: @dark-color-text;
+
+    .ant-checkbox {
+      .ant-checkbox-inner {
+        border-color: @dark-color-disable-text-light;
+        background-color: unset;
+      }
+
+      &.ant-checkbox-disabled .ant-checkbox-inner {
+        border-color: @dark-color-disable-text;
+      }
+    }
+  }
+}

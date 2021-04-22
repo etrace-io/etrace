@@ -1,0 +1,21 @@
+@import "../../../styles/index";
+
+@metric-view-prefix-cls: ~'@{emonitor-prefix}-metric-view';
+
+.@{metric-view-prefix-cls} {
+  padding: 10px;
+
+  .metric-view__item {
+    .ant-form-item-label {
+      font-weight: bold;
+      opacity: 0.7;
+    }
+    .ant-form-item {
+      max-width: 100%;
+    }
+    .ant-tag {
+      word-break: break-all;
+      white-space: normal;
+    }
+  }
+}

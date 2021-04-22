@@ -1,0 +1,5 @@
+.e-monitor-inner-content.scale-fullscreen > .fullscreen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}

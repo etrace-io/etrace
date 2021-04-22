@@ -1,0 +1,33 @@
+.meta-info-part-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.meta-info-part-card .ant-card-body {
+    flex: 1;
+    max-height: 250px;
+    overflow: auto;
+}
+.meta-info-part-card .ant-card-head-title {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.meta-info-part-card .meta-info-part-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f2f5;
+    /*font-weight: 600;*/
+}
+.meta-info-part-card .meta-info-part-item:last-child {
+    border-bottom: none;
+}
+
+.meta-info-part-card .meta-info-part-no-data {
+    /*line-height: 3em;*/
+    font-size: 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

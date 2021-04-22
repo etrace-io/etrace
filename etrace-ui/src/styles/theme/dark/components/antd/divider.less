@@ -1,0 +1,20 @@
+.ant-divider {
+  background: transparent !important;
+  border-color: @dark-color-border !important;
+
+  &::before,
+  &::after {
+    border-color: @dark-color-border !important;
+  }
+
+  &.ant-divider-dashed {
+    background: transparent !important;
+  }
+
+  &.ant-divider-with-text {
+    background: unset !important;
+    &:before, &:after {
+      border-color: @dark-color-border;
+    }
+  }
+}

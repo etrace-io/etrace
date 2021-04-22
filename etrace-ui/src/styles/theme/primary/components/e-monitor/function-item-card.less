@@ -1,0 +1,31 @@
+.function-item-card {
+  @function-item-card-border-color: #d9d9d9;
+  @function-item-card-title: #595959;
+  @function-item-card-primary: #55b4ff;
+
+  .ant-card,
+  .ant-card-head {
+    border-color: @function-item-card-border-color !important;
+  }
+
+  .function-item-card__list {
+    .function-item-card__item {
+
+      .function-item-card__icon-item {
+        color: @function-item-card-title;
+
+        &:hover {
+          color: @function-item-card-primary;
+        }
+      }
+
+      .function-item-card__text-item {
+        color: @function-item-card-title;
+
+        &:hover {
+          color: @function-item-card-primary;
+        }
+      }
+    }
+  }
+}

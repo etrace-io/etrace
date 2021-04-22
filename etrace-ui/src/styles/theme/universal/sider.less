@@ -1,0 +1,36 @@
+.e-monitor-side-menu {
+  margin-bottom: 37px;
+
+  .ant-menu-inline .ant-menu-item:not(:last-child) {
+    margin: 0;
+  }
+  .ant-layout-sider-trigger {
+    bottom: 37px;
+  }
+  .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
+    border-right: 1px solid transparent;
+  }
+  .ant-menu {
+    padding: 0 !important;
+
+    &.ant-menu-inline-collapsed {
+      width: 60px !important;
+
+      & > .ant-menu-item,
+      & > .ant-menu-submenu {
+        padding: 0 !important;
+        text-align: center;
+        .ant-menu-submenu-title {
+          padding: 0 16px !important;
+        }
+        .anticon {
+          line-height: 36px;
+          margin: 0 !important;
+        }
+      }
+    }
+  }
+  .ant-layout-sider-children {
+    overflow: auto;
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "noEmit": true,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "baseUrl": "./src",
+    "paths": {
+      "$components/*": ["./components/*"],
+      "$containers/*": ["./containers/*"],
+      "$constants/*": ["./constants/*"],
+      "$services/*": ["./services/*"],
+      "$models/*": ["./models/*"],
+      "$styles/*": ["./styles/*"],
+      "$utils/*": ["./utils/*"],
+      "$store/*": ["./store/*"],
+      "$hooks/*": ["./hooks/*"],
+      "$asset/*": ["./asset/*"]
+    }
+  },
+  "include": ["src", "./externals.d.ts"]
+}

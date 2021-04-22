@@ -1,0 +1,268 @@
+.e-monitor-dashboard-edit-node {
+  .ant-tabs-extra-content {
+    line-height: 44px;
+  }
+  .ant-tabs-tab {
+    padding: 12px 16px 15px;
+  }
+}
+
+// Graph 编辑
+.e-monitor-dashboard-graph-editor {
+  margin-bottom: 4px;
+
+  .ant-card-head {
+    min-height: unset;
+  }
+
+  .graph-editor__toolbar {
+    span[data-command] {
+      .anticon {
+        cursor: pointer;
+        padding: 8px;
+
+        &.disable {
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .graph-editor__toolbar__op-btn-group {
+      float: right;
+    }
+  }
+
+  .graph-editor-panels-container {
+    height: 100%;
+
+    & > [class*=ant-col] {
+      height: 100%;
+    }
+
+    .editor-detail-panel-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .graph-editor__panel {
+      margin-top: 1px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      & > .ant-card-body {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      &.node-selector {
+        & > .ant-card-body {
+          display: flex;
+          flex-direction: column;
+
+          & > .ant-form,
+          & > .ant-divider {
+            flex-shrink: 0;
+          }
+
+          & > .ant-list {
+            flex: 1;
+            overflow: auto;
+
+            .node-select-list__item {
+              user-select: none;
+              cursor: pointer;
+              width: 100%;
+
+              &_selected {
+                margin: 0;
+                float: right;
+                transform: scale(0.8);
+              }
+            }
+          }
+        }
+      }
+
+      &.canvas-panel {
+        display: flex;
+        flex-direction: column;
+        border-top: none;
+        border-bottom: none;
+        border-radius: 0;
+
+        .ant-card-body {
+          flex: 1;
+        }
+      }
+
+      &.detail-panel {
+        flex: 1;
+        overflow: hidden;
+
+        & > .ant-card-body {
+          overflow: auto;
+        }
+
+        .ant-form {
+          .ant-form-item {
+            padding-bottom: 12px;
+          }
+
+          &.ant-form-vertical .ant-form-item-label {
+            text-indent: 0.3em;
+            font-weight: bold;
+          }
+        }
+      }
+
+      &.minimap-panel {
+        height: unset;
+        margin-top: -1px;
+        flex-shrink: 0;
+
+        .ant-card-head-title {
+          padding: 0;
+        }
+        .minimap-title-trigger {
+          padding: 8px;
+          cursor: pointer;
+        }
+        .ant-card-extra {
+          padding: 8px 0 8px 6px;
+
+          .anticon {
+            opacity: .65;
+          }
+        }
+      }
+    }
+  }
+}
+
+// View Page
+.e-monitor-dashboard-view-page {
+  .e-monitor-dashboard-title {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 32px;
+    margin-right: 5px;
+  }
+  .view-page-toolbar__op-group {
+    float: right;
+    display: flex;
+    align-items: center;
+  }
+
+  .view-page-graph {
+    margin-bottom: 4px;
+  }
+
+  .view-page-toolbar {
+    span[data-command] {
+      .anticon {
+        cursor: pointer;
+        padding: 8px;
+        color: #666;
+
+        &.disable {
+          cursor: not-allowed;
+          color: #bfbfbf;
+        }
+      }
+    }
+  }
+}
+
+.e-monitor-dashboard-graph-view__container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  .ant-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .graph-canvas {
+    height: 100%;
+    width: 100%;
+    transition: opacity 0.3s;
+
+    &.loading {
+      opacity: 0.3;
+    }
+
+    & > canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .graph-view__loading {
+
+  }
+
+  .graph-view__empty-tips {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .e-monitor-dashboard-graph-view__minimap {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+// Target Selector
+.dashboard-selector {
+  .dashboard-selector__search {
+    margin-bottom: 8px;
+  }
+
+  .dashboard-selector__list {
+    .dashboard-selector__list-item__drag-wrapper {
+      border-bottom: 1px solid;
+    }
+
+    .dashboard-selector__list-item {
+      width: 100%;
+      cursor: pointer;
+      position: relative;
+
+      &:hover {
+        .dashboard-selector__list-item__btn-group {
+          opacity: 1;
+          transform: translate(0, -50%);
+        }
+      }
+
+      .dashboard-selector__list-item__btn-group {
+        position: absolute;
+        opacity: 0;
+        right: 0;
+        top: 50%;
+        transform: translate(50%, -50%);
+        transition: all 0.25s;
+
+        & > * {
+          margin-left: 6px;
+        }
+      }
+
+      &_selected {
+        margin: 0;
+        float: right;
+        transform: scale(0.8);
+      }
+    }
+  }
+}

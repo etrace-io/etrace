@@ -1,0 +1,35 @@
+.emonitor-layout {
+  &.header-fixed {
+    & > header {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9;
+    }
+    & > main {
+      padding-top: @header-height;
+    }
+  }
+
+  &.fullscreen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    & > main {
+      flex: 1;
+      overflow: auto;
+    }
+  }
+}
+
+.emonitor-container {
+  &.has-header {
+    margin-bottom: @header-height;
+  }
+  &.has-footer {
+    margin-bottom: @footer-height;
+  }
+}

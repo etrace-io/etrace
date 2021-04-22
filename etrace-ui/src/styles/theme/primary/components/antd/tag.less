@@ -1,0 +1,28 @@
+.ant-tag {
+  // 可 check 的 tag
+  &.ant-tag-checkable {
+    &.ant-tag-checkable-checked {
+      color: @dark-color-text-light;
+      .ant-badge {
+        color: @dark-color-text-light;
+      }
+    }
+    &:active {
+      color: @dark-color-text-light !important;
+    }
+  }
+
+  // 报警、变更事件按钮
+  &.change-event {
+    border-color: #6cbb5a !important;
+    background-color: #6cbb5a !important;
+  }
+  &.alert-event {
+    border-color: #e9546b !important;
+    background-color: #e9546b !important;
+  }
+  &.change-event-uncheck,
+  &.alert-event-uncheck {
+    border-color: #d9d9d9 !important;
+  }
+}

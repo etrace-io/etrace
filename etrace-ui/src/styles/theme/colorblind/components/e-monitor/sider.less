@@ -1,0 +1,85 @@
+// 侧边可收缩菜单
+.e-monitor-side-menu {
+  background: @dark-color-gray-background;
+
+  &::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: @dark-color-border;
+    width: 1px;
+    z-index: 2;
+  }
+
+  .ant-layout-sider-trigger {
+    background: @dark-color-gray-background;
+
+    i {
+      color: @dark-color-text
+    }
+  }
+  .ant-menu {
+    color: @dark-color-text;
+
+    .ant-menu-item-divider {
+      background-color: @dark-color-border;
+    }
+
+    &:not(.ant-menu-horizontal) .ant-menu-item-selected {
+      background: @dark-color-linear-gradient-background;
+      transition: color 0.25s;
+      a {
+        //color: @dark-color-major !important;
+      }
+    }
+    .ant-menu-item:active, .ant-menu-submenu-title:active {
+      background: unset;
+      color: #fff !important;
+    }
+    .ant-menu-item {
+      &.ant-menu-item-active {
+        background-color: unset !important;
+      }
+      &:after {
+        border-right: none !important;
+        width: 5px;
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        background: @dark-color-major-gradient-background-vertical;
+        //border-right: 4px solid @dark-color-major;
+      }
+    }
+
+    &.ant-menu-sub {
+      .ant-menu-item:after {
+        width: 4px;
+      }
+    }
+
+    .ant-menu-submenu {
+      .ant-menu {
+        background: unset;
+      }
+
+      .ant-menu-submenu-title {
+        color: @dark-color-text;
+
+        .ant-menu-submenu-arrow {
+          &::before,
+          &::after {
+            background: @dark-color-text;
+          }
+        }
+        &:hover .ant-menu-submenu-arrow {
+          &::before,
+          &::after {
+            background: @dark-color-major;
+          }
+          //color: @dark-color-text-light
+        }
+      }
+    }
+  }
+}

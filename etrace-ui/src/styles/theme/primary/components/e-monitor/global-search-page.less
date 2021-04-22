@@ -1,0 +1,81 @@
+.e-monitor-global-search-page {
+  @search-page-border-color: #d9d9d9;
+  @search-page-background: #fff;
+  @search-page-text: #262626;
+  @search-page-sub-title: #595959;
+  @search-page-primary: #55b4ff;
+  @search-page-gradient-background-vertical: linear-gradient(to bottom, #72b5f8, #77d9f6);
+  @search-page-gradient-background-horizon: linear-gradient(to right, #72b5f8, #77d9f6);
+
+  .e-monitor-global-search-page__title {
+    span {
+      &:before {
+        background: @search-page-gradient-background-horizon;
+      }
+    }
+  }
+
+  .e-monitor-global-search-page__tab {
+    border-color: @search-page-border-color;
+
+    .e-monitor-global-search-page__tab-item {
+      background: @search-page-background;
+      border-bottom-color: @search-page-border-color;
+      color: @search-page-text;
+
+      .e-monitor-global-search-page__tab-item__summary {
+        //color: @search-page-sub-title;
+        font-weight: normal;
+      }
+
+      &:before {
+        background: @search-page-gradient-background-vertical;
+      }
+
+      &:hover {
+        color: @search-page-primary;
+      }
+    }
+  }
+
+  .e-monitor-global-search-page__results {
+    .e-monitor-global-search-page__results-list {
+      .e-monitor-global-search-page__results-item {
+        background: @search-page-background;
+        border-color: @search-page-border-color;
+
+        .e-monitor-global-search-page__results-item__title {
+          color: @search-page-text;
+
+          &:hover {
+            color: @search-page-primary;
+          }
+        }
+
+        .e-monitor-global-search-page__results-item__footer {
+          color: @search-page-sub-title;
+        }
+
+        &.no-result {
+          color: @search-page-sub-title;
+        }
+
+        &:first-of-type {
+          border-top-color: @search-page-border-color;
+        }
+      }
+
+      .e-monitor-global-search-page__results-no-more {
+        .ant-divider-inner-text {
+          color: @search-page-sub-title;
+          opacity: 0.5;
+        }
+      }
+    }
+
+    &:before {
+      height: 30px;
+      background: linear-gradient(to bottom, @search-page-background, transparent);
+    }
+  }
+}

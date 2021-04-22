@@ -1,0 +1,19 @@
+@import "../../../styles/index";
+
+@gallery-prefix-cls: ~'@{emonitor-prefix}-gallery';
+
+.@{gallery-prefix-cls}-container {
+  overflow: hidden; // 解决 margin 负值占据空间问题
+}
+
+.@{gallery-prefix-cls} {
+  margin-bottom: calc(0px - var(--space-between));
+
+  &-item {
+    padding-bottom: var(--space-between);
+  }
+
+  & > *:not(&-item) {
+    padding-bottom: var(--space-between);
+  }
+}

@@ -1,0 +1,45 @@
+.metric-container {
+  &.show-overlay {
+    .metric-content {
+      opacity: 0;
+    }
+  }
+
+  .metric-card-title {
+    height: 25px;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+
+    & > * {
+      margin-right: 8px;
+      //flex: 1;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .metric-title__content {
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .ant-card-body {
+    position: relative;
+  }
+
+  .metric-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    //height: 100%;
+  }
+}

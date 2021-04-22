@@ -1,0 +1,98 @@
+.ant-menu {
+    background: none;
+}
+
+.ant-menu-horizontal > .ant-menu-item > a, .ant-menu-horizontal > .ant-menu-submenu > a {
+    color: #d0eae9 !important;
+}
+
+.ant-menu-horizontal .ant-menu-item, .ant-menu-horizontal .ant-menu-submenu {
+    margin-top: 0;
+}
+
+.ant-menu-horizontal .ant-menu-item, .ant-menu-horizontal .ant-menu-submenu {
+    margin-top: 0;
+}
+
+.ant-menu-sub.ant-menu-inline > .ant-menu-item, .ant-menu-sub.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+    line-height: 36px;
+    height: 36px;
+}
+
+.ant-dropdown-menu-submenu-popup {
+    position: absolute;
+    z-index: 1050 !important;
+}
+
+.ant-menu-vertical > .ant-menu-item, .ant-menu-vertical-left > .ant-menu-item, .ant-menu-vertical-right > .ant-menu-item, .ant-menu-inline > .ant-menu-item, .ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-vertical-left > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-vertical-right > .ant-menu-submenu > .ant-menu-submenu-title, .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+    line-height: 36px;
+    height: 36px;
+}
+
+.ant-layout {
+    background: #fff;
+}
+
+.ant-layout-header {
+    padding: 0 12px;
+}
+
+.ant-layout-footer {
+    background: #fff;
+}
+
+.ant-layout-sider-trigger {
+    transition: none;
+}
+
+.monitor-menu > a:hover {
+    color: #1890ff;
+}
+
+.ant-menu-vertical .ant-menu-item, .ant-menu-vertical-left .ant-menu-item, .ant-menu-vertical-right .ant-menu-item, .ant-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-submenu-title, .ant-menu-vertical-left .ant-menu-submenu-title, .ant-menu-vertical-right .ant-menu-submenu-title, .ant-menu-inline .ant-menu-submenu-title {
+    margin: 0;
+    overflow: hidden;
+    padding: 0 16px;
+}
+
+.ant-badge-count {
+    line-height: 15px;
+    height: 15px;
+    min-width: 15px;
+}
+
+.ant-badge-count-font-size {
+    font-size: 12px;
+    transform: scale(.7);
+}
+
+/*.monitor-sub-menu > .ant-menu-submenu-title {*/
+/*color: rgba(0, 0, 0, 0.65)*/
+/*}*/
+
+.monitor-sub-menu > .ant-menu-submenu-title:hover {
+    color: #1890ff;
+}
+
+.ant-menu-submenu-title {
+    color: #d0eae9;
+}
+
+.ant-menu-submenu-title:hover {
+    color: #fff;
+}
+
+.badgeEvent {
+    position: absolute;
+    right: 0;
+    top: -3px;
+}
+.ant-badge-status-dot {
+    width: 10px;
+    height: 10px;
+}
+.ant-badge-status-dot-center {
+    width: 30px;
+    text-align: center;
+}
+
