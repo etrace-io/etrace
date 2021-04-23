@@ -7,6 +7,7 @@ import io.etrace.api.model.po.ui.Chart;
 import io.etrace.api.model.po.ui.HistoryLog;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.Chart;
 import io.etrace.api.repository.ChartMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -27,16 +28,17 @@ public class ChartService implements SyncMetricConfigService<Chart> {
     public SearchResult<Chart> search(String title, String globalId, Long department, Long productLine, String user,
                                       int pageNum, int pageSize, String status) {
         SearchResult<Chart> searchResult = new SearchResult<Chart>();
-        int count = chartMapper
-            .countByTitleAndGlobalIdAndCreatedByAndStatusAndAdminVisible(title, globalId, user, status, true);
-        searchResult.setTotal(count);
-        if (count > 0) {
-            Integer start = (pageNum - 1) * pageSize;
-            PageRequest page = PageRequest.of(pageNum - 1, pageSize);
-            List<Chart> charts = chartMapper
-                .findByTitleAndGlobalIdAndCreatedByAndStatusAndAdminVisible(title, globalId, user, status, true, page);
-            searchResult.setResults(charts);
-        }
+        // todo 删除
+//        int count = chartMapper
+//            .countByTitleAndGlobalIdAndCreatedByAndStatusAndAdminVisible(title, globalId, user, status, true);
+//        searchResult.setTotal(count);
+//        if (count > 0) {
+//            Integer start = (pageNum - 1) * pageSize;
+//            PageRequest page = PageRequest.of(pageNum - 1, pageSize);
+//            List<Chart> charts = chartMapper
+//                .findByTitleAndGlobalIdAndCreatedByAndStatusAndAdminVisible(title, globalId, user, status, true, page);
+//            searchResult.setResults(charts);
+//        }
         return searchResult;
     }
 

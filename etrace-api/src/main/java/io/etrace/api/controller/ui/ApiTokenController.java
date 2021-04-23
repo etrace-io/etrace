@@ -1,15 +1,9 @@
 package io.etrace.api.controller.ui;
 
-import io.etrace.api.consts.ApplyTokenAuditStatus;
-import io.etrace.api.consts.TokenStatus;
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
-import io.etrace.api.model.po.ui.ApiToken;
-import io.etrace.api.model.po.ui.ApplyTokenLog;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.vo.SearchResult;
-import io.etrace.api.service.ApiTokenService;
-import io.etrace.api.service.ApplyTokenLogService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

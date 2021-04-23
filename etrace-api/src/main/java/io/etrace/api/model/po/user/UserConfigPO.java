@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package io.etrace.api.consts;
+package io.etrace.api.model.po.user;
 
-public enum ApplyTokenAuditStatus {
-    /**
-     * 待审核
-     */
-    NOT_AUDIT("NOT_AUDIT"),
-    /**
-     * 同意
-     */
-    AGREE("AGREE"),
-    /**
-     * 拒绝
-     */
-    REFUSED("REFUSED");
+import io.etrace.api.model.po.BasePersistentObject;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-    public String value;
+import javax.persistence.Entity;
 
-    ApplyTokenAuditStatus(String value) {
-        this.value = value;
-    }
-
+@Data
+@Entity
+@EqualsAndHashCode(callSuper = true)
+public class UserConfigPO extends BasePersistentObject {
+    private String userEmail;
+    private String config;
 }

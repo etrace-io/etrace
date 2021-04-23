@@ -9,7 +9,6 @@ import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
 import io.etrace.api.service.HistoryLogService;
-import io.etrace.api.service.SyncMetricConfigService;
 import io.etrace.api.service.UserActionService;
 import io.etrace.api.service.base.FavoriteAndViewInterface;
 import org.springframework.beans.factory.annotation.Autowired;

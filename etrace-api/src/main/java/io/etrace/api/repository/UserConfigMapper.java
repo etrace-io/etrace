@@ -1,9 +1,9 @@
 package io.etrace.api.repository;
 
-import io.etrace.api.model.po.user.UserConfig;
+import io.etrace.api.model.po.user.UserConfigPO;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserConfigMapper extends CrudRepository<UserConfig, Long> {
+public interface UserConfigMapper extends CrudRepository<UserConfigPO, Long> {
 
-    UserConfig findByUserEmail(String email);
+    UserConfigPO findByUserEmail(String email);
 }

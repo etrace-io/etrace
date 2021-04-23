@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static io.etrace.api.config.WebSecurityConfig.MOCK_PASSWORD;
+import static io.etrace.api.config.SimpleWebSecurityConfig.MOCK_PASSWORD;
+
 
 @Service
 public class UserService implements UserDetailsService {

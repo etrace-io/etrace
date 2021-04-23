@@ -32,23 +32,6 @@ import javax.persistence.MappedSuperclass;
 @EqualsAndHashCode(callSuper = true)
 public class BaseVisualizationObject extends BasePersistentObject {
 
-    @Nullable
-    private String title;
-    private String description;
-    private String status = Status.Active.name();
 
-    private Long favoriteCount;
-    private Long viewCount;
-    private Boolean isStar;
-
-    @Nullable
-    private String createdBy;
-    @Nullable
-    private String updatedBy;
-
-    @Column(unique = true, nullable = false)
-    @Nullable
-    private String globalId;
-    private Boolean adminVisible;
 }
 

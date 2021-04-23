@@ -4,8 +4,6 @@ import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.model.bo.yellowpage.SearchType;
 import io.etrace.api.model.po.ui.Dashboard;
 import io.etrace.api.model.po.ui.DashboardApp;
-import io.etrace.api.model.po.ui.Graph;
-import io.etrace.api.model.po.ui.Node;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.po.yellowpage.SearchList;

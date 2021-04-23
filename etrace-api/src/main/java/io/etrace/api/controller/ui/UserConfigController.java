@@ -3,7 +3,7 @@ package io.etrace.api.controller.ui;
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.model.po.user.ETraceUser;
-import io.etrace.api.model.po.user.UserConfig;
+import io.etrace.api.model.po.user.UserConfigPO;
 import io.etrace.api.service.UserConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,14 +23,14 @@ public class UserConfigController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("创建用户配置")
-    public UserConfig save(@RequestBody UserConfig userConfig, @CurrentUser ETraceUser user) {
+    public UserConfigPO save(@RequestBody UserConfigPO userConfig, @CurrentUser ETraceUser user) {
         return userConfigService.createOrUpdate(userConfig, user);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("用户配置查询")
-    public UserConfig search(@CurrentUser ETraceUser user) throws Exception {
-        UserConfig userConfig = userConfigService.findUserConfig(user);
+    public UserConfigPO search(@CurrentUser ETraceUser user) throws Exception {
+        UserConfigPO userConfig = userConfigService.findUserConfig(user);
         if (userConfig != null) {
             return userConfig;
         } else {

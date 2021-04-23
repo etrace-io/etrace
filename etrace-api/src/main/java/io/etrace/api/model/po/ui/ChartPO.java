@@ -14,20 +14,37 @@
  * limitations under the License.
  */
 
-package io.etrace.api.model.graph;
+package io.etrace.api.model.po.ui;
 
-import io.etrace.api.model.MetricResult;
+import io.etrace.api.model.Target;
+import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import javax.annotation.Nullable;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
 import java.util.List;
-import java.util.Map;
 
+@Entity
 @Data
-public class SimpleNodeQueryResult {
+@EqualsAndHashCode(callSuper = true)
+public class ChartPO extends BasePersistentObject {
 
-    private Long id;
+    private String config;
+
+    @Convert(converter = JpaConverterJson.class)
+    private List<Target> targets;
+
+    @Nullable
     private String title;
-    private NodeType nodeType;
-    private List<MetricResult> results;
-    private Map<String, String> group;
+    private String description;
+    private String status;
+
+    @Nullable
+    private String createdBy;
+    @Nullable
+    private String updatedBy;
 }
+

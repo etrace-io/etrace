@@ -38,29 +38,6 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     UserRoleMapper userRoleMapper;
 
-    @PostConstruct
-    public void i() {
-        //ETraceUser admin = new ETraceUser();
-        //admin.setUserName("admin");
-        //admin.setPassword("abc");
-        //userMapper.save(admin);
-        //
-        //ETraceUser user = new ETraceUser();
-        //user.setUserName("user");
-        //user.setPassword("def");
-        //userMapper.save(user) ;
-        //
-        //
-        //ETraceUser u1 = new ETraceUser();
-        //u1.setUserName("u1");
-        //u1.setPassword("u123");
-        ////u1.setId(3L);
-        //userMapper.save(u1);
-        //
-        //Iterable<ETraceUser> all = userMapper.findAll();
-        //System.out.println(all);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
         Iterable<ETraceUser> all = userMapper.findAll();

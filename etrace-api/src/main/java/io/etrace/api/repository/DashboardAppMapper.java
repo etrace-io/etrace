@@ -1,6 +1,7 @@
 package io.etrace.api.repository;
 
-import io.etrace.api.model.po.ui.DashboardApp;
+import io.etrace.api.model.po.ui.DashboardAppPO;
+import io.etrace.api.model.vo.ui.DashboardApp;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface DashboardAppMapper extends PagingAndSortingRepository<DashboardApp, Long> {
+public interface DashboardAppMapper extends PagingAndSortingRepository<DashboardAppPO, Long> {
     DashboardApp findByGlobalId(String globalId);
 
     int countByTitleContainingAndGlobalIdAndStatusAndCreatedByOrUpdatedBy(String title, String globalId, String status,

@@ -17,19 +17,12 @@
 package io.etrace.api.model.po.user;
 
 import io.etrace.api.model.po.BasePersistentObject;
-import io.etrace.api.model.po.ui.Dashboard;
-import io.etrace.api.model.po.ui.DashboardApp;
-import io.etrace.api.model.po.ui.Graph;
-import io.etrace.api.model.po.ui.Node;
-import io.etrace.api.model.po.yellowpage.SearchList;
-import io.etrace.api.model.po.yellowpage.SearchRecord;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 import java.util.List;
 
 @Data
@@ -41,42 +34,9 @@ public class UserAction extends BasePersistentObject {
 
     @Convert(converter = JpaConverterJson.class)
     private List<Long> favoriteBoardIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> viewBoardIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> favoriteApps;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> favoriteNodeIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> viewNodeIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> favoriteGraphIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> viewGraphIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> favoriteRecordIds;
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> favoriteListIds;
 
-    @Transient
-    private List<Dashboard> viewBoards;
+    @Convert(converter = JpaConverterJson.class)
+    private List<Long> favoriteAppIds;
 
-    @Transient
-    private List<Dashboard> favoriteBoards;
-    @Transient
-    private List<DashboardApp> apps;
-    @Transient
-    private List<Node> favoriteNodes;
-    @Transient
-    private List<Node> viewNodes;
-    @Transient
-    private List<Graph> favoriteGraphs;
-    @Transient
-    private List<Graph> viewGraphs;
-
-    @Transient
-    private List<SearchRecord> favoriteRecords;
-    @Transient
-    private List<SearchList> favoriteLists;
 
 }

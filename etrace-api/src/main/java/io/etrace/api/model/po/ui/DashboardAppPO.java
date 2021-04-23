@@ -16,27 +16,32 @@
 
 package io.etrace.api.model.po.ui;
 
-import io.etrace.api.model.po.BaseVisualizationObject;
+import io.etrace.api.model.po.BasePersistentObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.annotation.Nullable;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 import java.util.List;
 
-@Entity(name = "dashboard")
+@Entity(name = "dashboard_app")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Dashboard extends BaseVisualizationObject {
-
-    private String layout;
-    private String config;
+public class DashboardAppPO extends BasePersistentObject {
+    private Boolean critical;
 
     @Convert(converter = JpaConverterJson.class)
-    private List<Long> chartIds;
+    private List<Long> dashboardIds;
 
-    @Transient
-    private List<Chart> charts;
+    @Nullable
+    private String title;
+    private String description;
+    private String status;
+    private Long favoriteCount;
+    @Nullable
+    private String createdBy;
+    @Nullable
+    private String updatedBy;
 }

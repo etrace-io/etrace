@@ -9,6 +9,7 @@ import io.etrace.api.model.po.ui.DashboardApp;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.DashboardApp;
 import io.etrace.api.repository.DashboardAppMapper;
 import io.etrace.api.service.graph.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -24,7 +24,6 @@ public class AsyncConfig implements AsyncConfigurer {
     public static final String THREAD_POOL_TASK_EXECUTOR = "threadPoolTaskExecutor";
     //todo: this 3 executor not used?
     public static final String PROXY_THREAD_POOL_TASK_EXECUTOR = "proxyThreadPoolTaskExecutor";
-    public static final String REDIS_RATE_LIMIT_TASK_EXECUTOR = "redisRateLimitTaskExcutor";
     public static final String AsyncRateLimitThreadPoolExecutor = "AsyncRateLimitThreadPoolExecutor";
     private static final Logger logger = LoggerFactory.getLogger(AsyncConfig.class);
 
@@ -73,16 +72,6 @@ public class AsyncConfig implements AsyncConfigurer {
         return executor;
     }
 
-    @Bean(name = REDIS_RATE_LIMIT_TASK_EXECUTOR)
-    public Executor redisRateLimitTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(40);
-        executor.setMaxPoolSize(40);
-        executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("redis-ratelimit-thread-pool-");
-        executor.initialize();
-        return executor;
-    }
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {

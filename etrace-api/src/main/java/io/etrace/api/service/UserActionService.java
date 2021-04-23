@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import io.etrace.api.model.po.BaseVisualizationObject;
 import io.etrace.api.model.po.ui.Dashboard;
 import io.etrace.api.model.po.ui.DashboardApp;
-import io.etrace.api.model.po.ui.Graph;
-import io.etrace.api.model.po.ui.Node;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.po.yellowpage.SearchList;
@@ -14,8 +12,6 @@ import io.etrace.api.model.vo.SearchResult;
 import io.etrace.api.repository.UserActionMapper;
 import io.etrace.api.service.base.FavoriteAndViewInterface;
 import io.etrace.api.service.graph.BaseService;
-import io.etrace.api.service.graph.GraphService;
-import io.etrace.api.service.graph.NodeService;
 import io.etrace.api.service.yellowpage.SearchListService;
 import io.etrace.api.service.yellowpage.SearchRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +37,7 @@ public class UserActionService {
     private DashboardService dashboardService;
     @Autowired
     private DashboardAppService dashboardAppService;
-    @Autowired
-    private GraphService graphService;
-    @Autowired
-    private NodeService nodeService;
-    @Autowired
-    private SearchRecordService searchRecordService;
-    @Autowired
-    private SearchListService searchListService;
+
 
     private void create(UserAction userAction) {
         userActionMapper.save(userAction);
