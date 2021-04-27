@@ -11,7 +11,7 @@ export default {
 
 function getMOZIToken(): string {
     const currEnv = SystemKit.getCurrEnv();
-    const name = currEnv === ENV.DAILY
+    const name = currEnv === ENV.TEST
         ? DAILY_MOZI_TOKEN_COOKIE_KEY
         : MOZI_TOKEN_COOKIE_KEY;
 
@@ -27,7 +27,7 @@ function setMOZIToken(token: string, expires?: number) {
     const currEnv = SystemKit.getCurrEnv();
     const domain = "." + window.location.hostname.split(".").slice(-2).join(".");
 
-    const name = currEnv === ENV.DAILY
+    const name = currEnv === ENV.TEST
         ? DAILY_MOZI_TOKEN_COOKIE_KEY
         : MOZI_TOKEN_COOKIE_KEY;
 

@@ -1,6 +1,5 @@
 import React from "react";
 import {MenuItem} from "$models/Menu";
-import IconFont from "$components/Base/IconFont";
 
 import {
     ApartmentOutlined,
@@ -11,7 +10,6 @@ import {
     DashboardOutlined,
     DatabaseOutlined,
     DotChartOutlined,
-    DownloadOutlined,
     ExclamationCircleOutlined,
     FileTextOutlined,
     HddOutlined,
@@ -22,10 +20,9 @@ import {
     ProfileOutlined,
     SearchOutlined,
     SettingOutlined,
-    TeamOutlined,
-    UploadOutlined
+    TeamOutlined
 } from "@ant-design/icons";
-import {APP_ID, LEGACY_MONITOR_URL, STORAGE_KEY_APP_ID} from "$constants/index";
+import {APP_ID, STORAGE_KEY_APP_ID} from "$constants/index";
 
 /**
  * Path 相关
@@ -78,7 +75,7 @@ export const EMONITOR_ROUTER: MenuItem[] = [
     {
         isExternal: true,
         label: "大盘",
-        url: `${LEGACY_MONITOR_URL}/dashboard`,
+        url: `/dashboard`,
         icon: <ApartmentOutlined/>,
     },
 ];
@@ -111,19 +108,10 @@ export const TRACE_SIDER: MenuItem[] = [
         label: "SOA", icon: <ApiOutlined/>, children: [
             {label: "Provider", url: "/trace/soa/provider", icon: <ApiOutlined/>},
             {label: "Consumer", url: "/trace/soa/consumer", icon: <ApiOutlined/>},
-            {label: "Dependency", url: "/trace/soa/dependency", icon: <ApiOutlined/>},
-            {label: "Pizza", url: "/trace/soa/pizza", icon: <ApiOutlined/>},
         ]
     },
     {label: "URL", url: "/trace/url", icon: <LinkOutlined/>},
     {label: "JVM", url: "/trace/jvm", icon: <HddOutlined/>},
-    {label: "Redis", url: "/trace/redis", icon: <IconFont type="icon-redis1"/>},
-    {label: "RMQ Publisher", url: "/trace/rmq_publish", icon: <UploadOutlined/>},
-    {label: "RMQ Consumer", url: "/trace/rmq_consumer", icon: <DownloadOutlined/>},
-
-    // 老版 Monitor
-    {isExternal: true, label: "Ejdbc Pool", url: `${LEGACY_MONITOR_URL}/trace/ejdbc`, icon: <LinkOutlined/>},
-    {isExternal: true, label: "Database", url: `${LEGACY_MONITOR_URL}/trace/database`, icon: <DatabaseOutlined/>},
 ];
 
 // 「搜索」侧栏

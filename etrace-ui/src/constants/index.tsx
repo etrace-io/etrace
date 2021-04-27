@@ -1,17 +1,14 @@
 import get from "lodash/get";
-import {CURR_API} from "$constants/API";
-import {EMONITOR_URL, ENV} from "$constants/Env";
 
 /* 项目整体「组件间」间隙 */
 export const SPACE_BETWEEN = 4;
 
 /**
  * 项目部署路径
- * - 顶级目录如 monitor-ui.faas.daily.elenet.me/；
- * - 部署在一级目录下如：daily.elenet.me/monitor-ui/
+ * - 顶级目录如 demo.etrace.io；
+ * - 部署在一级目录下如：demo.etrace.io/monitor-ui/
  */
 export const APP_BASE_PATHNAME = get(window, "CONFIG.PATHNAME", "/").trim().replace(/\/$/, "");
-export const LEGACY_MONITOR_URL = CURR_API.env === ENV.PROD ? EMONITOR_URL[ENV.LEGACY_PROD] : EMONITOR_URL[ENV.LEGACY_DAILY];
 export const APP_BASE_URL = window.location.origin + APP_BASE_PATHNAME;
 
 /* URL Key */

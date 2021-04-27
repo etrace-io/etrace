@@ -17,7 +17,7 @@ const ALIBABA_LOGIN = (
 
 const LOGIN_BUTTON = {
     [ENV.PROD]: [ALIBABA_LOGIN],
-    [ENV.DAILY]: [ALIBABA_LOGIN],
+    [ENV.TEST]: [ALIBABA_LOGIN],
 };
 
 const LoginPage: React.FC = props => {

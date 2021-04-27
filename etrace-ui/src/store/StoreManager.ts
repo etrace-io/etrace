@@ -15,7 +15,6 @@ import {StateLinkStore} from "./StateLinkStore";
 import {URLParamStore} from "./URLParamStore";
 import {BoardConfigStore} from "./BoardConfigStore";
 import {PageSwitchStore} from "./PageSwitchStore";
-import {MonitorConfigStore} from "./MonitorConfigStore";
 import {ConfigStore} from "./ConfigStore";
 import {LoadingStore} from "./alert/LoadingStore";
 import {GraphStore} from "./GraphStore";
@@ -43,7 +42,6 @@ class StoreManager {
     public dataAppStore: DataAppStore = new DataAppStore();
     public stateLinkStore: StateLinkStore = new StateLinkStore();
     public boardConfigStore: BoardConfigStore = new BoardConfigStore(this.userStore);
-    public monitorConfigStore: MonitorConfigStore = new MonitorConfigStore();
 
     public nodeStore: NodeStore = new NodeStore(this.urlParamStore);
     public graphStore: GraphStore = new GraphStore(this.urlParamStore, this.nodeStore);

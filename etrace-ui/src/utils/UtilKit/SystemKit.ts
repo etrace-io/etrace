@@ -38,8 +38,8 @@ function redirectToLogin(origin?: string, targetEnv?: ENV) {
     // 其他环境跳转
     if (targetEnv && getCurrEnv() !== targetEnv) {
         switch (targetEnv) {
-            case ENV.DAILY:
-                window.open(EMONITOR_URL[ENV.DAILY] + targetURL);
+            case ENV.TEST:
+                window.open(EMONITOR_URL[ENV.TEST] + targetURL);
                 break;
             case ENV.PROD:
             default:
@@ -64,7 +64,7 @@ function redirectToSSO(env?: ENV) {
     const targetEnv = env || getCurrEnv();
     const backUrl = APP_BASE_URL + (params.get(LOGIN_BACK_URL_PARAM) || "");
     switch (targetEnv) {
-        case ENV.DAILY:
+        case ENV.TEST:
             window.location.href = `https://sso.daily.elenet.me/euc/#/?from=${encodeURIComponent(backUrl)}`;
             break;
         case ENV.PROD:
@@ -88,7 +88,7 @@ function redirectToMOZI(env?: ENV) {
 
     const targetProfile = env || SystemKit.getCurrEnv();
     switch (targetProfile) {
-        case ENV.DAILY:
+        case ENV.TEST:
             window.location.href = `https://mozi-login.alibaba.net/ssoLogin.htm?APP_NAME=Emonitor&BACK_URL=${encodeURIComponent(backUrl)}`;
             // window.location.href = `https://mozi-login.alibaba.net/oauth2/auth.htm?${mapObjectToUrlParamsStr(params)}`;
             break;
@@ -139,7 +139,7 @@ function redirectToOtherOrigin(origin: string): string {
  * 判断当前环境是否为 Daily
  */
 function isDaily() {
-    return getCurrEnv() === ENV.DAILY;
+    return getCurrEnv() === ENV.TEST;
 }
 
 /**
@@ -153,8 +153,8 @@ function isProd() {
  */
 function getCurrEnv(): ENV {
     switch (CURR_API.env) {
-        case ENV.DAILY:
-            return ENV.DAILY;
+        case ENV.TEST:
+            return ENV.TEST;
         case ENV.PROD:
         default:
             return ENV.PROD;
