@@ -1,0 +1,15 @@
+.am-result .am-result-message{
+    margin-top: 1px;
+    font-size: 14px;
+}
+
+html:not([data-scale]) .am-list-body div:not(:last-child) .am-list-line::after{
+    content: '';
+    height: 0;
+}
+
+.m-noData {
+    text-align: center;
+    border: none;
+    background-color: inherit;
+}

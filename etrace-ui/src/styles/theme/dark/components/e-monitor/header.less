@@ -1,0 +1,94 @@
+// 顶部导航栏
+.e-monitor-header {
+  background: @dark-color-gray-background;
+  border-bottom: 1px solid @dark-color-gray;
+  // 顶部导航栏字体颜色
+  .ant-menu {
+    .ant-menu-item a,
+    .ant-menu-submenu-title,
+    .ant-menu-item.navRight {
+      color: @dark-color-text !important;
+    }
+
+    .ant-menu-item {
+      //border-color: @dark-color-border-light;
+      position: relative;
+      //border-color: transparent !important;
+      border: none;
+
+      &:not(.e-monitor-menu-no-hover)::after {
+        content: "";
+        position: absolute;
+        bottom: 1px;
+        left: auto;
+        right: 0;
+        width: 0;
+        height: 4px;
+        background: @dark-color-major-gradient-background-horizon;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        transition: width 0.25s;
+      }
+
+      &.ant-menu-item-active {
+        border: none !important;
+      }
+
+      &.ant-menu-item-selected::after,
+      &.ant-menu-item-active::after {
+        // 左到右
+        left: 0;
+        right: auto;
+        width: 100%;
+      }
+
+      &.ant-menu-item-selected + .ant-menu-item:not(.ant-menu-item-active)::after,
+      &.ant-menu-item-active + .ant-menu-item:not(.ant-menu-item-selected)::after {
+        // 左到右
+        left: 0;
+        right: auto;
+        width: 0;
+      }
+
+      &.ant-menu-item-selected {
+        a {
+          color: @dark-color-major !important;
+        }
+      }
+    }
+  }
+
+  .e-monitor-header__functions {
+    .nav-curr-env {
+      background: @dark-color-light-background;
+    }
+
+    .debug-icon-style {
+      font-size: 24px;
+      color: #52c41a;
+    }
+  }
+
+  .ant-menu-submenu {
+    position: relative;
+    border: none !important;
+
+    &:not(.e-monitor-menu-no-hover)::after {
+      content: "";
+      position: absolute;
+      bottom: 1px;
+      left: 0;
+      width: 0;
+      height: 4px;
+      background: @dark-color-major-gradient-background-horizon;
+      transition: width 0.25s;
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+    }
+
+    &.ant-menu-submenu-selected::after,
+    &.ant-menu-submenu-active::after {
+      width: 100%;
+    }
+  }
+}

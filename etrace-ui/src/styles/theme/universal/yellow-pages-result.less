@@ -1,0 +1,214 @@
+.e-monitor-yellow-pages-search-result {
+  --marjorColor: #409EFF;
+  --secondaryColor: #BBD9F8;
+  --hoverColor: #f0f2f5;
+  --bgColor: #fff;
+  --btnGradientFrom: #2db7f5;
+  --btnGradientTo: #409EFF;
+  --btnTextColor: #fff;
+  --inkBarGradientFrom: #72b5f8;
+  --inkBarGradientTo: #77d9f6;
+
+  @content-width: 1100px;
+  @list-width: 70%;
+
+  overflow: auto;
+  padding-top: 50px;
+
+  // Header
+  .e-monitor-header.yellow-pages {
+    background: unset !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+
+    .e-monitor-header__content {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .search-result__body {
+    width: @content-width + 40px;
+    margin: 0 auto;
+    font-family: Nunito;
+    padding: 0 20px 60px;
+    display: flex;
+
+    .search-result__container {
+      width: @list-width;
+      position: relative;
+
+      &.loading {
+        & > *:not(.e-monitor-yellow-pages__search-box) {
+          opacity: 0.6;
+        }
+      }
+
+      .e-monitor-yellow-pages__search-box {
+        input {
+          border-width: 2px;
+        }
+      }
+
+      .search-result__tabs {
+        margin-top: -10px;
+
+        .ant-tabs-bar {
+          border: none !important;
+          margin-bottom: 20px;
+
+          .ant-tabs-nav {
+            padding: 0 !important;
+
+            .ant-tabs-ink-bar {
+              visibility: visible;
+              height: 6px;
+              background: linear-gradient(to right, var(--inkBarGradientFrom), var(--inkBarGradientTo));
+            }
+          }
+        }
+        .ant-tabs-tab {
+          border: none !important;;
+          font-weight: bold;
+          background: unset !important;;
+
+          &.ant-tabs-tab-active {
+            transform: scale(1.2);
+            transform-origin: center bottom;
+          }
+        }
+      }
+
+      .search-result__home-btn {
+        border-radius: 8px;
+        background: linear-gradient(to right, var(--btnGradientFrom), var(--btnGradientTo));
+        color: var(--btnTextColor);
+        border: none !important;
+      }
+
+      .search-result__records {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .e-monitor-yellow-pages__record-container {
+          width: 45%;
+        }
+      }
+
+      // 列表结果页
+      .search-result__lists {
+        width: 100%;
+        display: flex;
+
+        .lists-tabs {
+          width: 150px;
+          padding: 0;
+          list-style: none;
+          margin-right: 20px;
+          margin-top: 20px;
+
+          .list-tab__item {
+            width: 100%;
+            border-radius: 6px;
+            padding: 10px 15px 10px 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            cursor: pointer;
+
+            .list-tab__item-icon {
+              font-size: 20px;
+              flex-shrink: 0;
+              margin-right: 8px;
+            }
+            .list-tab__item-name {
+              font-size: 14px;
+              flex: 1;
+            }
+
+            &:hover {
+              background: var(--hoverColor);
+            }
+
+            &.selected {
+              font-weight: bold;
+              background: var(--hoverColor);
+              position: relative;
+
+              .list-tab__item-icon {
+                color: var(--marjorColor);
+              }
+
+              &::before {
+                content: "";
+                position: absolute;
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                background: var(--secondaryColor);
+                opacity: 0.3;
+                left: -10px;
+                top: 5px;
+              }
+            }
+          }
+        }
+      }
+
+      // 搜索结果空提示
+      .search-result__empty-tips {
+        padding: 30px 0 60px;
+        text-align: center;
+        flex: 1;
+
+        .empty-tips__icon {
+          font-size: 60px;
+          padding: 20px 0 30px;
+        }
+
+        .empty-tips__content {
+          opacity: 0.8;
+        }
+      }
+
+      // 搜索结果 Loading
+      .search-result__loading {
+        position: absolute;
+        width: 100%;
+        top: 250px;
+        left: 0;
+        text-align: center;
+        padding: 100px 0;
+        color: var(--marjorColor);
+
+        .search-result__loading-logo {
+          font-size: 35px;
+        }
+
+        .search-result__loading-text {
+          font-size: 16px;
+          font-weight: bold;
+          padding: 30px 0;
+        }
+      }
+    }
+
+    .yellow-pages__history-list-container {
+      flex: 1;
+      margin-left: 50px;
+      margin-top: 160px;
+    }
+  }
+
+  //.emonitor-footer {
+  //  background: var(--bgColor) !important;
+  //}
+}

@@ -1,0 +1,24 @@
+.chart-tooltip {
+  @tooltip-border: darken(@dark-color-border-light, 30%);
+
+  background: @dark-color-light-background;
+  border-color: @tooltip-border;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+  .tooltip-container {
+    .tooltip-top-kick,
+    .tooltip-title,
+    .tooltip-content-wrapper {
+      border-color: @tooltip-border;
+      color: @dark-color-text;
+      background: @dark-color-light-background;
+
+      &::-webkit-scrollbar-thumb {
+        background: @dark-color-border-gray !important;
+      }
+
+      .ant-input {
+        border-color: @tooltip-border !important;
+      }
+    }
+  }
+}

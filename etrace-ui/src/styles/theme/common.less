@@ -1,0 +1,256 @@
+// header
+@import "./universal/header.less";
+// 指标配置
+@import "./universal/metrics-configs.less";
+// 图表状态标签
+@import "./universal/chart-status.less";
+// sider
+@import "./universal/sider.less";
+// StatList
+@import "./universal/statlist.less";
+// system
+@import "./universal/system.less";
+// chart
+@import "./universal/chart.less";
+// tooltip
+@import "./universal/tooltip.less";
+// list
+@import "./universal/list.less";
+// sampling-modal
+@import "./universal/sampling-modal.less";
+// GlobalSearchPage
+@import "./universal/global-search-page.less";
+// function-item-card
+@import "./universal/function-item-card.less";
+// Statistic-Card
+@import "./universal/statistic-card.less";
+// request page
+@import "./universal/request.less";
+// dashboard
+@import "./universal/dashboard.less";
+// yellow pages
+@import "./universal/yellow-pages.less";
+// yellow pages record info
+@import "./universal/yellow-pages-record.less";
+// yellow pages list
+@import "./universal/yellow-pages-list.less";
+// yellow pages result
+@import "./universal/yellow-pages-result.less";
+// 根因分析
+@import "./universal/analyze.less";
+
+/* ACSS */
+// 文字右对齐
+.align-right {
+  text-align: right;
+}
+
+// 幽灵按钮
+.e-monitor-ghost-btn {
+  opacity: 0 !important;
+  &:hover {
+    opacity: 1 !important;
+  }
+}
+
+// 遮罩层背景虚化
+.ant-modal-mask,
+.ant-tooltip-inner {
+  backdrop-filter: blur(5px);
+}
+
+/* 通用 */
+.ant-menu {
+  background: unset;
+}
+
+.anticon {
+  //vertical-align: middle;
+  //line-height: 1.2;
+}
+
+.ant-card-extra {
+  margin-top: unset;
+}
+
+.card-item {
+  border: 1px dashed @dark-color-border-gray;
+  border-radius: 4px;
+  padding: 0 0.5rem;
+  height: 40px;
+  line-height: 40px;
+  margin-bottom: 6px;
+  //cursor: move;
+}
+
+.ant-list-something-after-last-item .ant-list-item:last-child {
+  border: none;
+}
+
+.ant-spin-nested-loading > div > .ant-spin .ant-spin-text {
+  text-shadow: unset;
+}
+
+.ant-row.row-inner-col-spacing {
+  [class^=ant-col] {
+    padding-bottom: 4px;
+  }
+}
+
+.side-stat-list {
+  &.filter-typing {
+    .side-stat-list-tree {
+      .ant-tree-treenode-switcher-close {
+        //display: none;
+      }
+    }
+  }
+}
+
+.e-monitor-markdown {
+  p {
+    margin: 0.2em !important;
+  }
+  &.highlight-strong {
+    strong {
+      color: #f50;
+    }
+  }
+}
+
+.e-monitor-suggestion {
+  min-height: 30px;
+  float: left;
+}
+
+.network-map {
+  text-align: center;
+
+  a {
+    display: block;
+    position: absolute;
+    cursor: pointer;
+  }
+}
+
+.ant-tag.ant-tag-checkable {
+  .departments-count {
+    color: #00ab69;
+    padding: 2px 0 2px 5px;
+    transition: color 0.3s;
+  }
+
+  &.ant-tag-checkable-checked,
+  &:active {
+    .departments-count {
+      color: #fff;
+    }
+  }
+}
+
+// 菜单内计数显示
+.e-monitor-menu-count {
+  float: right;
+  padding-left: 0.8em;
+}
+
+&.theme-light {
+  .e-monitor-menu-count {
+    color: #1890ff;
+  }
+}
+
+&.theme-dark {
+  .e-monitor-menu-count {
+    color: @dark-color-major;
+  }
+}
+
+.ant-select-allow-clear .ant-select-selection--multiple .ant-select-selection__rendered {
+  margin-right: 30px !important;
+}
+
+// dropdown 中的 menu group list 样式
+.ant-dropdown-menu {
+  .ant-dropdown-menu-item-group {
+    .ant-dropdown-menu-item-group-list {
+      padding: 0;
+
+      li {
+        list-style: none;
+      }
+    }
+  }
+}
+
+// 看板编辑 - 布局 - 拖拽
+.draggable-card-container {
+  margin-bottom: 6px;
+
+  .ant-card-head-title {
+    padding: 0;
+    & > div {
+      padding: 6px 0;
+    }
+  }
+}
+
+.title-action-item-btn {
+  line-height: 22px;
+  vertical-align: middle;
+
+  .title-action-item-title {
+
+    .title-action-item-shortcut {
+      vertical-align: top;
+    }
+  }
+}
+
+// List Page
+.list-item__action-btn {
+  width: 100%;
+  line-height: 25px;
+  display: inline-block;
+
+  .list-item__icon {}
+
+  .list-item__text {
+    font-size: 12px;
+    margin-left: 8px;
+  }
+}
+
+// 提示框样式控制
+.popover-tips-content {
+  p, pre {
+    margin-bottom: 6px;
+    width: 100%;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  pre {
+    border-radius: 4px;
+  }
+
+  code {
+    display: inline-block;
+    max-width: 600px;
+    overflow: auto;
+  }
+}
+
+// 指标下钻展示
+.e-monitor-analyze-popover__table {
+  th, td {
+    //white-space: nowrap;
+    word-break: break-all;
+  }
+}
+
+.ant-table-filter-dropdown .ant-dropdown-menu {
+  max-height: calc(~"100vh - 130px") !important;
+}

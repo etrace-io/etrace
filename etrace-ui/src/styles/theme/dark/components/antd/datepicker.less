@@ -1,0 +1,138 @@
+.ant-calendar-picker {
+  .ant-calendar-picker-input {
+    border-color: @dark-color-border;
+    background: @dark-color-light-background;
+
+    .ant-calendar-range-picker-input {
+      &:focus {
+        box-shadow: none !important;
+      }
+    }
+
+    .ant-calendar-picker-icon {
+      color: @dark-color-input-placeholder !important;
+      &:before,
+      &:after {
+        color: @dark-color-input-placeholder !important;
+      }
+    }
+
+    .ant-calendar-picker-clear {
+      background: @dark-color-gray;
+      color: #000;
+
+      &:hover {
+        color: @dark-color-text;
+      }
+    }
+  }
+
+  .ant-calendar-picker-icon {
+    color: @dark-color-input-placeholder !important;
+    &:before,
+    &:after {
+      color: @dark-color-input-placeholder !important;
+    }
+  }
+
+  .ant-calendar-picker-clear {
+    background: @dark-color-gray;
+    color: #000;
+
+    &:hover {
+      color: @dark-color-text;
+    }
+  }
+
+  .ant-calendar-picker-clear {
+    background: @dark-color-gray;
+    color: #000;
+
+    &:hover {
+      color: @dark-color-text;
+    }
+  }
+
+  &:hover {
+    .ant-calendar-picker-input {
+      border-color: @dark-color-border-light;
+    }
+  }
+  &:focus {
+    .ant-calendar-picker-input {
+      box-shadow: @dark-shadow-input-focus;
+      border-color: @dark-color-border-light;
+    }
+  }
+}
+
+.ant-calendar-picker-container {
+  .ant-calendar {
+    &,
+    .ant-calendar-input-wrap,
+    .ant-calendar-body,
+    .ant-calendar-footer {
+      border-color: @dark-color-border;
+    }
+
+    // time-picker 日期选择
+    .ant-calendar-body {
+      .ant-calendar-table {
+        .ant-calendar-tbody {
+          .ant-calendar-cell {
+            &.ant-calendar-disabled-cell {
+              .ant-calendar-date {
+                background-color: @dark-color-disable-background;
+                color: @dark-color-disable-text;
+              }
+            }
+            &:not(.ant-calendar-disabled-cell):hover {
+              .ant-calendar-date {
+                background-color: @dark-color-item-hover-bg;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 输入框及 range 符号
+    @calendar-input-height: 42px;
+    .ant-calendar-input-wrap {
+      height: @calendar-input-height;
+      padding: 10px;
+
+      .ant-calendar-input {
+        padding: 4px 6px;
+        text-align: center;
+      }
+    }
+    .ant-calendar-range-middle {
+      height: @calendar-input-height;
+      line-height: @calendar-input-height;
+    }
+
+    .ant-calendar-range-part {
+      .ant-calendar-time-picker {
+        top: 76px;
+      }
+
+      .ant-calendar-time-picker-inner,
+      .ant-calendar-time-picker-combobox {
+        border-color: @dark-color-border;
+      }
+
+      .ant-calendar-time-picker-select {
+        li {
+          &:not(.ant-calendar-time-picker-select-option-disabled):hover {
+            background: @dark-color-item-hover-bg;
+          }
+        }
+
+        .ant-calendar-time-picker-select-option-selected {
+          background: @dark-color-item-hover-bg-dark;
+        }
+      }
+    }
+  }
+}

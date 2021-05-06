@@ -1,0 +1,55 @@
+.function-item-card {
+  margin-bottom: 20px;
+
+  .ant-card {
+    border-radius: 4px !important;
+    overflow: hidden;
+  }
+
+  .ant-card-head-title {
+    padding-left: 0.3em;
+  }
+
+  .function-item-card__list {
+    .function-item-card__item {
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 5px 0;
+
+      .icon-item {
+        display: block;
+        transition: color 0.25s;
+        color: inherit;
+
+        .icon-item__icon {
+          font-size: 25px;
+          text-align: center;
+
+          .anticon {
+            font-size: 25px !important;
+          }
+        }
+        .icon-item__text {
+          width: 100%;
+          text-align: center;
+          margin: 0;
+          padding: 0.5em 0;
+        }
+      }
+
+      .text-item {
+        padding: 0 0.6em;
+        display: inline-block;
+        transition: color 0.25s;
+        word-break: break-word;
+      }
+    }
+
+    .list__no-content {
+      text-align: center;
+      line-height: 3em;
+      opacity: 0.75;
+    }
+  }
+}

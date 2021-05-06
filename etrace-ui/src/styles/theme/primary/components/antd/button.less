@@ -1,0 +1,25 @@
+.ant-btn {
+
+  @dark-btn-color-danger: #ff4d4f;
+  @dark-btn-color-success: #6cbb5a;
+
+  &.change-event {
+    color: #fff !important;
+    background-color: fade(@dark-btn-color-success, 80%) !important;
+  }
+
+  &.change-event-uncheck {
+    color: @dark-btn-color-success !important;
+  }
+
+  &.alert-event {
+    margin-left: 5px;
+    color: #fff !important;
+    background-color: fade(@dark-btn-color-danger, 90%) !important;
+  }
+
+  &.alert-event-uncheck {
+    margin-left: 5px;
+    color: @dark-btn-color-danger !important;
+  }
+}

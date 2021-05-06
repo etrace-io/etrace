@@ -1,0 +1,74 @@
+.ant-table-wrapper {
+  .ant-table {
+    border-color: @dark-color-border;
+
+    .ant-table-title {
+      border-color: @dark-color-border;
+    }
+
+    .ant-table-content {
+      background: @dark-color-gray-background;
+      border-color: @dark-color-border;
+
+      .ant-table-body,
+      .ant-table-header {
+        table {
+          border-color: @dark-color-border;
+          background: @dark-color-gray-background;
+          .ant-table-thead {
+            tr {
+              th {
+                //border-color: lighten(@dark-color-border, 15%);
+                border-color: @dark-color-border !important;
+              }
+            }
+          }
+          .ant-table-tbody {
+            tr {
+              td {
+                border-color: @dark-color-border !important;
+              }
+              &:hover,
+              &.ant-table-row-selected,
+              &.host_stat_table_row_selected {
+                & > td {
+                  background: darken(@dark-color-item-hover-bg, 15%);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .ant-table-fixed-left, .ant-table-fixed-right {
+        border-color: @dark-color-border !important;
+        .ant-table-fixed {
+          tr {
+            &.ant-table-row-hover {
+              td {
+                background: darken(@dark-color-item-hover-bg, 15%);
+              }
+            }
+          }
+          th, td {
+            border-color: @dark-color-border !important;
+          }
+        }
+      }
+
+      .ant-table-placeholder {
+        border-color: @dark-color-border !important;
+      }
+
+      .ant-table-footer {
+        background: @dark-color-gray-background;
+        border-color: @dark-color-border;
+      }
+    }
+  }
+}
+.ant-table-filter-dropdown {
+  .ant-table-filter-dropdown-btns {
+    border-color: @dark-color-border;
+  }
+}

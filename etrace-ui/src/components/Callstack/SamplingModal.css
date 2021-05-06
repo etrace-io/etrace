@@ -1,0 +1,133 @@
+.sampling-modal .sampling-modal-container {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s;
+}
+.sampling-modal .ant-radio-button-wrapper {
+    margin: 2px;
+    border-radius: 4px !important;
+    border-left: 1px solid #d9d9d9;
+}
+.sampling-modal .ant-radio-button-wrapper:not(:first-child)::before {
+    content: none;
+}
+.sampling-modal .ant-radio-button-wrapper:hover, .ant-radio-button-wrapper-focused, .ant-radio-button-wrapper-checked {
+    color: #fff;
+    background-color: #1890ff;
+    border-color: #1890ff;
+    box-shadow: none;
+}
+
+/* More btn */
+.sampling-modal .sampling-modal-more-btn {
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+}
+.sampling-modal .sampling-modal-more-btn .anticon {
+    transition: all 0.35s;
+    transform: rotate(180deg);
+    font-weight: bold;
+}
+.sampling-modal.collapsed .sampling-modal-container {
+    height: 28px !important;
+}
+.sampling-modal.collapsed .sampling-modal-more-btn .anticon {
+    transform: rotate(0);
+}
+.sampling-modal.no-more-btn .sampling-modal-more-btn {
+    display: none;
+}
+
+.callstack-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 10px;
+}
+.callstack-header-func {
+    text-align: right;
+}
+.callstack-header-func .ant-btn {
+    margin-left: 10px;
+}
+
+.callstack-table-header {
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #00000050;
+}
+
+.callstack-table-one-line {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    border-bottom: 1px solid #00000050;
+    /*border-top: 1px solid #00000061;*/
+    /*background-color: #8fbc8f4a*/
+    /*height: 30px;*/
+}
+
+.callstack-table-col-duration-container {
+    border: 1px solid #333;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.callstack-table-col-duration-container .callstack-table-col-duration {
+    height: 20px;
+    background-color: #b7eb8f;
+}
+.callstack-table-col-duration-container .callstack-table-col-duration.warning {
+    background-color: #ff8882 !important;
+}
+
+.callstack-table-col-duration-container .callstack-table-col-duration .callstack-table-col-duration-content {
+    position: absolute;
+    left: 0;
+    height: 20px;
+    line-height: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.callstack-table-col-description {
+    padding: 0 0.5em;
+    display: flex;
+    align-items: center;
+}
+
+.callstack-table-col-description span {
+    flex: 1;
+}
+
+.transaction-detail-wrapper {
+    border-bottom: 1px solid #00000050;
+}
+.transaction-detail-card {
+    margin: 10px 0;
+    border: 1px solid #bfbfbf;
+    border-radius: 2px;
+    width: 100%;
+}
+.transaction-detail-thread-card {
+    margin: 10px 0;
+    border: 1px solid #bfbfbf;
+    border-radius: 2px;
+    height: 95vh;
+    overflow-y: auto;
+}
+
+.transaction-detail-card:last-of-type {
+    border-color: #bfbfbf;
+    border-width: 1px;
+}
+.transaction-detail-card .ant-card-head {
+    min-height: auto !important;
+    border-color: #bfbfbf;
+}
+.transaction-detail-card .ant-card-head-title {
+    padding: 2px 0;
+}
+.transaction-detail-card .ant-card-body {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}

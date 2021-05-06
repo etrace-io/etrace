@@ -1,0 +1,255 @@
+.e-monitor-content-area {
+    /*flex: 1 1 0;*/
+    /*margin-bottom: 38px;*/
+    /*position: absolute;*/
+    /*left: 200px;*/
+    /*top: 50px;*/
+    /*right: 0;*/
+    /*bottom: 38px;*/
+    /*transition: all 0.2s;*/
+}
+
+.e-monitor-full-content-area {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 100%;
+    bottom: 38px;
+    /*transition: all 0.2s;*/
+}
+
+.e-monitor-purity-content-area {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    bottom: 38px;
+    /*transition: all 0.2s;*/
+}
+
+.e-monitor-content-area.sider-collapsed {
+    /*left: 60px;*/
+}
+
+.e-monitor-content-area.sider-collapsed.no-transition {
+    transition: none;
+}
+
+.e-monitor-side-menu {
+    /*background-color: #fff;*/
+    /*position: absolute;*/
+    /*top: 50px;*/
+    height: calc(100vh - 50px);
+    overflow: auto;
+    transition: none;
+}
+
+.e-monitor-side-menu:before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #e8e8e8;
+    width: 1px;
+    z-index: 2;
+}
+
+.e-monitor-page-content {
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.e-monitor-inner-content-container {
+    flex: 1;
+    overflow: hidden;
+}
+
+.e-monitor-inner-content-container .e-monitor-inner-content {
+    height: calc(100vh - 90px);
+    /*height: 100%;*/
+    display: flex;
+    flex-direction: column;
+    z-index: 0;
+}
+
+.e-monitor-inner-content-container .e-monitor-inner-content.scroll {
+    overflow: auto;
+}
+
+.e-monitor-page-content .e-monitor-content-part {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.e-monitor-page-content .e-monitor-content-part .e-monitor-inner-content {
+
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-margin {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.e-monitor-page-content .e-monitor-content-part.ml {
+    margin-left: 4px !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.mr {
+    margin-right: 4px !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.mt {
+    margin-top: 4px !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.mb {
+    margin-bottom: 4px !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-ml {
+    margin-left: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-mr {
+    margin-right: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-mt {
+    margin-top: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-mb {
+    margin-bottom: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-pl {
+    padding-left: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-pr {
+    padding-right: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-pt {
+    padding-top: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.no-pb {
+    padding-bottom: 0 !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.fullscreen {
+    flex: 1;
+}
+
+.e-monitor-page-content .e-monitor-content-part.scroll {
+    position: relative;
+    overflow-y: auto;
+    height: calc(100vh - 200px);
+    /*overflow-x: hidden;*/
+    /* 上面设置 overflow-x 的话，react-lazy-load 好像就无法监听到 */
+}
+
+.e-monitor-page-content .e-monitor-content-part.scroll.hidden-x {
+    overflow-x: hidden;
+}
+
+.e-monitor-page-content .e-monitor-content-part.column {
+    display: flex;
+}
+
+.e-monitor-page-content .e-monitor-content-part.column > div:last-of-type {
+    margin-left: 0;
+    padding-left: 4px;
+}
+
+.e-monitor-page-content .e-monitor-content-part.full-height {
+    height: 100% !important;
+}
+
+/* chart 部分 */
+.e-monitor-page-content .e-monitor-content-part.chart:not(.overview) {
+    /*margin-top: -4px;*/
+    margin-bottom: -4px;
+}
+
+.e-monitor-page-content .e-monitor-content-part.chart:not(.overview) > div {
+    /*margin-top: 4px;*/
+    margin-bottom: 4px;
+}
+
+.e-monitor-page-content .e-monitor-content-part.chart.overview {
+    margin: 0;
+    padding: 4px 2px 0;
+}
+
+.e-monitor-page-content .e-monitor-content-part.chart.overview > div {
+    padding: 0 2px 4px;
+}
+
+/* List 相关 */
+.e-monitor-page-content .e-monitor-content-part.list {
+    /*overflow-x: hidden;*/
+    /*overflow-y: auto;*/
+    /*height: 100%;*/
+}
+
+.e-monitor-page-content .e-monitor-content-part.list .ant-row {
+    margin: 0 !important;
+    margin-top: -2px !important;
+    margin-left: -2px !important;
+}
+
+.e-monitor-page-content .e-monitor-content-part.list .ant-row > div {
+    padding: 2px;
+    /*margin-top: 4px;*/
+    /*margin-left: 4px;*/
+}
+
+/* List 下 item 相关 */
+.e-monitor-page-content .e-monitor-content-part.list .e-monitor-content-list-item {
+    margin: 0;
+    padding: 0 !important;
+    /*border: 1px solid #e8e8e8;*/
+    /*display: -webkit-box;*/
+    /*-webkit-box-orient: vertical;*/
+}
+
+.e-monitor-content-list-item .ant-list-item-content {
+    width: 100%;
+}
+
+/* Item Meta 部分 */
+.e-monitor-content-list-item-meta {
+    padding: 0 10px;
+    height: 56px;
+}
+
+/* List Item 标题 */
+.e-monitor-content-list-item .ant-card-meta-title {
+    color: #1890ff;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.e-monitor-content-list-item .e-monitor-content-list-item-title {
+}
+
+/* List Item 描述 */
+.e-monitor-content-list-item .e-monitor-content-list-item-desc {
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 12px;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
+}
+
+.ant-card-actions > li {
+    margin: 5px 0;
+}

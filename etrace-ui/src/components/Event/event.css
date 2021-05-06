@@ -1,0 +1,56 @@
+.fieldItem {
+    margin-right: 20px;
+    min-height: 39px;
+}
+
+.fieldContend {
+    margin-left: 8px;
+}
+
+.fieldTitle {
+    text-align: right;
+    min-width: 50px;
+}
+.fieldItemTrigger {
+    text-align: right;
+    width: 60px;
+}
+.fieldCheckbox {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: top;
+}
+.fieldCheckboxUp {
+    margin-left: 0;
+}
+.fieldNull {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.fieldDelete {
+    display: inline-block;
+    vertical-align: top;
+    float: right;
+    width: 100%;
+}
+
+.searchTitle {
+   text-align: right;
+   line-height: 34px;
+}
+
+.fitFormHeight{
+    line-height: 39px;
+}
+
+.searchContent {
+
+}
+
+.searchRow {
+    margin-right: 16px;
+}
+.conditionWidth {
+    width: calc(100% - 90px);
+}

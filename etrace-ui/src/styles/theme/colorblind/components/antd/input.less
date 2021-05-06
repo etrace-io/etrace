@@ -1,0 +1,51 @@
+// 带 search 的搜索
+.ant-input-search {
+  &:hover {
+    input {
+      border-color: lighten(@dark-color-border, 20%);
+    }
+  }
+}
+
+// 带 input 的 selection
+.ant-select-selection {
+  background: @dark-color-gray !important;
+  .ant-input-group-addon {
+    color: @dark-color-text;
+    background: @dark-color-default;
+    border-color: @dark-color-border;
+  }
+}
+
+.ant-input-group {
+  color: @dark-color-text;
+}
+
+// 带 icon 的 input
+.ant-input-group-wrapper {
+  .ant-input-group-addon {
+    color: @dark-color-text;
+    background: @dark-color-default;
+    border-color: @dark-color-border;
+  }
+}
+
+// 通用 input 样式（包括文本域，排除 Select 组件中的 input）
+input:not(.ant-select-search__field),
+textarea {
+  color: @dark-color-text !important;
+  background: @dark-color-gray !important;
+  border-color: @dark-color-border !important;
+  &:hover {
+    border-color: @dark-color-border-light !important;
+  }
+  &:focus {
+    border-color: @dark-color-border-light !important;
+    box-shadow: @dark-shadow-input-focus !important;
+  }
+
+  &.ant-input-disabled {
+    background: @dark-color-disable-background;
+    color: @dark-color-disable-text !important;
+  }
+}

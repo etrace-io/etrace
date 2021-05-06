@@ -1,0 +1,32 @@
+.ant-tabs {
+  color: @dark-color-text;
+
+  .ant-tabs-bar {
+    border-color: @dark-color-border;
+    margin-bottom: 10px;
+
+    .ant-tabs-nav-container {
+      .ant-tabs-nav-wrap {
+        .ant-tabs-nav {
+          padding-bottom: 5px;
+
+          .ant-tabs-tab {
+            &.ant-tabs-tab-active {
+              color: @dark-color-major;
+            }
+            &:hover {
+              color: @dark-color-major-text-hover;
+            }
+          }
+
+          .ant-tabs-ink-bar {
+            background: @dark-color-major-gradient-background-horizon;
+            height: 4px;
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+          }
+        }
+      }
+    }
+  }
+}

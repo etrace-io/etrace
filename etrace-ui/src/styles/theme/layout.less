@@ -1,0 +1,154 @@
+/* 结构：e-monitor-layout -> e-monitor-container -> [e-monitor-side-menu, e-monitor-content -> e-monitor-content-sections -> e-monitor-content-section ] */
+/* 其中 e-monitor-content 对应 Layout 组件 */
+
+/* 新老 class 变化 */
+/* overview -> space-between */
+/* fullscreen -> take-rest-height */
+
+.e-monitor-layout {
+  --space-between: 10px; // 所有块落之间的间隙
+
+  height: 100vh;
+
+  .e-monitor-container {
+    flex: 1;
+    box-sizing: border-box;
+
+    .e-monitor-content {
+      height: 100%;
+
+      & > [class*=e-monitor-content-section] {
+        width: 100%;
+      }
+
+      // section|s 之间的 title 如：renderBoard
+      .e-monitor-content-section-title {
+        margin: 2px;
+        width: 100%;
+      }
+
+      .e-monitor-content-sections {
+
+        padding: var(--space-between) 0 0 var(--space-between);
+
+        & > *:not(.ant-col):not(.e-monitor-content-sections) {
+          margin: 0 var(--space-between) var(--space-between) 0;
+        }
+        & > .ant-col {
+          padding: 0 var(--space-between) var(--space-between) 0;
+        }
+
+        & > .e-monitor-content-sections {
+          padding: 0;
+        }
+      }
+
+      [class*=e-monitor-content-section] {
+        //overflow: hidden;
+        // 添加后失效页面见 /chart/chartId
+        background: inherit;
+
+        /* 包含 footer的 section|s */
+        &.with-footer {
+          margin-bottom: @footer-height;
+
+          // 避免多层 footer 高度叠加
+          .with-footer {
+            margin-bottom: 0;
+          }
+        }
+
+        /* 占据剩余高度，父级元素需添加 `flex` class 或设置了 display:flex */
+        &.take-rest-height {
+          flex: 1;
+          overflow: hidden;
+          &:not(.scroll) > * {
+            max-height: 100%;
+          }
+        }
+
+        &.flex {
+          display: flex;
+          flex-direction: column;
+
+          &.row {
+            flex-direction: row;
+          }
+        }
+
+        &.max-height {
+          height: 100%;
+        }
+
+        &.no-shrink {
+          flex-shrink: 0;
+        }
+
+        &.scroll {
+          position: relative;
+          overflow-y: auto !important;
+          overflow-x: auto !important;
+          // y 和 x 都需要设置为 auto 或者 scroll，lazy-load 才能监听到滚动，详见下面链接
+          // https://github.com/jasonslyvia/react-lazyload/blob/master/src/utils/scrollParent.js#L30-L32
+        }
+
+        &.table-scroll-y {
+          //overflow: hidden auto;
+        }
+
+        &.space-between {
+          margin-right: 0 !important;
+          margin-bottom: 0 !important;
+          padding-right: 0 !important;
+          padding-bottom: 0 !important;
+
+          & > *:not(.ant-col) {
+            margin: 0 var(--space-between) var(--space-between) 0;
+          }
+          & > .ant-col {
+            padding: 0 var(--space-between) var(--space-between) 0;
+          }
+        }
+
+        // 除了水平布局，其他的 section|s 后的 space-between 都需要有 mt，否则为 -2 没有间隙
+        //&:not(.horizontal) > [class*=e-monitor-content-section] + .space-between {
+        //  // space-between 上下之间需要间隙
+        //  margin-top: 2px !important;
+        //}
+
+        &.tabs-container {
+          .ant-card-body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .ant-tabs {
+            display: flex;
+            flex-direction: column;
+
+            .ant-tabs-content-holder {
+              flex: 1;
+              overflow: hidden;
+            }
+
+            .ant-tabs-content,
+            .e-monitor-tab-content {
+              height: 100%;
+            }
+          }
+        }
+
+        &.card-body-take-rest-height {
+          display: flex;
+          flex-direction: column;
+
+          & > .ant-card-body {
+            flex: 1;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+}

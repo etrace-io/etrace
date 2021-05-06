@@ -1,0 +1,41 @@
+.e-monitor-yellow-pages-list {
+  @content-width: 1100px;
+
+  overflow: auto;
+  padding-top: 50px;
+
+  // Header
+  .e-monitor-header.yellow-pages {
+    background: unset !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+
+    .e-monitor-header__content {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .list-result__body {
+    max-width: @content-width;
+    width: 90%;
+    margin: 0 auto;
+    font-family: Nunito;
+    padding: 0 20px 60px;
+
+    .e-monitor-yellow-pages__search-box {
+      input {
+        border-width: 2px;
+      }
+    }
+
+    .list-records-container {
+      padding: 0 20px;
+    }
+  }
+}

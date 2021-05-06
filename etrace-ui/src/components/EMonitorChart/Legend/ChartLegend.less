@@ -1,0 +1,163 @@
+.emonitor-chart-legend-container {
+  max-height: 30%;
+  max-width: 100%;
+  overflow: auto;
+  width: auto;
+
+  &.align-center {
+    text-align: center;
+  }
+
+  &.align-right {
+    text-align: right;
+  }
+
+  &.to-right {
+    height: auto;
+    max-height: 100%;
+    max-width: 70%;
+
+    .chart-legend-content {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.chart-legend-content {
+  &.table {
+    display: table !important;
+    width: 100%;
+
+    .chart-legend-series {
+      display: table-row;
+
+      .legend-series-key,
+      .legend-series-value {
+        display: table-cell;
+      }
+
+      .legend-series-key {
+        text-align: left;
+      }
+
+      .legend-series-value {
+        text-align: right;
+      }
+    }
+  }
+
+  .chart-legend-split-layout {
+    display: flex;
+    .chart-legend__split-left {
+      text-align: left;
+    }
+    .chart-legend__split-right {
+      text-align: right;
+      margin-left: 30px;
+    }
+  }
+
+  &:not(.active):hover {
+    .chart-legend-series {
+      opacity: 0.7;
+    }
+  }
+}
+
+.chart-legend-table-header {
+  display: table-row;
+
+  .chart-legend-th-content {
+    display: table-cell;
+    text-align: right;
+    font-size: 12px;
+    font-weight: bold;
+    //padding: 3px 6px;
+    color: #2AB2E4;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+
+    span {
+      padding: 3px 6px;
+
+      &.legend-name-col {
+        padding-left: 20px;
+      }
+    }
+
+    &.no-pointer {
+      cursor: default;
+      text-align: left;
+    }
+
+    &.order span::after {
+      display: inline-block;
+      padding: 0 0 0 4px;
+      content: "▲";
+      transition: all 0.2s;
+      transform: rotateX(0);
+    }
+
+    &.order.desc span::after {
+      transform: rotateX(180deg);
+    }
+  }
+}
+
+.chart-legend-series {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0 6px;
+  opacity: 1;
+  transition: opacity 0.2s;
+  font-size: 12px;
+  max-width: 100%;
+
+  .legend-series-key {
+    padding: 0 6px;
+    font-weight: bold;
+    white-space: nowrap;
+
+    .legend-series-icon {
+      display: inline-block;
+      height: 8px;
+      width: 8px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    .legend-series-label {
+      //white-space: normal;
+      //word-break: break-all;
+    }
+  }
+
+  .legend-series-value {
+    padding-right: 6px;
+    white-space: nowrap;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &.fade {
+    opacity: 0.35;
+  }
+
+  &.collapse {
+    visibility: collapse;
+  }
+
+  &:hover {
+    opacity: 1 !important;
+    .legend-series-icon {
+      transform: scale(1.2);
+    }
+  }
+}

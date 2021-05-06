@@ -1,0 +1,65 @@
+.e-monitor-global-search-page {
+
+  .e-monitor-global-search-page__title {
+    span {
+      &:before {
+        background: @dark-color-major-gradient-background-horizon;
+      }
+    }
+  }
+
+  .e-monitor-global-search-page__tab {
+    border-color: @dark-color-border;
+
+    .e-monitor-global-search-page__tab-item {
+      background: @dark-color-gray-background;
+      border-bottom-color: @dark-color-border;
+
+      .e-monitor-global-search-page__tab-item__summary {
+        //color: #fff;
+      }
+
+      &:before {
+        background: @dark-color-major-gradient-background-vertical;
+      }
+
+      &:hover {
+        color: @dark-color-major;
+      }
+    }
+  }
+
+  .e-monitor-global-search-page__results {
+
+    .e-monitor-global-search-page__results-list {
+      .e-monitor-global-search-page__results-item {
+        background: @dark-color-gray-background;
+        border-color: @dark-color-border;
+
+        .e-monitor-global-search-page__results-item__title {
+          color: @dark-color-text-light;
+
+          &:hover {
+            color: @dark-color-text;
+          }
+        }
+
+        .e-monitor-global-search-page__results-item__footer {
+          color: @dark-color-text-gray;
+        }
+
+        &.no-result {
+          color: @dark-color-text-gray;
+        }
+
+        &:first-of-type {
+          border-top-color: @dark-color-border;
+        }
+      }
+    }
+
+    &:before {
+      background: linear-gradient(to bottom, @dark-color-background, transparent);
+    }
+  }
+}

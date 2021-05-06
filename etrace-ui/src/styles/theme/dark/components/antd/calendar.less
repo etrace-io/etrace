@@ -1,0 +1,97 @@
+.ant-calendar-picker-container {
+  .ant-calendar-header {
+    border-color: @dark-color-border;
+
+    @units: month year decade century;
+
+    .make-calendar-classes(@i) when (@i > 1) {
+      .make-calendar-classes(@i - 1);
+
+      @unit: extract(@units, @i);
+      @prev-unit: extract(@units, @i - 1);
+
+      .ant-calendar-@{prev-unit}-panel {
+        .ant-calendar-@{prev-unit}-panel-header {
+          border-color: @dark-color-border;
+        }
+        .ant-calendar-@{prev-unit}-panel-body {
+          border-color: @dark-color-border;
+
+          .ant-calendar-@{prev-unit}-panel-cell {
+
+            &.ant-calendar-month-panel-cell-disabled {
+              a {
+                background: @dark-color-disable-background;
+                color: @dark-color-disable-text;
+              }
+            }
+
+            &.ant-calendar-@{prev-unit}-panel-last-@{unit}-cell,
+            &.ant-calendar-@{prev-unit}-panel-next-@{unit}-cell {
+              a {
+                color: @dark-color-gray;
+              }
+            }
+
+            &.ant-calendar-@{prev-unit}-panel-selected-cell {
+              a {
+                background: @dark-color-border-gray;
+              }
+            }
+
+            a {
+              &:hover {
+                background-color: @dark-color-item-hover-bg;
+                color: #fff;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .make-calendar-classes(length(@units));
+  }
+
+  .ant-calendar-body {
+    .ant-calendar-table {
+      .ant-calendar-tbody {
+        tr {
+          td {
+            &.ant-calendar-cell {
+
+              &.ant-calendar-in-range-cell {
+                &::before {
+                  background: @dark-color-light-background;
+                }
+              }
+
+              &.ant-calendar-selected-day {
+                .ant-calendar-date {
+                  background: @dark-color-border-gray;
+                }
+              }
+
+              &.ant-calendar-last-month-cell,
+              &.ant-calendar-next-month-btn-day {
+                .ant-calendar-date {
+                  color: @dark-color-gray;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ant-calendar-time-picker {
+    .ant-calendar-time-picker-inner {
+      .ant-calendar-time-picker-combobox {
+        .ant-calendar-time-picker-select {
+          border-color: @dark-color-border;
+        }
+      }
+    }
+  }
+}

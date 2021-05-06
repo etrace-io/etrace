@@ -1,0 +1,39 @@
+.ant-alert {
+  &.ant-alert-error {
+    border-color: transparent;
+    background-color: @colorblind-color-error !important;
+
+    .anticon {
+      color: #c50220;
+      //color: #e2001a;
+      //color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  &.ant-alert-success {
+    border-color: transparent;
+    background-color: @colorblind-color-success !important;
+    .anticon {
+      color: #40c300;
+    }
+  }
+  &.ant-alert-info {
+    border-color: transparent;
+    background-color: @colorblind-color-info !important;
+  }
+  &.ant-alert-warning {
+    border-color: transparent;
+    background-color: @colorblind-color-warning !important;
+  }
+
+  .ant-alert-message {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .ant-alert-description {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  .ant-alert-close-icon {
+    .anticon {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+  }
+}

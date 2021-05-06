@@ -1,0 +1,48 @@
+@import "./mixin";
+@import "./antd-custom";
+//@import '~antd/dist/antd.dark.less'; // 引入官方提供的暗色 less 样式入口文件
+
+@emonitor-prefix: emonitor;
+@header-height: 50px;
+@footer-height: 38px;
+
+/* Color */
+@color-success: #00ab69;
+@color-error: #ff4d4f; // #c70024
+@color-warning: #ffc857;
+@color-info: #409EFF; // 084c61
+
+@color-yellow: #ffdd00;
+
+// base color
+@emonitor-component-background: #fff;
+@emonitor-border-color: hsv(0, 0, 85%);
+@emonitor-border-color-light: #f0f0f0;
+@emonitor-text-color: fade(#000, 65%);
+
+
+
+/* Size */
+@base-inline-height: 32px;
+
+@border-radius: 2px;
+@btn-height: @base-inline-height;
+
+:root {
+  --space-between: 4px; // 所有块落之间的间隙
+  --component-background: @emonitor-component-background;
+  //--text-primary-color: rgba(0, 0, 0, 0.85);
+  --text-primary-color-light: #fff;
+}
+
+.emonitor-scrollbar {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #c9cacd;
+    border-radius: 3px;
+  }
+}
