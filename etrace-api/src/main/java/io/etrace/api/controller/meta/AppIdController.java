@@ -24,11 +24,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.etrace.api.config.SwaggerConfig.META;
-import static io.etrace.api.config.SwaggerConfig.OPEN_API_TAG;
 
 @RestController
 @RequestMapping()
-@Api(tags = {META, OPEN_API_TAG})
+@Api(tags = {META})
 public class AppIdController {
     private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AppIdController.class);
 

@@ -2,9 +2,8 @@ package io.etrace.api.controller.ui;
 
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
-import io.etrace.api.model.po.ui.Dashboard;
 import io.etrace.api.model.po.user.ETraceUser;
-import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.Dashboard;
 import io.etrace.api.service.DashboardService;
 import io.etrace.api.service.UserActionService;
 import io.swagger.annotations.Api;

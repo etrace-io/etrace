@@ -1,7 +1,6 @@
 package io.etrace.api.config;
 
 import io.etrace.api.filter.GlobalFilter;
-import io.etrace.api.ratelimit.BaseRateLimitService;
 import io.etrace.api.service.UserService;
 import io.etrace.plugins.interceptors.TraceFilter;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -20,6 +20,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "io.etrace.api.repository")
+@EnableJpaRepositories(basePackages = "io.etrace.api.repository"
+    //        ,
+    //        entityManagerFactoryRef = "entityManagerFactory",
+    //        transactionManagerRef = "transactionManager"
+    // todo:  移除了默认的 enableDefaultTransactions （后续看看是否这个配置）
+    , enableDefaultTransactions = false
+)
 public class JPAConfig {
 }

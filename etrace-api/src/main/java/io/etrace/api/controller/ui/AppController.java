@@ -30,12 +30,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static io.etrace.api.config.SwaggerConfig.DEPRECATED_TAG;
-
 // todo?  属于哪里的
 @RestController
 @RequestMapping(value = "/app")
-@Api(value = "App", description = "App相关API", tags = {DEPRECATED_TAG})
+@Api(value = "App", description = "App相关API", tags = {})
 public class AppController {
 
     @Autowired
