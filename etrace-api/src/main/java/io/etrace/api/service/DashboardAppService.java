@@ -5,6 +5,7 @@ import io.etrace.api.consts.HistoryLogTypeEnum;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.exception.UserForbiddenException;
 import io.etrace.api.model.po.ui.DashboardAppPO;
+import io.etrace.api.model.po.ui.DashboardPO;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
@@ -87,7 +88,7 @@ public class DashboardAppService extends BaseService<DashboardAppVO, DashboardAp
             if (dashboardApp.getDashboardIds() != null
                 && dashboardApp.getDashboardIds().size() > 0) {
                 List<Long> dashboardIds = dashboardApp.getDashboardIds();
-                List<DashboardVO> dashboards = Lists.newArrayList(dashboardService.findByIds(dashboardIds));
+                List<DashboardPO> dashboards = Lists.newArrayList(dashboardService.findByIds(dashboardIds));
                 // sort the dashboard
                 if (!CollectionUtils.isEmpty(dashboards)) {
                     LinkedHashMap<Long, Integer> dashboardIdMap = new LinkedHashMap<>();
@@ -96,7 +97,7 @@ public class DashboardAppService extends BaseService<DashboardAppVO, DashboardAp
                     }
                     dashboards.sort(Comparator.comparingInt(o -> dashboardIdMap.get(o.getId())));
                 }
-                dashboardApp.setDashboards(dashboards);
+                dashboardApp.setDashboards(dashboards.stream().map(DashboardVO::toVO).collect(Collectors.toList()));
             }
             return Optional.of(dashboardApp.toPO());
         }

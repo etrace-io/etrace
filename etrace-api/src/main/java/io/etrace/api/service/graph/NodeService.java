@@ -10,6 +10,7 @@ import io.etrace.api.model.bo.AppNodeQueryResult;
 import io.etrace.api.model.bo.GroupResult;
 import io.etrace.api.model.bo.SelectResult;
 import io.etrace.api.model.bo.SimpleNodeQueryResult;
+import io.etrace.api.model.po.ui.ChartPO;
 import io.etrace.api.model.po.ui.Node;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NodeService extends BaseService<Node, Node> {
@@ -64,9 +66,9 @@ public class NodeService extends BaseService<Node, Node> {
             for (ChartVO chart : charts) {
                 chartMap.put(chart.getId(), chart);
             }
-            List<ChartVO> sortedCharts = new ArrayList<>(charts.size());
+            List<ChartPO> sortedCharts = new ArrayList<>(charts.size());
             for (Long chartId : chartIds) {
-                sortedCharts.add(chartMap.get(chartId));
+                sortedCharts.add(chartMap.get(chartId).toPO());
             }
             node.setCharts(sortedCharts);
         }
@@ -81,7 +83,8 @@ public class NodeService extends BaseService<Node, Node> {
     }
 
     public void syncSonMetricConfig(Node node) {
-        node.setChartIds(SyncUtil.syncCharts(node.getCharts(), node.getUpdatedBy(), chartService));
+        node.setChartIds(SyncUtil.syncCharts(node.getCharts().stream().map(ChartVO::toVO).collect(Collectors.toList()),
+            node.getUpdatedBy(), chartService));
     }
 
     public List<SimpleNodeQueryResult> queryNode(Node node) throws BadRequestException {
@@ -233,14 +236,14 @@ public class NodeService extends BaseService<Node, Node> {
     private List<MetricBean> convertTargetToMetricBean(Node node, List<String> metricShowNames,
                                                        List<ChartVO> finalCharts) {
         List<MetricBean> metricBeanList = new ArrayList<>();
-        List<ChartVO> charts = node.getCharts();
-        for (ChartVO chart : charts) {
+        List<ChartPO> charts = node.getCharts();
+        for (ChartPO chart : charts) {
             List<Target> targets = chart.getTargets();
             if (targets != null) {
                 for (Target target : targets) {
                     MetricBean metricBean = MetricBeanUtil.convert(target);
                     metricShowNames.add(chart.getTitle());
-                    finalCharts.add(chart);
+                    finalCharts.add(ChartVO.toVO(chart));
                     metricBeanList.add(metricBean);
                 }
             }

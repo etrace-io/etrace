@@ -1,5 +1,6 @@
 package io.etrace.api.util;
 
+import io.etrace.common.util.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -14,11 +15,10 @@ public class LongListTypeConverter implements AttributeConverter<List<Long>, Str
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaConverterJson.class);
 
-
     @Override
     public String convertToDatabaseColumn(List<Long> longs) {
         try {
-            return JacksonUtil.toJson(longs);
+            return JSONUtil.toJson(longs);
         } catch (Exception e) {
             LOGGER.error("==convertToDatabaseColumn==", e);
             return null;
@@ -31,7 +31,7 @@ public class LongListTypeConverter implements AttributeConverter<List<Long>, Str
             if (StringUtils.isEmpty(s)) {
                 return null;
             }
-            return JacksonUtil.toObjectList(s, Long.class);
+            return JSONUtil.toObjectList(s, Long.class);
 
         } catch (IOException e) {
             LOGGER.error("==convertToDatabaseColumn==", e);

@@ -17,6 +17,7 @@
 package io.etrace.api.model.po.user;
 
 import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.model.po.ui.DashboardPO;
 import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.util.JpaConverterJson;
 import io.etrace.api.util.LongListTypeConverter;
@@ -52,9 +53,9 @@ public class UserAction extends BasePersistentObject {
     @Convert(converter = LongListTypeConverter.class)
     private List<Long> viewBoardIds;
     @Convert(converter = JpaConverterJson.class)
-    private List<DashboardVO> viewBoards;
+    private List<DashboardPO> viewBoards;
     @Convert(converter = JpaConverterJson.class)
-    private List<DashboardVO> favoriteBoards;
+    private List<DashboardPO> favoriteBoards;
 
     @Convert(converter = LongListTypeConverter.class)
     private List<Long> viewNodeIds;
