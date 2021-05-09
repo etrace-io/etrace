@@ -1,20 +1,11 @@
 package io.etrace.api.model.yellowpage;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import me.ele.arch.monitor.api.consts.SearchListTypeEnum;
-import me.ele.arch.monitor.api.model.BaseModel;
-import me.ele.arch.monitor.api.model.Status;
+import io.etrace.api.model.SearchListTypeEnum;
+import io.etrace.api.model.po.BasePersistentObject;
+import lombok.Data;
 
-/**
- * @author chunle.pei
- * @date 2019/12/31
- */
-@Getter
-@Setter
-@ToString
-public class SearchList extends BaseModel {
+@Data
+public class SearchList extends BasePersistentObject {
 
     /**
      * 名称
@@ -31,7 +22,7 @@ public class SearchList extends BaseModel {
     private String status;
 
     /**
-     * 类型 {@link me.ele.arch.monitor.api.consts.SearchListTypeEnum}
+     *
      */
     private Integer listType = SearchListTypeEnum.NEWEST.getCode();
     /**

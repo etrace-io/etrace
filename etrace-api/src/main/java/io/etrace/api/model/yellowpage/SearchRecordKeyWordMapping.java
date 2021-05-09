@@ -1,20 +1,13 @@
 package io.etrace.api.model.yellowpage;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import me.ele.arch.monitor.api.model.BaseModel;
+import io.etrace.api.model.po.BasePersistentObject;
+import lombok.Data;
 
 /**
  * 记录和关键字关系映射表
- *
- * @author chunle.pei
- * @date 2020/1/6
  */
-@Getter
-@Setter
-@ToString
-public class SearchRecordKeyWordMapping extends BaseModel {
+@Data
+public class SearchRecordKeyWordMapping extends BasePersistentObject {
 
     private long recordId;
 

@@ -16,7 +16,7 @@
 
 package io.etrace.api.model;
 
-import io.etrace.api.model.po.ui.Chart;
+import io.etrace.api.model.vo.ui.ChartVO;
 import io.etrace.common.datasource.MetricResultSet;
 import lombok.Data;
 
@@ -24,6 +24,6 @@ import lombok.Data;
 public class MetricResult {
 
     private String metricShowName;
-    private Chart chart;
+    private ChartVO chart;
     private MetricResultSet result;
 }

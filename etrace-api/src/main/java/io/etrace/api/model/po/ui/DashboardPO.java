@@ -14,24 +14,37 @@
  * limitations under the License.
  */
 
-package io.etrace.api.model.po;
+package io.etrace.api.model.po.ui;
 
-import io.etrace.common.constant.Status;
+import io.etrace.api.model.po.BaseItem;
+import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import java.util.List;
 
-/**
- * base persistent object for visualization object
- */
-@MappedSuperclass
+@Entity(name = "dashboard")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BaseVisualizationObject extends BasePersistentObject {
+public class DashboardPO extends BaseItem {
 
+    private String layout;
+    private String config;
 
+    @Convert(converter = JpaConverterJson.class)
+    private List<Long> chartIds;
+
+    @Nullable
+    private String title;
+    private String description;
+    private String status ;
+    private Long favoriteCount;
+    @Nullable
+    private String createdBy;
+    @Nullable
+    private String updatedBy;
 }
-

@@ -16,6 +16,7 @@
 
 package io.etrace.api.model.po.ui;
 
+import io.etrace.api.model.po.BaseItem;
 import io.etrace.api.model.po.BasePersistentObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
@@ -29,7 +30,7 @@ import java.util.List;
 @Entity(name = "dashboard_app")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DashboardAppPO extends BasePersistentObject {
+public class DashboardAppPO extends BaseItem {
     private Boolean critical;
 
     @Convert(converter = JpaConverterJson.class)

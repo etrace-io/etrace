@@ -1,16 +1,15 @@
-package io.etrace.api.service.graph;
+package io.etrace.api.service.base;
 
 import io.etrace.api.consts.HistoryLogTypeEnum;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.exception.UserForbiddenException;
-import io.etrace.api.model.po.BaseVisualizationObject;
+import io.etrace.api.model.po.BaseItem;
 import io.etrace.api.model.po.ui.HistoryLog;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
 import io.etrace.api.service.HistoryLogService;
 import io.etrace.api.service.UserActionService;
-import io.etrace.api.service.base.FavoriteAndViewInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.util.StringUtils;
@@ -19,8 +18,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BaseService<T extends BaseVisualizationObject>
-    implements SyncMetricConfigService<T>, FavoriteAndViewInterface {
+public abstract class BaseService<VO extends BaseItem, T extends BaseItem> implements SyncMetricConfigService<VO>,
+    FavoriteAndViewInterface {
 
     private final UserActionService.Callback callback;
     private final CrudRepository<T, Long> crudRepository;
@@ -60,7 +59,7 @@ public abstract class BaseService<T extends BaseVisualizationObject>
         return crudRepository.findAllById(ids);
     }
 
-    public abstract List<T> findByIds(String title, List<Long> ids);
+    public abstract List<VO> findByIds(String title, List<Long> ids);
 
     public abstract T findById(long id, ETraceUser user);
 
@@ -87,10 +86,10 @@ public abstract class BaseService<T extends BaseVisualizationObject>
         historyLogService.create(historyLog);
     }
 
-    public abstract SearchResult<T> search(String title, String globalId, Integer pageNum, Integer pageSize,
-                                           String user, String status);
+    public abstract SearchResult<VO> search(String title, String globalId, Integer pageNum, Integer pageSize,
+                                            String user, String status);
 
-    public void modelIsStar(ETraceUser user, List<T> models) {
+    public void modelIsStar(ETraceUser user, List<VO> models) {
         if (user == null) {
             return;
         }
@@ -98,7 +97,7 @@ public abstract class BaseService<T extends BaseVisualizationObject>
         if (userAction != null) {
             List<Long> favorites = callback.get(userAction, false);
             if (favorites != null && !favorites.isEmpty()) {
-                for (T model : models) {
+                for (VO model : models) {
                     if (favorites.contains(model.getId())) {
                         model.setIsStar(true);
                     }
@@ -108,34 +107,34 @@ public abstract class BaseService<T extends BaseVisualizationObject>
 
     }
 
-    @Override
+    //@Override
     public void syncMetricConfig(@NotNull T t, ETraceUser user) throws UserForbiddenException {
-        if (null == t) {
-            throw new RuntimeException("the dashboard must not be null");
-        }
-        t.setUpdatedBy(user.getUsername());
-        t.setCreatedBy(user.getUsername());
-
-        T oldT = findByGlobalId(t.getGlobalId());
-        if (null != oldT && Boolean.TRUE.equals(oldT.getAdminVisible()) && !user.isAdmin()) {
-            throw new UserForbiddenException("no permission,the dashboard is set to the administrator to update！");
-        }
-        syncSonMetricConfig(t, user);
-        if (null == oldT) {
-            t.setFavoriteCount(0L);
-            t.setViewCount(0L);
-            if (null == t.getAdminVisible()) {
-                t.setAdminVisible(Boolean.FALSE);
-            }
-            create(t);
-        } else {
-            t.setId(oldT.getId());
-            createHistoryLog(oldT, user, null, false);
-            try {
-                update(t, user);
-            } catch (BadRequestException e) {
-                throw new RuntimeException("sync error!");
-            }
-        }
+        //if (null == t) {
+        //    throw new RuntimeException("the dashboard must not be null");
+        //}
+        //t.setUpdatedBy(user.getUsername());
+        //t.setCreatedBy(user.getUsername());
+        //
+        //T oldT = findByGlobalId(t.getGlobalId());
+        //if (null != oldT && Boolean.TRUE.equals(oldT.getAdminVisible()) && !user.isAdmin()) {
+        //    throw new UserForbiddenException("no permission,the dashboard is set to the administrator to update！");
+        //}
+        //syncSonMetricConfig(t, user);
+        //if (null == oldT) {
+        //    //t.setFavoriteCount(0L);
+        //    //t.setViewCount(0L);
+        //    if (null == t.getAdminVisible()) {
+        //        t.setAdminVisible(Boolean.FALSE);
+        //    }
+        //    create(t);
+        //} else {
+        //    t.setId(oldT.getId());
+        //    createHistoryLog(oldT, user, null, false);
+        //    try {
+        //        update(t, t, user);
+        //    } catch (BadRequestException e) {
+        //        throw new RuntimeException("sync error!");
+        //    }
+        //}
     }
 }

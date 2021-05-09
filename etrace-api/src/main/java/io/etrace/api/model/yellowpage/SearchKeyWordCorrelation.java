@@ -1,15 +1,13 @@
 package io.etrace.api.model.yellowpage;
 
-import lombok.Getter;
-import lombok.Setter;
-import me.ele.arch.monitor.api.model.BaseModel;
+import io.etrace.api.model.po.BasePersistentObject;
+import lombok.Data;
 
 /**
  * 关联性model
  */
-@Getter
-@Setter
-public class SearchKeyWordCorrelation extends BaseModel {
+@Data
+public class SearchKeyWordCorrelation extends BasePersistentObject {
 
     private Long keywordId;
 

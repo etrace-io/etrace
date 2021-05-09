@@ -3,6 +3,7 @@ package io.etrace.api.controller.ui;
 import com.google.common.collect.Sets;
 import io.etrace.api.consts.RoleType;
 import io.etrace.api.model.po.user.ETraceUser;
+import io.etrace.api.model.po.user.ETraceUserPO;
 import io.etrace.api.service.UserConfigService;
 import io.etrace.api.service.UserService;
 import io.swagger.annotations.Api;
@@ -51,7 +52,7 @@ public class UserController {
     @Secured("ADMIN")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "根据keyword获取用户信息", response = ETraceUser.class)
-    public List<ETraceUser> getUser(@RequestParam(value = "keyword") String keyword) {
+    public List<ETraceUserPO> getUser(@RequestParam(value = "keyword") String keyword) {
         return userService.findByKeyword(keyword);
     }
 

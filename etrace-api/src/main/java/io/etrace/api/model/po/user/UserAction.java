@@ -17,7 +17,9 @@
 package io.etrace.api.model.po.user;
 
 import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.util.JpaConverterJson;
+import io.etrace.api.util.LongListTypeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,11 +34,31 @@ public class UserAction extends BasePersistentObject {
 
     private String userEmail;
 
-    @Convert(converter = JpaConverterJson.class)
+    @Convert(converter = LongListTypeConverter.class)
     private List<Long> favoriteBoardIds;
 
-    @Convert(converter = JpaConverterJson.class)
+    @Convert(converter = LongListTypeConverter.class)
     private List<Long> favoriteAppIds;
 
+    @Convert(converter = LongListTypeConverter.class)
+    private List<Long> favoriteApps;
+
+    @Convert(converter = LongListTypeConverter.class)
+    private List<Long> favoriteGraphIds;
+
+    @Convert(converter = LongListTypeConverter.class)
+    private List<Long> favoriteNodeIds;
+
+    @Convert(converter = LongListTypeConverter.class)
+    private List<Long> viewBoardIds;
+    @Convert(converter = JpaConverterJson.class)
+    private List<DashboardVO> viewBoards;
+    @Convert(converter = JpaConverterJson.class)
+    private List<DashboardVO> favoriteBoards;
+
+    @Convert(converter = LongListTypeConverter.class)
+    private List<Long> viewNodeIds;
+    @Convert(converter = LongListTypeConverter.class)
+    private List<Long> viewGraphIds;
 
 }

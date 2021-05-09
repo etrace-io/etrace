@@ -1,6 +1,7 @@
 package io.etrace.api.repository;
 
-import io.etrace.api.model.vo.ui.Dashboard;
+import io.etrace.api.model.po.ui.DashboardPO;
+import io.etrace.api.model.vo.ui.DashboardVO;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,18 +10,18 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface DashboardMapper extends PagingAndSortingRepository<Dashboard, Long> {
+public interface DashboardMapper extends PagingAndSortingRepository<DashboardPO, Long> {
 
-    Dashboard findByGlobalId(String globalId);
+    DashboardPO findByGlobalId(String globalId);
 
     int countByTitleContainingAndGlobalIdAndStatusAndCreatedByOrUpdatedBy(String title, String globalId, String status,
                                                                           String create, String update);
 
-    List<Dashboard> findByTitleContainingAndGlobalIdAndStatusAndCreatedByOrUpdatedBy(String title, String globalId,
-                                                                                     String status, String create,
-                                                                                     String update, Pageable page);
+    List<DashboardPO> findByTitleContainingAndGlobalIdAndStatusAndCreatedByOrUpdatedBy(String title, String globalId,
+                                                                                       String status, String create,
+                                                                                       String update, Pageable page);
 
-    List<Dashboard> findByTitleContainingAndIdIn(String title, List<Long> id);
+    List<DashboardPO> findByTitleContainingAndIdIn(String title, List<Long> id);
 
     @Query("UPDATE dashboard   SET viewCount = (viewCount + 1) WHERE id = ?1")
     @Modifying
@@ -34,7 +35,7 @@ public interface DashboardMapper extends PagingAndSortingRepository<Dashboard, L
     @Modifying
     void deleteUserFavorite(Long id);
 
-    Iterable<Dashboard> findAll(Example<Dashboard> example, Pageable page);
+    Iterable<DashboardPO> findAll(Example<DashboardPO> example, Pageable page);
 
-    int count(Example<Dashboard> example);
+    int count(Example<DashboardPO> example);
 }

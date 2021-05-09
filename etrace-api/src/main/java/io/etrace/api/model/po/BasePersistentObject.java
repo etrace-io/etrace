@@ -44,7 +44,9 @@ public abstract class BasePersistentObject implements Serializable {
     @CreationTimestamp
     private Date createdAt;
 
-    @Column(unique = true, nullable = false)
-    @Nullable
-    private String globalId;
+
+
+    private String createdBy;
+    private String updatedBy;
+
 }

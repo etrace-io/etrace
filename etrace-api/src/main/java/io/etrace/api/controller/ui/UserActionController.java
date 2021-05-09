@@ -1,16 +1,13 @@
 package io.etrace.api.controller.ui;
 
 import io.etrace.api.controller.CurrentUser;
-import io.etrace.api.model.bo.yellowpage.SearchType;
 import io.etrace.api.model.po.ui.Graph;
 import io.etrace.api.model.po.ui.Node;
-import io.etrace.api.model.po.ui.SearchRecord;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
-import io.etrace.api.model.vo.ui.Dashboard;
-import io.etrace.api.model.vo.ui.DashboardApp;
-import io.etrace.api.model.yellowpage.SearchList;
+import io.etrace.api.model.vo.ui.DashboardVO;
+import io.etrace.api.model.vo.ui.DashboardAppVO;
 import io.etrace.api.service.UserActionService;
 import io.etrace.api.service.UserService;
 import io.swagger.annotations.Api;
@@ -18,9 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static io.etrace.api.config.SwaggerConfig.FOR_ETRACE;
 import static io.etrace.api.config.SwaggerConfig.MYSQL_DATA;
@@ -49,7 +43,7 @@ public class UserActionController {
 
     @GetMapping(value = "/view/board", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("用户浏览的面板")
-    public SearchResult<Dashboard> userViewAction(
+    public SearchResult<DashboardVO> userViewAction(
         @RequestParam(value = "departmentId", required = false) Long departmentId,
         @RequestParam(value = "productLineId", required = false) Long productLineId,
         @RequestParam(value = "title", required = false) String title,
@@ -57,7 +51,7 @@ public class UserActionController {
         @RequestParam(value = "current", defaultValue = "1") Integer current,
         @CurrentUser ETraceUser user) {
         if (!user.isAnonymousUser()) {
-            SearchResult<Dashboard> dashboards = userActionService.searchViewByPageSize(user, pageSize, current,
+            SearchResult<DashboardVO> dashboards = userActionService.searchViewByPageSize(user, pageSize, current,
                 title, departmentId, productLineId);
             return dashboards;
         }
@@ -101,7 +95,7 @@ public class UserActionController {
 
     @GetMapping(value = "/favorite/board", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("用户收藏的面板")
-    public SearchResult<Dashboard> userFavoriteAction(
+    public SearchResult<DashboardVO> userFavoriteAction(
         @RequestParam(value = "departmentId", required = false) Long departmentId,
         @RequestParam(value = "productLineId", required = false)
             Long productLineId,
@@ -110,7 +104,7 @@ public class UserActionController {
         @RequestParam(value = "current", defaultValue = "1") Integer current,
         @CurrentUser ETraceUser user) {
         if (!user.isAnonymousUser()) {
-            SearchResult<Dashboard> dashboards = userActionService.searchFavoriteByPageSize(user, pageSize, current,
+            SearchResult<DashboardVO> dashboards = userActionService.searchFavoriteByPageSize(user, pageSize, current,
                 title, departmentId, productLineId);
             return dashboards;
         }
@@ -119,7 +113,7 @@ public class UserActionController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/favorite/app")
     @ApiOperation("用户收藏的App")
-    public SearchResult<DashboardApp> userAppAction(
+    public SearchResult<DashboardAppVO> userAppAction(
         @RequestParam(value = "departmentId", required = false) Long departmentId,
         @RequestParam(value = "productLineId", required = false) Long productLineId,
         @RequestParam(value = "title", required = false) String title,
@@ -127,7 +121,7 @@ public class UserActionController {
         @RequestParam(value = "current", defaultValue = "1") Integer current,
         @CurrentUser ETraceUser user) {
         if (!user.isAnonymousUser()) {
-            SearchResult<DashboardApp> dashboards = userActionService.searchAppByPageSize(user, pageSize, current,
+            SearchResult<DashboardAppVO> dashboards = userActionService.searchAppByPageSize(user, pageSize, current,
                 title, departmentId, productLineId);
             return dashboards;
         }
@@ -166,23 +160,23 @@ public class UserActionController {
         return SearchResult.empty();
     }
 
-    @GetMapping(value = "/favorite/recordAndList", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation("用户收藏的record和list")
-    public void userFavoriteRecordAction(@RequestParam(value = "title", required = false) String title,
-                                         @RequestParam(value = "pageSize", defaultValue = "10")
-                                             Integer pageSize,
-                                         @RequestParam(value = "current", defaultValue = "1") Integer current,
-                                         @CurrentUser ETraceUser user) {
-        if (!user.isAnonymousUser()) {
-            SearchResult<SearchRecord> records = userActionService.searchFavoriteRecordsByPageSize(user, pageSize,
-                current, title);
-            SearchResult<SearchList> lists = userActionService.searchFavoriteListsByPageSize(user, pageSize,
-                current, title);
-            Map<String, SearchResult> result = new LinkedHashMap<>(2);
-            result.put(SearchType.LIST.name(), lists);
-            result.put(SearchType.RECORD.name(), records);
-        }
-    }
+    //@GetMapping(value = "/favorite/recordAndList", produces = MediaType.APPLICATION_JSON_VALUE)
+    //@ApiOperation("用户收藏的record和list")
+    //public void userFavoriteRecordAction(@RequestParam(value = "title", required = false) String title,
+    //                                     @RequestParam(value = "pageSize", defaultValue = "10")
+    //                                         Integer pageSize,
+    //                                     @RequestParam(value = "current", defaultValue = "1") Integer current,
+    //                                     @CurrentUser ETraceUser user) {
+    //    if (!user.isAnonymousUser()) {
+    //        SearchResult<SearchRecord> records = userActionService.searchFavoriteRecordsByPageSize(user, pageSize,
+    //            current, title);
+    //        SearchResult<SearchList> lists = userActionService.searchFavoriteListsByPageSize(user, pageSize,
+    //            current, title);
+    //        Map<String, SearchResult> result = new LinkedHashMap<>(2);
+    //        result.put(SearchType.LIST.name(), lists);
+    //        result.put(SearchType.RECORD.name(), records);
+    //    }
+    //}
 
     @PutMapping(produces = MediaType.ALL_VALUE, value = "/favorite/board/{boardId}")
     @ApiOperation("创建或更新用户收藏面板")

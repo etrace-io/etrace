@@ -1,16 +1,10 @@
 package io.etrace.api.model.yellowpage;
 
-import lombok.Getter;
-import lombok.Setter;
-import me.ele.arch.monitor.api.model.BaseModel;
+import io.etrace.api.model.po.BasePersistentObject;
+import lombok.Data;
 
-/**
- * @author chunle.pei
- * @date 2020/3/5
- */
-@Getter
-@Setter
-public class SearchListRecordMapping extends BaseModel {
+@Data
+public class SearchListRecordMapping extends BasePersistentObject {
 
     private Long listId;
 

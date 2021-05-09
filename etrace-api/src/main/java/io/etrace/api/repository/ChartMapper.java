@@ -12,8 +12,8 @@ public interface ChartMapper extends CrudRepository<ChartPO, Long> {
                                                                     String status, boolean isAdmin);
 
     List<ChartPO> findByTitleAndGlobalIdAndCreatedByAndStatusAndAdminVisible(String title, String globalId,
-                                                                           String createdBy, String status,
-                                                                           boolean isAdmin, Pageable page);
+                                                                             String createdBy, String status,
+                                                                             boolean isAdmin, Pageable page);
 
     List<ChartPO> findByIdIn(List<Long> ids);
 

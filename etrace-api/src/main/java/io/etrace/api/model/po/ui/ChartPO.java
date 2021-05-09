@@ -17,6 +17,7 @@
 package io.etrace.api.model.po.ui;
 
 import io.etrace.api.model.Target;
+import io.etrace.api.model.po.BaseItem;
 import io.etrace.api.model.po.BasePersistentObject;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
@@ -30,7 +31,7 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ChartPO extends BasePersistentObject {
+public class ChartPO extends BaseItem {
 
     private String config;
 

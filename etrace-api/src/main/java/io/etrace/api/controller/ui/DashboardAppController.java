@@ -2,9 +2,10 @@ package io.etrace.api.controller.ui;
 
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
-import io.etrace.api.model.po.ui.DashboardApp;
+import io.etrace.api.model.po.ui.DashboardAppPO;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.DashboardAppVO;
 import io.etrace.api.service.DashboardAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +22,7 @@ import static io.etrace.api.config.SwaggerConfig.MYSQL_DATA;
 @RestController
 @RequestMapping(value = "/dashboard/app")
 @Api(tags = {FOR_ETRACE, MYSQL_DATA})
-public class DashboardAppController extends BaseController<DashboardApp> {
+public class DashboardAppController extends BaseController<DashboardAppVO, DashboardAppPO> {
 
     private final DashboardAppService dashboardAppService;
 
@@ -33,9 +34,9 @@ public class DashboardAppController extends BaseController<DashboardApp> {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("创建看板应用")
-    public Long create(@RequestBody DashboardApp dashboardApp, @CurrentUser ETraceUser user) throws Exception {
+    public Long create(@RequestBody DashboardAppVO dashboardApp, @CurrentUser ETraceUser user) throws Exception {
         try {
-            return doCreate(dashboardApp, user);
+            return doCreate(dashboardApp.toPO(), user);
         } catch (Exception e) {
             throw new BadRequestException("创建看板应用异常：" + e.getMessage());
         }
@@ -43,9 +44,9 @@ public class DashboardAppController extends BaseController<DashboardApp> {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("更新看板应用")
-    public void update(@RequestBody DashboardApp dashboardApp, @CurrentUser ETraceUser user) throws Exception {
+    public void update(@RequestBody DashboardAppVO dashboardApp, @CurrentUser ETraceUser user) throws Exception {
         try {
-            doUpdate(dashboardApp, user);
+            doUpdate(dashboardApp.toPO(), user);
         } catch (Exception e) {
             throw new BadRequestException("更新看板应用异常：" + e.getMessage());
         }
@@ -63,7 +64,7 @@ public class DashboardAppController extends BaseController<DashboardApp> {
                                  @CurrentUser ETraceUser eTraceUser)
         throws Exception {
         try {
-            SearchResult<DashboardApp> result = dashboardAppService.search(title, departmentId, productLineId, user,
+            SearchResult<DashboardAppVO> result = dashboardAppService.search(title, departmentId, productLineId, user,
                 pageNum, pageSize, critical);
             if (result.getTotal() > 0) {
                 dashboardAppService.dashboardAppIsStar(eTraceUser, result.getResults());
@@ -80,7 +81,7 @@ public class DashboardAppController extends BaseController<DashboardApp> {
                                  @RequestParam(value = "critical", required = false) Boolean critical)
         throws Exception {
         try {
-            List<DashboardApp> result = dashboardAppService.settingSearch(title, critical);
+            List<DashboardAppVO> result = dashboardAppService.settingSearch(title, critical);
             if (result == null) {
                 throw new Exception("关键应用配置查询异常");
             }
@@ -92,9 +93,9 @@ public class DashboardAppController extends BaseController<DashboardApp> {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("获取某个看板应用的详细信息")
-    public DashboardApp findById(@PathVariable("id") long id, @CurrentUser ETraceUser user) throws Exception {
+    public DashboardAppVO findById(@PathVariable("id") long id, @CurrentUser ETraceUser user) throws Exception {
         try {
-            return doFindById(id, user);
+            return DashboardAppVO.toVO(doFindById(id, user));
         } catch (Exception e) {
             throw new BadRequestException("获取看板应用的详细信息异常：" + e.getMessage());
         }

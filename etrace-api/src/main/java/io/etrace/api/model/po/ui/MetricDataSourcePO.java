@@ -17,33 +17,24 @@
 package io.etrace.api.model.po.ui;
 
 import io.etrace.api.model.po.BasePersistentObject;
-import io.etrace.api.util.JpaConverterJson;
+import io.etrace.common.constant.Status;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.annotation.Nullable;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
-import java.util.List;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
-@Entity(name = "dashboard")
+@Entity(name = "datasource")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DashboardDO extends BasePersistentObject {
+public class MetricDataSourcePO extends BasePersistentObject {
+    private String name;
+    private String type;
 
-    private String layout;
     private String config;
 
-    @Convert(converter = JpaConverterJson.class)
-    private List<Long> chartIds;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.Active;
 
-    @Nullable
-    private String title;
-    private String description;
-    private String status ;
-    private Long favoriteCount;
-    @Nullable
-    private String createdBy;
-    @Nullable
-    private String updatedBy;
 }

@@ -1,6 +1,6 @@
 package io.etrace.api.model.po.ui;
 
-import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.model.po.BaseItem;
 import io.etrace.api.model.vo.graph.Relation;
 import io.etrace.api.util.JpaConverterJson;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Entity(name = "graph")
 @EqualsAndHashCode(callSuper = true)
-public class Graph extends BasePersistentObject {
+public class Graph extends BaseItem {
 
     private Object layout;
     private Object config;

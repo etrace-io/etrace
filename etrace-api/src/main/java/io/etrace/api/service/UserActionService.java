@@ -1,22 +1,21 @@
 package io.etrace.api.service;
 
 import com.google.common.collect.Lists;
-import io.etrace.api.model.po.BaseVisualizationObject;
-import io.etrace.api.model.po.ui.Dashboard;
-import io.etrace.api.model.po.ui.DashboardApp;
+import io.etrace.api.model.po.BaseItem;
+import io.etrace.api.model.po.ui.Graph;
+import io.etrace.api.model.po.ui.Node;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
-import io.etrace.api.model.po.yellowpage.SearchList;
-import io.etrace.api.model.po.yellowpage.SearchRecord;
 import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.DashboardVO;
+import io.etrace.api.model.vo.ui.DashboardAppVO;
 import io.etrace.api.repository.UserActionMapper;
+import io.etrace.api.service.base.BaseService;
 import io.etrace.api.service.base.FavoriteAndViewInterface;
-import io.etrace.api.service.graph.BaseService;
-import io.etrace.api.service.yellowpage.SearchListService;
-import io.etrace.api.service.yellowpage.SearchRecordService;
+import io.etrace.api.service.graph.GraphService;
+import io.etrace.api.service.graph.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,8 +27,6 @@ public class UserActionService {
     public final static DashboardAppCallback dashboardAppCallback = new DashboardAppCallback();
     public final static GraphCallback graphCallback = new GraphCallback();
     public final static NodeCallback nodeCallback = new NodeCallback();
-    public final static SearchRecordCallback searchRecordCallback = new SearchRecordCallback();
-    public final static SearchListCallback searchListCallback = new SearchListCallback();
     private final static int VIEW_COUNT = 20;
     @Autowired
     private UserActionMapper userActionMapper;
@@ -37,15 +34,18 @@ public class UserActionService {
     private DashboardService dashboardService;
     @Autowired
     private DashboardAppService dashboardAppService;
-
+    @Autowired
+    private GraphService graphService;
+    @Autowired
+    private NodeService nodeService;
 
     private void create(UserAction userAction) {
         userActionMapper.save(userAction);
     }
 
-    private <T extends BaseVisualizationObject> void doCreateOrUpdateFavorite(Long id, ETraceUser user,
-                                                                              Callback callback,
-                                                                              FavoriteAndViewInterface favoriteAndViewInterface) {
+    private <T extends BaseItem> void doCreateOrUpdateFavorite(Long id, ETraceUser user,
+                                                               Callback callback,
+                                                               FavoriteAndViewInterface favoriteAndViewInterface) {
         UserAction userAction = findFavoriteByUser(user);
         if (userAction != null) {
             List<Long> favorites = callback.get(userAction, false);
@@ -86,15 +86,19 @@ public class UserActionService {
     }
 
     public void createOrUpdateRecordsFavorite(Long recordId, ETraceUser user) {
-        doCreateOrUpdateFavorite(recordId, user, searchRecordCallback, searchRecordService);
+        // todo: implement this!
+        throw new RuntimeException("==createOrUpdateRecordsFavorite== not implemented yet!");
+        //doCreateOrUpdateFavorite(recordId, user, searchRecordCallback, searchRecordService);
     }
 
     public void createOrUpdateListsFavorite(Long listId, ETraceUser user) {
-        doCreateOrUpdateFavorite(listId, user, searchListCallback, searchListService);
+        // todo: implement this!
+        throw new RuntimeException("==createOrUpdateListsFavorite== not implemented yet!");
+        //doCreateOrUpdateFavorite(listId, user, searchListCallback, searchListService);
     }
 
-    private <T extends BaseVisualizationObject> void doCreateOrUpdateView(Long id, ETraceUser user, Callback callback,
-                                                                          FavoriteAndViewInterface favoriteAndViewInterface) {
+    private <T extends BaseItem> void doCreateOrUpdateView(Long id, ETraceUser user, Callback callback,
+                                                           FavoriteAndViewInterface favoriteAndViewInterface) {
         UserAction userAction = findFavoriteByUser(user);
         if (userAction != null) {
             callback.set(userAction, updateIds(callback.get(userAction, true), id), true);
@@ -123,7 +127,9 @@ public class UserActionService {
     }
 
     public void createOrUpdateRecordView(Long recordId, ETraceUser user) {
-        doCreateOrUpdateView(recordId, user, searchRecordCallback, searchRecordService);
+        // todo: implement this!
+        throw new RuntimeException("==createOrUpdateRecordView== not implemented yet!");
+        //doCreateOrUpdateView(recordId, user, searchRecordCallback, searchRecordService);
     }
 
     private List<Long> updateIds(List<Long> oldIds, long currentId) {
@@ -149,9 +155,9 @@ public class UserActionService {
         return oldIds;
     }
 
-    private <T extends BaseVisualizationObject> void doDeleteFavoriteUserAction(Long id, ETraceUser user,
-                                                                                Callback callback,
-                                                                                FavoriteAndViewInterface favoriteAndViewInterface) {
+    private <T extends BaseItem> void doDeleteFavoriteUserAction(Long id, ETraceUser user,
+                                                                 Callback callback,
+                                                                 FavoriteAndViewInterface favoriteAndViewInterface) {
         UserAction favorite = findFavoriteByUser(user);
         if (favorite != null) {
             List<Long> fas = callback.get(favorite, false);
@@ -181,25 +187,29 @@ public class UserActionService {
     }
 
     public void deleteRecordFavoriteUserAction(Long recordId, ETraceUser user) {
-        doDeleteFavoriteUserAction(recordId, user, searchRecordCallback, searchRecordService);
+        // todo: implement this!
+        throw new RuntimeException("==deleteRecordFavoriteUserAction== not implemented yet!");
+        //doDeleteFavoriteUserAction(recordId, user, searchRecordCallback, searchRecordService);
     }
 
     public void deleteListFavoriteUserAction(Long listId, ETraceUser user) {
-        doDeleteFavoriteUserAction(listId, user, nodeCallback, searchRecordService);
+        // todo: implement this!
+        throw new RuntimeException("==deleteListFavoriteUserAction== not implemented yet!");
+        //doDeleteFavoriteUserAction(listId, user, nodeCallback, searchRecordService);
     }
 
     public UserAction findFavoriteByUser(ETraceUser user) {
         return userActionMapper.findByUserEmail(user.getEmail());
     }
 
-    public SearchResult<DashboardApp> searchAppByPageSize(ETraceUser user, Integer pageSize, Integer current,
-                                                          String title, Long department, Long productLine) {
+    public SearchResult<DashboardAppVO> searchAppByPageSize(ETraceUser user, Integer pageSize, Integer current,
+                                                            String title, Long department, Long productLine) {
         return doSearchFavoriteByPageSize(user, pageSize, current, title, department, productLine,
             dashboardAppCallback, dashboardAppService, false);
     }
 
-    public SearchResult<Dashboard> searchFavoriteByPageSize(ETraceUser user, Integer pageSize, Integer current,
-                                                            String title, Long department, Long productLine) {
+    public SearchResult<DashboardVO> searchFavoriteByPageSize(ETraceUser user, Integer pageSize, Integer current,
+                                                              String title, Long department, Long productLine) {
         return doSearchFavoriteByPageSize(user, pageSize, current, title, department, productLine, dashboardCallback,
             dashboardService, false);
     }
@@ -216,9 +226,9 @@ public class UserActionService {
             graphService, false);
     }
 
-    public SearchResult<Dashboard> searchViewByPageSize(ETraceUser user, Integer pageSize, Integer current,
-                                                        String title,
-                                                        Long department, Long productLine) {
+    public SearchResult<DashboardVO> searchViewByPageSize(ETraceUser user, Integer pageSize, Integer current,
+                                                          String title,
+                                                          Long department, Long productLine) {
         return doSearchFavoriteByPageSize(user, pageSize, current, title, department, productLine, dashboardCallback,
             dashboardService, true);
     }
@@ -235,16 +245,16 @@ public class UserActionService {
             graphService, true);
     }
 
-    private <T extends BaseVisualizationObject> SearchResult<T> doSearchFavoriteByPageSize(ETraceUser user,
-                                                                                           Integer pageSize,
-                                                                                           Integer current,
-                                                                                           String title,
-                                                                                           Long department,
-                                                                                           Long productLine,
-                                                                                           Callback callback,
-                                                                                           BaseService<T> baseService,
-                                                                                           boolean view) {
-        SearchResult<T> searchResult = new SearchResult<>();
+    private <VO extends BaseItem, T extends BaseItem> SearchResult<VO> doSearchFavoriteByPageSize(ETraceUser user,
+                                                                            Integer pageSize,
+                                                                            Integer current,
+                                                                            String title,
+                                                                            Long department,
+                                                                            Long productLine,
+                                                                            Callback callback,
+                                                                            BaseService<VO, T> baseService,
+                                                                            boolean view) {
+        SearchResult<VO> searchResult = new SearchResult<>();
         searchResult.setTotal(0);
         UserAction userAction = userActionMapper.findByUserEmail(user.getEmail());
         if (userAction != null) {
@@ -261,7 +271,7 @@ public class UserActionService {
                 }
             }
             if (!appIds.isEmpty()) {
-                List<T> entities = baseService.findByIds(title, Lists.newArrayList(appIds));
+                List<VO> entities = baseService.findByIds(title, Lists.newArrayList(appIds));
                 if (entities != null && !entities.isEmpty()) {
                     entityIsStar(favorites, entities);
                     searchResult.setResults(entities);
@@ -271,7 +281,7 @@ public class UserActionService {
         return searchResult;
     }
 
-    private <T extends BaseVisualizationObject> void entityIsStar(List<Long> views, List<T> entities) {
+    private <T extends BaseItem> void entityIsStar(List<Long> views, List<T> entities) {
         for (T t : entities) {
             if (views.contains(t.getId())) {
                 t.setIsStar(true);
@@ -297,57 +307,17 @@ public class UserActionService {
             }
 
             if (userAction.getViewBoardIds() != null && !userAction.getViewBoardIds().isEmpty()) {
-                List<Dashboard> viewDashboards = dashboardService.findByIds(null, null, null,
+                List<DashboardVO> viewDashboards = dashboardService.findByIds(null, null, null,
                     userAction.getViewBoardIds());
                 userAction.setViewBoards(viewDashboards);
             }
             if (userAction.getFavoriteBoardIds() != null && !userAction.getFavoriteBoardIds().isEmpty()) {
-                List<Dashboard> favoriteDashboards = dashboardService.findByIds(null, null, null,
+                List<DashboardVO> favoriteDashboards = dashboardService.findByIds(null, null, null,
                     userAction.getFavoriteBoardIds());
                 userAction.setFavoriteBoards(favoriteDashboards);
             }
         }
         return userAction;
-    }
-
-    public SearchResult<SearchRecord> searchFavoriteRecordsByPageSize(ETraceUser user, Integer pageSize,
-                                                                      Integer current, String title) {
-
-        UserAction userAction = userActionMapper.findByUserEmail(user.getEmail());
-        List<Long> recordIds = userAction.getFavoriteRecordIds();
-
-        SearchResult<SearchRecord> searchResult = new SearchResult<>();
-        searchResult.setTotal(0);
-
-        if (!CollectionUtils.isEmpty(recordIds)) {
-            searchResult.setTotal(recordIds.size());
-            searchResult.setResults(searchRecordService.findByIdListWithPage(recordIds, null, current, pageSize));
-            searchResult.getResults().stream().forEach(searchRecord -> searchRecord.setStar(Boolean.TRUE));
-            searchRecordService.findExtendIcon(searchResult.getResults());
-        }
-        return searchResult;
-
-    }
-
-    public SearchResult<SearchList> searchFavoriteListsByPageSize(ETraceUser user, Integer pageSize, Integer current,
-                                                                  String title) {
-        UserAction userAction = userActionMapper.findByUserEmail(user.getEmail());
-        SearchResult<SearchList> searchResult = new SearchResult<>();
-        searchResult.setTotal(0);
-        List<Long> listIds = userAction.getFavoriteListIds();
-        if (!CollectionUtils.isEmpty(listIds)) {
-            searchResult.setTotal(listIds.size());
-            int fromIndex = (current - 1) * pageSize;
-            int toIndex = current * pageSize;
-            searchResult.setTotal(listIds.size());
-            if (listIds.size() > toIndex) {
-                searchResult.setResults(searchListService.findByIdList(listIds.subList(fromIndex, toIndex)));
-            } else {
-                searchResult.setResults(searchListService.findByIdList(listIds.subList(fromIndex, listIds.size())));
-            }
-            searchResult.getResults().stream().forEach(searchList -> searchList.setStar(Boolean.TRUE));
-        }
-        return searchResult;
     }
 
     public interface Callback {
@@ -438,33 +408,6 @@ public class UserActionService {
             } else {
                 userAction.setFavoriteNodeIds(ids);
             }
-        }
-    }
-
-    public static class SearchRecordCallback implements Callback {
-
-        @Override
-        public List<Long> get(UserAction userAction, boolean view) {
-            return userAction.getFavoriteRecordIds();
-        }
-
-        @Override
-        public void set(UserAction userAction, List<Long> ids, boolean view) {
-
-            userAction.setFavoriteRecordIds(ids);
-        }
-    }
-
-    public static class SearchListCallback implements Callback {
-
-        @Override
-        public List<Long> get(UserAction userAction, boolean view) {
-            return userAction.getFavoriteListIds();
-        }
-
-        @Override
-        public void set(UserAction userAction, List<Long> ids, boolean view) {
-            userAction.setFavoriteListIds(ids);
         }
     }
 }

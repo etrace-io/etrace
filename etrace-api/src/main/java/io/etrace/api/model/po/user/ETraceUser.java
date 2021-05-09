@@ -19,6 +19,7 @@ package io.etrace.api.model.po.user;
 import io.etrace.api.consts.RoleType;
 import io.etrace.api.model.po.BaseObject;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,11 +48,23 @@ public class ETraceUser extends BaseObject implements Cloneable, UserDetails {
 
     @Transient
     private UserConfigPO userConfig;
-
     /**
      * 默认是非api访问
      */
+    @Transient
+    private Boolean isApiUser = Boolean.FALSE;
 
+    public static ETraceUser toVO(ETraceUserPO po) {
+        ETraceUser vo = new ETraceUser();
+        BeanUtils.copyProperties(po, vo);
+        return vo;
+    }
+
+    public ETraceUserPO toPO() {
+        ETraceUserPO po = new ETraceUserPO();
+        BeanUtils.copyProperties(this, po);
+        return po;
+    }
 
     @Override
     public ETraceUser clone() {

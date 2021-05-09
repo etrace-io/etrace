@@ -2,8 +2,10 @@ package io.etrace.api.controller.ui;
 
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
+import io.etrace.api.model.po.ui.DashboardPO;
 import io.etrace.api.model.po.user.ETraceUser;
-import io.etrace.api.model.vo.ui.Dashboard;
+import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.service.DashboardService;
 import io.etrace.api.service.UserActionService;
 import io.swagger.annotations.Api;
@@ -20,7 +22,7 @@ import static io.etrace.api.config.SwaggerConfig.MYSQL_DATA;
 @RestController
 @RequestMapping(value = "/dashboard")
 @Api(tags = {FOR_ETRACE, MYSQL_DATA})
-public class DashboardController extends BaseController<Dashboard> {
+public class DashboardController extends BaseController<DashboardVO, DashboardPO> {
 
     private final DashboardService dashboardService;
     private final UserActionService userActionService;
@@ -35,9 +37,9 @@ public class DashboardController extends BaseController<Dashboard> {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("创建看板")
-    public Long create(@RequestBody Dashboard dashboard, @CurrentUser ETraceUser user) throws Exception {
+    public Long create(@RequestBody DashboardVO dashboard, @CurrentUser ETraceUser user) throws Exception {
         try {
-            return doCreate(dashboard, user);
+            return doCreate(dashboard.toPO(), user);
         } catch (Exception e) {
             throw new BadRequestException("创建看板异常：" + e.getMessage());
         }
@@ -45,13 +47,13 @@ public class DashboardController extends BaseController<Dashboard> {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("看板查询")
-    public SearchResult<Dashboard> search(@RequestParam(value = "user", required = false) String user,
-                                          @RequestParam(value = "title", required = false) String title,
-                                          @RequestParam(value = "globalId", required = false) String globalId,
-                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-                                          @RequestParam(value = "current", defaultValue = "1") Integer pageNum,
-                                          @RequestParam(value = "status", defaultValue = "Active") String status,
-                                          @CurrentUser ETraceUser eTraceUser)
+    public SearchResult<DashboardVO> search(@RequestParam(value = "user", required = false) String user,
+                                            @RequestParam(value = "title", required = false) String title,
+                                            @RequestParam(value = "globalId", required = false) String globalId,
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                            @RequestParam(value = "current", defaultValue = "1") Integer pageNum,
+                                            @RequestParam(value = "status", defaultValue = "Active") String status,
+                                            @CurrentUser ETraceUser eTraceUser)
         throws Exception {
         try {
             return doSearch(user, title, globalId, pageSize, pageNum, status, eTraceUser);
@@ -62,9 +64,9 @@ public class DashboardController extends BaseController<Dashboard> {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("获取某个看板的详细信息")
-    public Dashboard findById(@PathVariable("id") long id, @CurrentUser ETraceUser user) throws Exception {
+    public DashboardVO findById(@PathVariable("id") long id, @CurrentUser ETraceUser user) throws Exception {
         try {
-            return doFindById(id, user);
+            return DashboardVO.toVO(doFindById(id, user));
         } catch (Exception e) {
             throw new BadRequestException("获取看板的详细信息异常：" + e.getMessage());
         }
@@ -72,9 +74,9 @@ public class DashboardController extends BaseController<Dashboard> {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("更新看板")
-    public void updateDashboard(@RequestBody Dashboard dashboard, @CurrentUser ETraceUser user) throws Exception {
+    public void updateDashboard(@RequestBody DashboardVO dashboard, @CurrentUser ETraceUser user) throws Exception {
         try {
-            doUpdate(dashboard, user);
+            doUpdate(dashboard.toPO(), user);
         } catch (Exception e) {
             throw new BadRequestException("更新看板异常：" + e.getMessage());
         }
@@ -83,11 +85,11 @@ public class DashboardController extends BaseController<Dashboard> {
     @PutMapping(value = "/{id}/charts", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("更新看板下的指标")
     public ResponseEntity updateDashboardChartIds(@PathVariable("id") long dashboardId,
-                                                  @RequestBody Dashboard dashboard, @CurrentUser ETraceUser user)
+                                                  @RequestBody DashboardVO dashboard, @CurrentUser ETraceUser user)
         throws Exception {
         try {
             if (dashboard == null) {
-                dashboard = new Dashboard();
+                dashboard = new DashboardVO();
             }
             if (dashboard.getChartIds() == null) {
                 dashboard.setChartIds(newArrayList());
@@ -116,7 +118,7 @@ public class DashboardController extends BaseController<Dashboard> {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "/sync")
     @ApiOperation("同步看板")
-    public void syncDashboard(@RequestBody Dashboard dashboard, @CurrentUser ETraceUser user) throws Exception {
+    public void syncDashboard(@RequestBody DashboardVO dashboard, @CurrentUser ETraceUser user) throws Exception {
         dashboardService.syncMetricConfig(dashboard, user);
     }
 
@@ -124,7 +126,7 @@ public class DashboardController extends BaseController<Dashboard> {
     @ApiOperation("校验globalId是否可用")
     public ResponseEntity chechGlobalIsValid(@RequestParam("globalId") String globalId) throws Exception {
         try {
-            Dashboard dashboard = dashboardService.findByGlobalId(globalId);
+            DashboardVO dashboard = dashboardService.findByGlobalId(globalId);
             if (null == dashboard) {
                 return ResponseEntity.ok(true);
             } else {
