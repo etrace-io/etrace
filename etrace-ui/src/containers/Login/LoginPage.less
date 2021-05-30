@@ -1,6 +1,5 @@
 .emonitor-login-page {
-  @eleme-color: #3296FA;
-  @alibaba-color: #FF6A00;
+  @etrace-color: #3296FA;
 
   text-align: center;
   overflow: auto;
@@ -19,7 +18,7 @@
     //opacity: 0.7;
 
     .hl {
-      color: @eleme-color;
+      color: @etrace-color;
     }
     color: #666;
   }
@@ -43,29 +42,14 @@
         border-radius: 10px;
       }
 
-      &.eleme-login {
-        background: @eleme-color;
-        border-color: @eleme-color;
+      &.etrace-login {
+        background: @etrace-color;
+        border-color: @etrace-color;
         color: #fff;
 
         &:hover {
-          background: fade(@eleme-color, 80%);
-          border-color: fade(@eleme-color, 80%);
-        }
-      }
-
-      &.alibaba-login {
-        background: @alibaba-color;
-        border-color: @alibaba-color;
-        color: #fff;
-
-        .anticon {
-          transform: scale(1.3);
-        }
-
-        &:hover {
-          background: fade(@alibaba-color, 80%);
-          border-color: fade(@alibaba-color, 80%);
+          background: fade(@etrace-color, 80%);
+          border-color: fade(@etrace-color, 80%);
         }
       }
     }

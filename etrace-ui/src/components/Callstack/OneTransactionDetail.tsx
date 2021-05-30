@@ -153,10 +153,6 @@ export default class OneTransactionDetail extends React.Component <DetailProps, 
         const eagleEyeValue = message.tags["EagleEye-TraceId"];
         const redisType = message.tags.redisType;
 
-        // const eagleEyeUrl = GetApi.profile === Profile.PROD
-        //     ? `http://eagleeye.alibaba-inc.com/trace/callChain.htm?traceId=${eagleEyeValue}`
-        //     : `http://eagleeye.alibaba.net/trace/callChain.htm?traceId=${eagleEyeValue}`;
-
         return (
             <div>
                 {(eagleEyeValue || redisType) && (

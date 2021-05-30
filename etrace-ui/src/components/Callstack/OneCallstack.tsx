@@ -395,7 +395,6 @@ export default class OneCallstack extends React.Component<Props, State> {
             <a
                 style={{color: "#f77e1c", textDecoration: "underline"}}
                 rel="noopener noreferrer"
-                href={"https://n.alibaba-inc.com/ops/info/host?host=" + callstack.hostName}
                 target="_blank"
             >
                 {callstack.hostName}
@@ -407,16 +406,11 @@ export default class OneCallstack extends React.Component<Props, State> {
             <Row>
                 <Col span={12} style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
                     <Tooltip title={callstack.hostName} overlayStyle={{maxWidth: "none"}}>
-                        <div><b>HostName: </b>{hostLink} <img height={18}
-                                                              src="https://shadow.elemecdn.com/app/monitor/normandy.e7273a81-6075-11eb-82d4-053e75478990.png"
-                                                              alt="Normandy"/></div>
+                        <div><b>HostName: </b>{hostLink}<img height={18} src="" alt="HostLink"/></div>
                     </Tooltip>
                 </Col>
                 <Col span={8}><b>IP: </b>
-                    <a rel="noopener noreferrer"
-                       href={"https://n.alibaba-inc.com/ops/info/host?host=" + callstack.hostIp} target="_blank">
-                        {callstack.hostIp}
-                    </a>
+                    <a rel="noopener noreferrer" target="_blank">{callstack.hostIp}</a>
                 </Col>
                 <Col span={4}>
                     {/*log link*/}

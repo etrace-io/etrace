@@ -9,6 +9,7 @@ import {isEmpty, MapToObject} from "$utils/Util";
 import moment from "moment";
 import {ConvertFunctionEnum, ConvertFunctionModel} from "$utils/ConvertFunction";
 import {calLineSequence} from "$utils/ChartDataConvert";
+import {PROMETHEUS_URL_PROD, PROMETHEUS_URL_TEST} from "$constants/index";
 
 const uuid = require("react-native-uuid");
 
@@ -17,10 +18,8 @@ const uuid = require("react-native-uuid");
  * $ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10:30.781Z&end=2015-07-01T20:11:00.781Z&step=15s'
  */
 function fetchMetricByOneTarget(target: EMonitorMetricTarget, indexStart?: number) {
-    // let url = "https://etrace-gw.ele.me/sunfire";
-    const url = CURR_API.env == ENV.PROD ? "https://etrace-gw.ele.me/prometheus-prod" : "https://etrace-gw.ele.me/prometheus-daily";
+    const url = CURR_API.env == ENV.PROD ? PROMETHEUS_URL_PROD : PROMETHEUS_URL_TEST;
     // const url = CURR_API.monitor + "/prometheus-daily";
-    // http://daily.i.sigma.alibaba-inc.com/api/v1/query_range?query=pod_cpu_cfs_throttled_seconds_ps%7Bip%3D%2211.159.172.12%22%7D&start=1617924560&end=1617946160&step=20
 
     const start = target.from;
     const end = target.to;
@@ -139,7 +138,7 @@ function buildTargetWithoutOrderBy(target: Target, chart?: Chart, forceChangeTim
 
 //
 // export async function showTagKey(code: string, measurement: string): Promise<Array<string>> {
-//     const url = CURR_API.env == ENV.PROD ? "https://etrace-gw.ele.me/prometheus-daily" : "https://etrace-gw.ele.me/prometheus-daily";
+//     const url = CURR_API.env == ENV.PROD ? PROMETHEUS_URL_PROD : PROMETHEUS_URL_TEST;
 //
 //     let message = "获取Tag Key";
 //     let requestUrl = url + `/api/v1/labels?match[]=${measurement}`;
@@ -156,7 +155,7 @@ function buildTargetWithoutOrderBy(target: Target, chart?: Chart, forceChangeTim
 // }
 //
 // export async function showTagValue(code: string, measurement: string, tagKey: string, prefix?: string): Promise<Array<string>> {
-//     const url = CURR_API.env == ENV.PROD ? "https://etrace-gw.ele.me/prometheus-daily" : "https://etrace-gw.ele.me/prometheus-daily";
+//     const url = CURR_API.env == ENV.PROD ? PROMETHEUS_URL_PROD : PROMETHEUS_URL_TEST;
 //     let requestUrl = url + `/api/v1/label/${tagKey}/values?match[]=${prefix}`;
 //
 //     console.log("showTagValue: ", requestUrl);

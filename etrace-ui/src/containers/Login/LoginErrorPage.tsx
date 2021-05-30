@@ -29,7 +29,7 @@ const LoginErrorPage: React.FC<{
                         <Button
                             type="primary"
                             icon={<EyeOutlined />}
-                            href="https://bpms.alibaba-inc.com/workdesk/instStartLegao?__id=inist_start&processCode=login"
+                            href=""
                             target="_blank"
                         >权限申请
                         </Button>
@@ -55,7 +55,7 @@ const LoginErrorPage: React.FC<{
                 <div className="login-error__content-item">
                     <p className="content-item__title">钉钉支持群 <DingdingOutlined style={{ color: "#008cee" }} /></p>
                     <div className="content-item__body">
-                        <Typography.Paragraph copyable={true}>21713321</Typography.Paragraph>
+                        <Typography.Paragraph copyable={true}>123456</Typography.Paragraph>
                     </div>
                 </div>
             </div>

@@ -1,35 +1,35 @@
 import {ENV} from "$constants/Env";
 import {SystemKit} from "$utils/Util";
-import {DAILY_MOZI_TOKEN_COOKIE_KEY, MOZI_TOKEN_COOKIE_KEY} from "$constants/index";
+import {SSO_TOKEN_COOKIE_KEY_TEST, SSO_TOKEN_COOKIE_KEY} from "$constants/index";
 
 const Cookies = require("js-cookie");
 
 export default {
-    getMOZIToken,
-    setMOZIToken,
+    getSSOToken,
+    setSSOToken
 };
 
-function getMOZIToken(): string {
+function getSSOToken(): string {
     const currEnv = SystemKit.getCurrEnv();
     const name = currEnv === ENV.TEST
-        ? DAILY_MOZI_TOKEN_COOKIE_KEY
-        : MOZI_TOKEN_COOKIE_KEY;
+        ? SSO_TOKEN_COOKIE_KEY_TEST
+        : SSO_TOKEN_COOKIE_KEY;
 
     return Cookies.get(name);
 }
 
 /**
- * 设置 MOZI Token
- * @param token MOZI Token
+ * 设置 SSO Token
+ * @param token SSO Token
  * @param expires 过期时间，单位：天
  */
-function setMOZIToken(token: string, expires?: number) {
+function setSSOToken(token: string, expires?: number) {
     const currEnv = SystemKit.getCurrEnv();
     const domain = "." + window.location.hostname.split(".").slice(-2).join(".");
 
     const name = currEnv === ENV.TEST
-        ? DAILY_MOZI_TOKEN_COOKIE_KEY
-        : MOZI_TOKEN_COOKIE_KEY;
+        ? SSO_TOKEN_COOKIE_KEY_TEST
+        : SSO_TOKEN_COOKIE_KEY;
 
     Cookies.set(name, token, {
         domain,

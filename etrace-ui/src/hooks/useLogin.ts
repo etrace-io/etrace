@@ -4,7 +4,7 @@ import {CURR_API} from "$constants/API";
 import {useLocation} from "react-router-dom";
 import {LoginError, User} from "$models/User";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {APP_BASE_PATHNAME, APP_BASE_URL, LOGIN_BACK_URL_PARAM, MOZI_SSO_TOKEN} from "$constants/index";
+import {APP_BASE_PATHNAME, APP_BASE_URL, LOGIN_BACK_URL_PARAM, SSO_TOKEN} from "$constants/index";
 
 /**
  * 获取用户信息接口，放这里统一管理
@@ -49,20 +49,20 @@ export default function useLogin (
         const {search} = location;
         const params = new URLSearchParams(search);
 
-        const SSO_TOKEN = params.get(MOZI_SSO_TOKEN);
+        const ssoToken = params.get(SSO_TOKEN);
 
         // if (SSO_TOKEN) {
-        //     CookieKit.setMOZIToken(SSO_TOKEN);
+        //     CookieKit.setSSOToken(SSO_TOKEN);
         // }
 
         // 登录
-        login(SSO_TOKEN);
+        login(ssoToken);
         // `${window.location.origin}${backURLPath}${enter === "/" ? "" : encodeURIComponent(enter)}`;
     }, []);
 
-    const login = useCallback((moziSSOToken) => {
+    const login = useCallback((SSOToken) => {
         fetchUserInfo({
-            moziSSOToken
+            SSOToken: SSOToken
         })
             .then(result => {
                 setUser(result.data);

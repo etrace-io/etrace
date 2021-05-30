@@ -1,4 +1,5 @@
 import get from "lodash/get";
+import {MONITOR_URL_PROD, MONITOR_URL_TEST} from "$constants/index";
 
 export enum ENV {
     PROD = "prod",
@@ -17,6 +18,6 @@ export const ENV_COLOR = {
 };
 
 export const EMONITOR_URL = {
-    [ENV.PROD]: get(window, "CONFIG.URL_PROD", "https://monitor.faas.ele.me"),
-    [ENV.TEST]: get(window, "CONFIG.URL_DAILY", "https://monitor.daily.elenet.me"),
+    [ENV.PROD]: get(window, "CONFIG.URL_PROD", MONITOR_URL_PROD),
+    [ENV.TEST]: get(window, "CONFIG.URL_DAILY", MONITOR_URL_TEST),
 };

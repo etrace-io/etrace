@@ -25,7 +25,7 @@ interface YellowPagesStatus {
 
 export default class YellowPages extends React.Component<YellowPagesProps, YellowPagesStatus> {
     public static BASE_URL = "/yellow-pages";
-    public static DEFAULT_RECORD_LOGO = "https://arch-etracealertconsole-altest-alpha-oss-1.oss-cn-shanghai.aliyuncs.com/2020/3/16/11/28/23/IMG_2109.JPG?Expires=1584606144&OSSAccessKeyId=LTAIZYrPlrcDRL7z&Signature=kJQd%2BY5TwK5ghyASIe3M%2ByCR0eM%3D";
+    public static DEFAULT_RECORD_LOGO = "";
     public static DEFAULT_LIST_LOGO = "appstore";
 
     state = {

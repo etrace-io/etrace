@@ -1,6 +1,7 @@
 // API 相关
 import {ENV} from "./Env";
 import {get} from "lodash";
+import {API_URL_TEST, API_URL_PROD} from "$constants/index";
 
 interface APIGateway {
     monitor: string;
@@ -8,12 +9,12 @@ interface APIGateway {
 }
 
 const API_TEST: APIGateway = {
-    monitor: "https://monitor-api.daily.elenet.me",
+    monitor: API_URL_TEST,
     env: ENV.TEST
 };
 
 const API_PROD: APIGateway = {
-    monitor: "https://etrace-gw.ele.me/monitor",
+    monitor: API_URL_PROD,
     env: ENV.PROD
 };
 
@@ -36,7 +37,7 @@ const currApi: APIGateway = get(window, "CONFIG.MONITOR")
 // tslint:disable-next-line:no-console
 console.log("当前 API 接口详情：", currApi);
 // tslint:disable-next-line:no-console
-console.log("%c 当前 EMonitor 环境 %c ".concat(currEnv, " %c"), "background:#328cf0 ; margin: 6px 0; padding: 3px 1px; border-radius: 3px 0 0 3px;  color: #fff", "background:#e94708 ; padding: 3px 1px; border-radius: 0 3px 3px 0;  color: #fff", "background:transparent");
+console.log("%c 当前 ETrace 环境 %c ".concat(currEnv, " %c"), "background:#328cf0 ; margin: 6px 0; padding: 3px 1px; border-radius: 3px 0 0 3px;  color: #fff", "background:#e94708 ; padding: 3px 1px; border-radius: 0 3px 3px 0;  color: #fff", "background:transparent");
 
 export function getApiByEnv(env: ENV) {
     switch (env) {
@@ -49,4 +50,5 @@ export function getApiByEnv(env: ENV) {
             return API_TEST;
     }
 }
+
 export const CURR_API = currApi;

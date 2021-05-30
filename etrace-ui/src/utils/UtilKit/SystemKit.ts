@@ -10,9 +10,8 @@ import * as message from "$utils/message";
 export default {
     redirectToLogin: debounce(redirectToLogin, 500),
     redirectToSSO,
-    redirectToMOZI,
     redirectToOtherOrigin,
-    isDaily,
+    isTest,
     isProd,
     getCurrEnv,
 };
@@ -54,10 +53,12 @@ function redirectToLogin(origin?: string, targetEnv?: ENV) {
  * 跳转至 SSO
  * @param env 目标环境
  */
-function redirectToSSO(env?: ENV) {
+function redirectToSSO0(env?: ENV) {
     const {search} = browserHistory.location;
     const params = new URLSearchParams(search);
     if (params.get("debug")) {
+        // todo: should remove debug mode
+        console.warn("todo: should remove debug mode in ");
         return;
     }
 
@@ -65,22 +66,24 @@ function redirectToSSO(env?: ENV) {
     const backUrl = APP_BASE_URL + (params.get(LOGIN_BACK_URL_PARAM) || "");
     switch (targetEnv) {
         case ENV.TEST:
-            window.location.href = `https://sso.daily.elenet.me/euc/#/?from=${encodeURIComponent(backUrl)}`;
+            window.location.href = `https://sso-test/#/?from=${encodeURIComponent(backUrl)}`;
             break;
         case ENV.PROD:
         default:
-            window.location.href = `https://sso.rajax.me/auth/entry?from=${encodeURIComponent(backUrl)}`;
+            window.location.href = `https://sso-prod/auth/entry?from=${encodeURIComponent(backUrl)}`;
     }
 }
 
 /**
- * 跳转至 MOZI 登录页
+ * 跳转至 SSO 登录页
  * @param env 目标环境
  */
-function redirectToMOZI(env?: ENV) {
+function redirectToSSO(env?: ENV) {
     const {search} = browserHistory.location;
     const urlParams = new URLSearchParams(search);
     if (urlParams.get("debug")) {
+        // todo: should remove debug mode
+        console.warn("todo: should remove debug mode in ");
         return;
     }
 
@@ -89,13 +92,11 @@ function redirectToMOZI(env?: ENV) {
     const targetProfile = env || SystemKit.getCurrEnv();
     switch (targetProfile) {
         case ENV.TEST:
-            window.location.href = `https://mozi-login.alibaba.net/ssoLogin.htm?APP_NAME=Emonitor&BACK_URL=${encodeURIComponent(backUrl)}`;
-            // window.location.href = `https://mozi-login.alibaba.net/oauth2/auth.htm?${mapObjectToUrlParamsStr(params)}`;
+            window.location.href = `https://localhost:8080/test-ssoLogin.htm?BACK_URL=${encodeURIComponent(backUrl)}`;
             break;
         case ENV.PROD:
         default:
-            window.location.href = `https://mozi-login.alibaba-inc.com/ssoLogin.htm?APP_NAME=Emonitor&BACK_URL=${encodeURIComponent(backUrl)}`;
-            // window.location.href = `https://mozi-login.alibaba-inc.com/oauth2/auth.htm?${mapObjectToUrlParamsStr(params)}`;
+            window.location.href = `https://localhost:8080/prod-ssoLogin.htm?BACK_URL=${encodeURIComponent(backUrl)}`;
             break;
     }
 }
@@ -136,9 +137,9 @@ function redirectToOtherOrigin(origin: string): string {
 }
 
 /**
- * 判断当前环境是否为 Daily
+ * 判断当前环境是否为 Test
  */
-function isDaily() {
+function isTest() {
     return getCurrEnv() === ENV.TEST;
 }
 
@@ -148,6 +149,7 @@ function isDaily() {
 function isProd() {
     return getCurrEnv() === ENV.PROD;
 }
+
 /**
  * 获取当前环境
  */

@@ -3,21 +3,20 @@ import {ENV} from "$constants/Env";
 import {SystemKit} from "$utils/Util";
 import {Button, Divider, Space} from "antd";
 import EMonitorLogo from "$components/Base/EMonitorLogo";
-import {AlibabaIcon} from "$components/Icon/Icon";
 import {EMonitorContainer, EMonitorFooter} from "$components/EMonitorLayout";
 
 import "./LoginPage.less";
 import {EMONITOR_LOGO_DARK, EMONITOR_LOGO_LIGHT, EMPTY_BACKGROUND} from "$constants/index";
 
-const ALIBABA_LOGIN = (
-    <Button key="alibaba" className="alibaba-login" size="large" onClick={() => SystemKit.redirectToMOZI()}>
-        <AlibabaIcon fill="#fff"/> 集团账号登录
+const ETRACE_LOGIN = (
+    <Button key="etrace" className="etrace-login" size="large" onClick={() => SystemKit.redirectToSSO()}>
+        Sign in
     </Button>
 );
 
 const LOGIN_BUTTON = {
-    [ENV.PROD]: [ALIBABA_LOGIN],
-    [ENV.TEST]: [ALIBABA_LOGIN],
+    [ENV.PROD]: [ETRACE_LOGIN],
+    [ENV.TEST]: [ETRACE_LOGIN],
 };
 
 const LoginPage: React.FC = props => {
@@ -37,7 +36,7 @@ const LoginPage: React.FC = props => {
             />
 
             <p className="e-monitor-intro">
-                <span className="hl">E-Monitor</span> 一站式监控系统</p>
+                <span className="hl">ETrace</span> 一站式监控系统</p>
 
             <div className="login-btn-group">
                 <Space direction="vertical" split={<Divider>或</Divider>}>

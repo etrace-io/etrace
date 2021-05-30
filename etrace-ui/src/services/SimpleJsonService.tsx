@@ -7,6 +7,7 @@ import {MapToObject} from "$utils/Util";
 import {ConvertFunctionEnum, ConvertFunctionModel} from "$utils/ConvertFunction";
 import {calLineSequence} from "$utils/ChartDataConvert";
 import {Http} from "$services/http";
+import {SIMPLE_JSON_URL_PROD} from "$constants/index";
 
 export class SimpleJsonService {
 
@@ -34,7 +35,7 @@ export class SimpleJsonService {
      * @param targets
      */
     public static async searchMetrics(targets: Array<Target>): Promise<Array<ResultSetModel>> {
-        let url = "https://etrace-gw.ele.me/sunfire";
+        let url = SIMPLE_JSON_URL_PROD;
 
         let simpleJsonTarget = targets.map((target, index) => {
             return {
@@ -120,10 +121,10 @@ export class SimpleJsonService {
             let line = new ConvertFunctionModel(ConvertFunctionEnum.LINE_FLAG, "line_flag", [{
                 name: "line_flag",
                 type: "string"
-            }],                                 [lineNum]);
+            }], [lineNum]);
             functions.push(line);
 
-            results.push( {
+            results.push({
                 "results": {
                     groups,
                     measurementName: "sunfire_has_no_measurement_name",
@@ -167,7 +168,7 @@ function fetchMetricByTargets(targets: EMonitorMetricTarget[]) {
         maxDataPoints: 550
     };
 
-    return Http.post<SunfireMetricDataSet[]>("https://etrace-gw.ele.me/sunfire", params);
+    return Http.post<SunfireMetricDataSet[]>(SIMPLE_JSON_URL_PROD, params);
 }
 
 export default {

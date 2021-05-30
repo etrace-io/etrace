@@ -634,8 +634,8 @@ class AddRecordForm extends React.Component<AddRecordProps, AddRecordFormStatus>
         const dingTalkNumberTipsContent = (
             <div style={{textAlign: "center"}}>
                 <div className="tip-image-container">
-                    <img className="tip-image" src="https://shadow.elemecdn.com/app/monitor/IMG_2149.fa935b11-61fe-11ea-a23b-37f48a7c71d7.JPEG" alt="Tips"/>
-                    <img className="tip-image overlay" src="https://shadow.elemecdn.com/app/monitor/share.eca157a1-6294-11ea-852d-e36529fae564.jpg" alt="Tips"/>
+                    <img className="tip-image" src="" alt="Tips"/>
+                    <img className="tip-image overlay" src="" alt="Tips"/>
                 </div>
                 <div className="tip-text">PC 端：个人 Profile 页 - 钉钉号</div>
                 <div className="tip-text">移动端：点击头像「我的信息」页 - 钉钉号</div>

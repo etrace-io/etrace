@@ -34,7 +34,7 @@ const EMonitorApp: React.FC = props => {
 
     const history = useHistory();
 
-    // 判断是否 MOZI 登录
+    // 判断是否 sso 登录
     const {search} = window.location;
     const params = new URLSearchParams(search);
     const state = params.get("state");

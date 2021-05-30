@@ -290,10 +290,7 @@ const EntityForm: React.FC<{
                 </Select>
                 </Form.Item>
                 {selectedAliasCode &&
-                <span style={{width: "50%", margin: "5px"}}>即查询<b>{selectedAliasCode}</b>时也会查询该数据源。
-                    <b>会影响Watchdog!!</b>
-                    <a href="https://yuque.antfin-inc.com/elearch/etrace/sq1bll" target="_blank" rel="noopener noreferrer">原因</a>
-                </span>
+                <span style={{width: "50%", margin: "5px"}}>即查询<b>{selectedAliasCode}</b>时也会查询该数据源。</span>
                 }
             </Form.Item>
         </>
