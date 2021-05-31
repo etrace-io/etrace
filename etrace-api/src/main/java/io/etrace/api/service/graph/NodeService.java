@@ -80,9 +80,7 @@ public class NodeService extends BaseService<Node, Node> {
         return node;
     }
 
-    public void syncSonMetricConfig(Node node) {
-        node.setChartIds(SyncUtil.syncCharts(node.getCharts(), node.getUpdatedBy(), chartService));
-    }
+
 
     public List<SimpleNodeQueryResult> queryNode(Node node) throws BadRequestException {
         if (NodeType.GroupNode.equals(node.getNodeType())) {
@@ -256,6 +254,9 @@ public class NodeService extends BaseService<Node, Node> {
     @Override
     public <S extends Node> void syncSonMetricConfig(S t, ETraceUser user) {
 
+    }
+    public void syncSonMetricConfig(Node node) {
+        node.setChartIds(SyncUtil.syncCharts(node.getCharts(), node.getUpdatedBy(), chartService));
     }
 
     @Override

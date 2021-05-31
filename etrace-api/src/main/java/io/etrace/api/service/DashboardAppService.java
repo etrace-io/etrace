@@ -1,6 +1,6 @@
 package io.etrace.api.service;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import io.etrace.api.consts.HistoryLogTypeEnum;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.exception.UserForbiddenException;
@@ -79,6 +79,24 @@ public class DashboardAppService extends BaseService<DashboardAppVO, DashboardAp
         return result;
     }
 
+    public SearchResult<DashboardAppVO> search(String title, Long department, Long productLine, String user,
+                                               Integer pageNum, Integer pageSize, Boolean critical) {
+        SearchResult<DashboardAppVO> searchResult = new SearchResult<>();
+        int count = dashboardAppMapper.countByTitleAndCreatedByAndCritical(title,
+            user, critical);
+        searchResult.setTotal(count);
+        if (count > 0) {
+            Integer start = (pageNum - 1) * pageSize;
+            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
+            List<DashboardAppVO> dashboardApps = dashboardAppMapper
+                .findByTitleAndCreatedByAndCritical(title, user, critical, pageRequest)
+                .stream().map(DashboardAppVO::toVO).collect(Collectors.toList());
+
+            searchResult.setResults(dashboardApps);
+        }
+        return searchResult;
+    }
+
     @Override
     public Optional<DashboardAppPO> findById(long id) {
         Optional<DashboardAppPO> op = dashboardAppMapper.findById(id);
@@ -87,7 +105,9 @@ public class DashboardAppService extends BaseService<DashboardAppVO, DashboardAp
             if (dashboardApp.getDashboardIds() != null
                 && dashboardApp.getDashboardIds().size() > 0) {
                 List<Long> dashboardIds = dashboardApp.getDashboardIds();
-                List<DashboardVO> dashboards = Lists.newArrayList(dashboardService.findByIds(dashboardIds));
+                List<DashboardVO> dashboards =
+                    Streams.stream(dashboardService.findByIds(dashboardIds)).map(DashboardVO::toVO)
+                        .collect(Collectors.toList());
                 // sort the dashboard
                 if (!CollectionUtils.isEmpty(dashboards)) {
                     LinkedHashMap<Long, Integer> dashboardIdMap = new LinkedHashMap<>();
@@ -126,24 +146,6 @@ public class DashboardAppService extends BaseService<DashboardAppVO, DashboardAp
     @Override
     public void deleteUserFavorite(long id) {
         dashboardAppMapper.deleteUserFavorite(id);
-    }
-
-    public SearchResult<DashboardAppVO> search(String title, Long department, Long productLine, String user,
-                                               Integer pageNum, Integer pageSize, Boolean critical) {
-        SearchResult<DashboardAppVO> searchResult = new SearchResult<>();
-        int count = dashboardAppMapper.countByTitleAndCreatedByAndCritical(title,
-            user, critical);
-        searchResult.setTotal(count);
-        if (count > 0) {
-            Integer start = (pageNum - 1) * pageSize;
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
-            List<DashboardAppVO> dashboardApps = dashboardAppMapper
-                .findByTitleAndCreatedByAndCritical(title, user, critical, pageRequest)
-                .stream().map(DashboardAppVO::toVO).collect(Collectors.toList());
-
-            searchResult.setResults(dashboardApps);
-        }
-        return searchResult;
     }
 
     public List<DashboardAppVO> settingSearch(String title, Boolean critical) {

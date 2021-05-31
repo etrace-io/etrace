@@ -1,10 +1,10 @@
 package io.etrace.api.service;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import io.etrace.api.model.po.ui.HistoryLog;
 import io.etrace.api.model.vo.SearchResult;
-import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.model.vo.ui.DashboardAppVO;
+import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.repository.HistoryLogMapper;
 import io.etrace.common.util.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class HistoryLogService {
@@ -73,7 +74,8 @@ public class HistoryLogService {
     private void addMoreInfo(HistoryLog historyLog) throws IOException {
         switch (historyLog.getType()) {
             case "dashboard":
-                DashboardVO dashboard = JSONUtil.toObject(JSONUtil.toString(historyLog.getHistory()), DashboardVO.class);
+                DashboardVO dashboard = JSONUtil.toObject(JSONUtil.toString(historyLog.getHistory()),
+                    DashboardVO.class);
                 if (!CollectionUtils.isEmpty(dashboard.getChartIds())) {
                     dashboard.setCharts(chartService.findChartByIds(dashboard.getChartIds()));
                     historyLog.setHistory(dashboard);
@@ -84,7 +86,8 @@ public class HistoryLogService {
                     DashboardAppVO.class);
                 if (!CollectionUtils.isEmpty(dashboardApp.getDashboardIds())) {
                     dashboardApp.setDashboards(
-                        Lists.newArrayList(dashboardService.findByIds(dashboardApp.getDashboardIds())));
+                        Streams.stream(dashboardService.findByIds(dashboardApp.getDashboardIds()))
+                            .map(DashboardVO::toVO).collect(Collectors.toList()));
                     historyLog.setHistory(dashboardApp);
                 }
                 return;

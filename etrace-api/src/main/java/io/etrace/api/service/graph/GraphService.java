@@ -67,16 +67,16 @@ public class GraphService extends BaseService<Graph, Graph> {
     public <S extends Graph> void syncSonMetricConfig(S t, ETraceUser user) {
 
     }
-
+    public void syncSonMetricConfig(Graph graph) {
+        graph.setNodeIds(SyncUtil.syncNodes(graph.getNodes(), graph.getUpdatedBy(), nodeService));
+    }
     @Override
     public SearchResult<Graph> search(String title, String globalId, Integer pageNum, Integer pageSize, String user,
                                       String status) {
         return null;
     }
 
-    public void syncSonMetricConfig(Graph graph) {
-        graph.setNodeIds(SyncUtil.syncNodes(graph.getNodes(), graph.getUpdatedBy(), nodeService));
-    }
+
 
     @Override
     public void updateUserFavorite(long id) {

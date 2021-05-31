@@ -13,7 +13,7 @@ public interface UserMapper extends PagingAndSortingRepository<ETraceUserPO, Lon
 
     List<ETraceUserPO> findAllByEmailContainingOrUserNameContaining(String keyword, String k2);
 
-    ETraceUserPO findByEmail(String email);
-
     List<ETraceUserPO> findAllByEmailContainingOrUserNameContaining(String keyword, String k2, Pageable page);
+
+    ETraceUserPO findByEmail(String email);
 }

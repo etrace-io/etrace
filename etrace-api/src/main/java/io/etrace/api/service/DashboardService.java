@@ -5,9 +5,7 @@ import io.etrace.api.consts.HistoryLogTypeEnum;
 import io.etrace.api.exception.UserForbiddenException;
 import io.etrace.api.model.po.ui.DashboardPO;
 import io.etrace.api.model.po.user.ETraceUser;
-import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
-import io.etrace.api.model.vo.ui.ChartVO;
 import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.repository.DashboardMapper;
 import io.etrace.api.service.base.BaseService;
@@ -38,6 +36,11 @@ public class DashboardService extends BaseService<DashboardVO, DashboardPO> {
     @Override
     public List<DashboardVO> findByIds(String title, List<Long> ids) {
         return dashboardMapper.findByTitleContainingAndIdIn(title, ids)
+            .stream().map(DashboardVO::toVO).collect(Collectors.toList());
+    }
+
+    public List<DashboardVO> findByIds(String title, Long department, Long productLine, List<Long> dashboardIds) {
+        return dashboardMapper.findByTitleContainingAndIdIn(title, dashboardIds)
             .stream().map(DashboardVO::toVO).collect(Collectors.toList());
     }
 
@@ -116,11 +119,6 @@ public class DashboardService extends BaseService<DashboardVO, DashboardPO> {
     @Override
     public DashboardVO findByGlobalId(@NotNull String globalConfigId) {
         return DashboardVO.toVO(dashboardMapper.findByGlobalId(globalConfigId));
-    }
-
-    public List<DashboardVO> findByIds(String title, Long department, Long productLine, List<Long> dashboardIds) {
-        return dashboardMapper.findByTitleContainingAndIdIn(title, dashboardIds)
-            .stream().map(DashboardVO::toVO).collect(Collectors.toList());
     }
 
     public void updateDashboardChartIds(DashboardVO dashboard, ETraceUser user) throws UserForbiddenException {

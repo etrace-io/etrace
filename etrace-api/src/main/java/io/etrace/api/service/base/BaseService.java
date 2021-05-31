@@ -55,13 +55,13 @@ public abstract class BaseService<VO extends BaseItem, T extends BaseItem> imple
         return crudRepository.findById(id);
     }
 
+    public abstract T findById(long id, ETraceUser user);
+
     public Iterable<T> findByIds(List<Long> ids) {
         return crudRepository.findAllById(ids);
     }
 
     public abstract List<VO> findByIds(String title, List<Long> ids);
-
-    public abstract T findById(long id, ETraceUser user);
 
     public abstract <S extends T> void syncSonMetricConfig(S t, ETraceUser user);
 
