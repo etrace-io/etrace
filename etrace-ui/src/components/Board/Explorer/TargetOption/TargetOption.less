@@ -1,0 +1,70 @@
+.explorer__metrics-config {
+  margin: 0 5px;
+  flex-wrap: nowrap !important;
+
+  & > .ant-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .ant-form-item {
+      &:not(.filterItem) {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      &.filterItem {
+        max-width: 100%;
+        display: inline-flex;
+        align-items: center;
+
+        .ant-form-item-label {
+          flex-shrink: 0;
+        }
+
+        .ant-form-item-control-wrapper {
+          flex: 1;
+
+          .ant-form-item-control,
+          .ant-form-item-children,
+          .tag-filter-select {
+            max-width: 100%;
+          }
+
+          .ant-form-item-children {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding-top: 10px;
+
+            // 选择部分
+            .tag-filter-select {
+              flex: 0 0 auto;
+              margin-right: 10px;
+              margin-bottom: 10px;
+
+              .ant-input-group {
+                display: flex;
+                flex: 0 1 auto;
+
+                .ant-btn {
+                  min-height: 32px;
+                  height: unset;
+                }
+              }
+            }
+            & > .ant-btn {
+              flex-shrink: 0;
+              margin-bottom: 10px;
+            }
+          }
+        }
+      }
+
+      .ant-form-item-label {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}

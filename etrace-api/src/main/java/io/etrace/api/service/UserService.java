@@ -2,12 +2,10 @@ package io.etrace.api.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import io.etrace.agent.Trace;
 import io.etrace.api.consts.RoleType;
 import io.etrace.api.model.po.user.ETraceUser;
+import io.etrace.api.model.po.user.ETraceUserPO;
 import io.etrace.api.repository.UserMapper;
-import io.etrace.common.constant.Constants;
-import io.etrace.common.util.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static io.etrace.api.config.WebSecurityConfig.MOCK_PASSWORD;
+import static io.etrace.api.config.SimpleWebSecurityConfig.MOCK_PASSWORD;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -48,45 +45,38 @@ public class UserService implements UserDetailsService {
         return builder.build();
     }
 
-    private void log(String actionName, Object user, boolean success) throws IOException {
-        Trace.logEvent("User-Service", actionName, success ? Constants.SUCCESS : Constants.FAILURE,
-            "User: " + JSONUtil.toString(user), null);
-        String jsonString = JSONUtil.toString(user);
-        LOGGER.info("==getUserInfoByToken== {}, {}", actionName, jsonString);
-    }
-
-    public void saveUser(ETraceUser ETraceUser) {
-        ETraceUser ETraceUserFromDB = userMapper.findByEmail(ETraceUser.getEmail());
-        if (ETraceUserFromDB != null) {
-            ETraceUser.setId(ETraceUserFromDB.getId());
-            // todo: 这个 update 应该多余了
-            updateUser(ETraceUser);
-        } else {
-            try {
-                createUser(ETraceUser);
-            } catch (DuplicateKeyException e) {
-                // 如果用户已经存在，
-                ETraceUser ETraceUserFromDB2 = userMapper.findByEmail(ETraceUser.getEmail());
-                if (null != ETraceUserFromDB2) {
-                    LOGGER.info("find user in db。return ok");
-                    ETraceUser.setId(ETraceUserFromDB2.getId());
-                } else {
-                    LOGGER.warn("not find user in db，maybe mysql synchronization is too slow");
-                }
-            }
-        }
-    }
+    //public void saveUser(ETraceUser ETraceUser) {
+    //    ETraceUser ETraceUserFromDB = userMapper.findByEmail(ETraceUser.getEmail());
+    //    if (ETraceUserFromDB != null) {
+    //        ETraceUser.setId(ETraceUserFromDB.getId());
+    //        // todo: 这个 update 应该多余了
+    //        updateUser(ETraceUser);
+    //    } else {
+    //        try {
+    //            createUser(ETraceUser);
+    //        } catch (DuplicateKeyException e) {
+    //            // 如果用户已经存在，
+    //            ETraceUser ETraceUserFromDB2 = userMapper.findByEmail(ETraceUser.getEmail());
+    //            if (null != ETraceUserFromDB2) {
+    //                LOGGER.info("find user in db。return ok");
+    //                ETraceUser.setId(ETraceUserFromDB2.getId());
+    //            } else {
+    //                LOGGER.warn("not find user in db，maybe mysql synchronization is too slow");
+    //            }
+    //        }
+    //    }
+    //}
 
     public void createUser(ETraceUser ETraceUser) {
-        userMapper.save(ETraceUser);
+        userMapper.save(ETraceUser.toPO());
     }
 
     public void updateUser(ETraceUser ETraceUser) {
-        userMapper.save(ETraceUser);
+        userMapper.save(ETraceUser.toPO());
     }
 
-    public List<ETraceUser> findByKeyword(String keyword) {
-        List<ETraceUser> list = userMapper.findAllByEmailContainingOrUserNameContaining(keyword, keyword);
+    public List<ETraceUserPO> findByKeyword(String keyword) {
+        List<ETraceUserPO> list = userMapper.findAllByEmailContainingOrUserNameContaining(keyword, keyword);
         return list;
     }
 
@@ -95,12 +85,14 @@ public class UserService implements UserDetailsService {
      */
     @Cacheable(value = "user-email-cache", key = "#email")
     public ETraceUser findByUserEmail(String email) {
-        return userMapper.findByEmail(email);
+        return ETraceUser.toVO(userMapper.findByEmail(email));
     }
 
     public List<ETraceUser> findAllUser(String keyword, String userRole, int pageNum, int pageSize) {
-        List<ETraceUser> ETraceUsers = userMapper.findAllByEmailContainingOrUserNameContaining(keyword, keyword,
-            PageRequest.of(pageNum - 1, pageSize));
+        List<ETraceUser> ETraceUsers =
+            userMapper.findAllByEmailContainingOrUserNameContaining(keyword, keyword,
+                PageRequest.of(pageNum - 1, pageSize))
+                .stream().map(ETraceUser::toVO).collect(Collectors.toList());
         List<ETraceUser> ETraceUserList = Lists.newLinkedList();
         if (CollectionUtils.isEmpty(ETraceUsers)) {
             return ETraceUserList;

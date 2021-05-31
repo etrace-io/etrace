@@ -8,7 +8,7 @@ import io.etrace.common.pipeline.Resource;
 import io.etrace.common.pipeline.impl.DefaultPipelineLoader;
 import io.etrace.plugins.kafka0882.impl.impl.producer.ClusterBuilder;
 import io.etrace.plugins.kafka0882.impl.impl.producer.KafkaCluster;
-import io.etrace.stream.container.config.ConfigProp;
+import io.etrace.stream.container.config.StreamConfigProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -28,7 +28,7 @@ public class ChannelManager implements BeanFactoryAware {
     private final static Logger LOGGER = LoggerFactory.getLogger(ChannelManager.class);
     private final Map<String, KafkaCluster> kafkaClusters = Maps.newConcurrentMap();
     @Autowired
-    private ConfigProp configProp;
+    private StreamConfigProperties streamConfigProperties;
     private PipelineRepository repository;
     private BeanFactory beanFactory;
 
@@ -39,7 +39,7 @@ public class ChannelManager implements BeanFactoryAware {
     public void startup() {
         try {
             repository = beanFactory.getBean(PipelineRepository.class, new DefaultPipelineLoader().load(),
-                configProp.getResources());
+                streamConfigProperties.getResources());
             metricDatasourceService.initResourceAndStart(repository.getResources());
             repository.initAndStartUp();
         } catch (Exception e) {

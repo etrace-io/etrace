@@ -1,0 +1,69 @@
+.ant-cascader-picker {
+  color: @dark-color-text;
+  transition: all 0.3s;
+  background: @dark-color-gray;
+  // focus
+  &:focus {
+    .ant-cascader-input {
+      box-shadow: @dark-shadow-input-focus;
+    }
+  }
+
+  // 禁用
+  &.ant-cascader-picker-disabled {
+    background: @dark-color-disable-background;
+    color: @dark-color-disable-text;
+    &:hover input {
+      border-color: @dark-color-border !important;
+    }
+  }
+
+  // clear icon
+  .ant-cascader-picker-clear {
+    background: @dark-color-gray;
+    color: #000;
+
+    &:hover {
+      color: @dark-color-text;
+    }
+  }
+
+  // 下拉箭头 icon
+  .ant-cascader-picker-arrow {
+    transition: color 0.3s;
+    color: @dark-color-text !important;
+
+    &.ant-cascader-picker-arrow-expand {
+      color: @dark-color-border-light !important;
+    }
+  }
+
+  &:hover {
+    .ant-cascader-picker-arrow {
+      color: @dark-color-border-light !important;
+    }
+  }
+}
+
+.ant-cascader-menus {
+  .ant-cascader-menu {
+    &:not(:last-child) {
+      border-color: @dark-color-border;
+    }
+    .ant-cascader-menu-item {
+      &.ant-cascader-menu-item-active {
+        background-color: @dark-color-item-active-bg;
+      }
+      &:hover {
+        background-color: @dark-color-item-hover-bg;
+      }
+
+      &.ant-cascader-menu-item-disabled {
+        color: @dark-color-disable-text;
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+}

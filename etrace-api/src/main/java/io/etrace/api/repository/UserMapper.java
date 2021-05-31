@@ -1,19 +1,19 @@
 package io.etrace.api.repository;
 
-import io.etrace.api.model.po.user.ETraceUser;
+import io.etrace.api.model.po.user.ETraceUserPO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserMapper extends PagingAndSortingRepository<ETraceUser, Long> {
+public interface UserMapper extends PagingAndSortingRepository<ETraceUserPO, Long> {
 
-    Optional<ETraceUser> findByUserName(String username);
+    Optional<ETraceUserPO> findByUserName(String username);
 
-    List<ETraceUser> findAllByEmailContainingOrUserNameContaining(String keyword, String k2);
+    List<ETraceUserPO> findAllByEmailContainingOrUserNameContaining(String keyword, String k2);
 
-    ETraceUser findByEmail(String email);
+    List<ETraceUserPO> findAllByEmailContainingOrUserNameContaining(String keyword, String k2, Pageable page);
 
-    List<ETraceUser> findAllByEmailContainingOrUserNameContaining(String keyword, String k2, Pageable page);
+    ETraceUserPO findByEmail(String email);
 }

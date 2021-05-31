@@ -3,18 +3,18 @@ package io.etrace.api.controller.ui;
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.exception.UserForbiddenException;
-import io.etrace.api.model.po.BaseVisualizationObject;
+import io.etrace.api.model.po.BaseItem;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.vo.SearchResult;
-import io.etrace.api.service.graph.BaseService;
+import io.etrace.api.service.base.BaseService;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Deprecated
-public abstract class BaseController<T extends BaseVisualizationObject> {
+public abstract class BaseController<VO extends BaseItem, T extends BaseItem> {
 
-    private final BaseService<T> baseService;
+    private final BaseService<VO, T> baseService;
 
-    public BaseController(BaseService<T> baseService) {
+    public BaseController(BaseService<VO, T> baseService) {
         this.baseService = baseService;
     }
 
@@ -43,7 +43,7 @@ public abstract class BaseController<T extends BaseVisualizationObject> {
         baseService.delete(id, user);
     }
 
-    public SearchResult<T> doSearch(
+    public SearchResult<VO> doSearch(
         @RequestParam(value = "user", required = false) String user,
         @RequestParam(value = "title", required = false) String title,
         @RequestParam(value = "globalId", required = false) String globalId,
@@ -51,7 +51,7 @@ public abstract class BaseController<T extends BaseVisualizationObject> {
         @RequestParam(value = "current", defaultValue = "1") Integer pageNum,
         @RequestParam(value = "status", defaultValue = "Active") String status,
         @CurrentUser ETraceUser eTraceUser) {
-        SearchResult<T> result = baseService.search(title, globalId, pageNum, pageSize, user, status);
+        SearchResult<VO> result = baseService.search(title, globalId, pageNum, pageSize, user, status);
         if (result.getTotal() > 0) {
             baseService.modelIsStar(eTraceUser, result.getResults());
         }

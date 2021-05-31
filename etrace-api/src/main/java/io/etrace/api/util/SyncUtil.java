@@ -1,9 +1,8 @@
 package io.etrace.api.util;
 
 import io.etrace.api.exception.UserForbiddenException;
-import io.etrace.api.model.po.ui.Chart;
 import io.etrace.api.model.po.ui.Node;
-import io.etrace.api.model.po.user.ETraceUser;
+import io.etrace.api.model.vo.ui.ChartVO;
 import io.etrace.api.service.ChartService;
 import io.etrace.api.service.graph.NodeService;
 import org.springframework.util.CollectionUtils;
@@ -12,10 +11,12 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author lg Date: 2019-12-02 Time: 15:40
+ */
 public class SyncUtil {
 
-    public static List<Long> syncCharts(List<Chart> charts, String updateBy, ChartService chartService,
-                                        ETraceUser user) {
+    public static List<Long> syncCharts(List<ChartVO> charts, String updateBy, ChartService chartService) {
         if (charts != null && !CollectionUtils.isEmpty(charts)) {
             List<String> chartGlobalIdList = new ArrayList<>();
             List<Long> chartIdList = new ArrayList<>();
@@ -24,7 +25,7 @@ public class SyncUtil {
                 chart.setUpdatedBy(updateBy);
                 chart.setCreatedBy(updateBy);
                 try {
-                    chartService.syncMetricConfig(chart, user);
+                    chartService.syncMetricConfig(chart, null);
                 } catch (UserForbiddenException e) {
                     throw new RuntimeException(e.getMessage());
                 }
@@ -33,7 +34,7 @@ public class SyncUtil {
                 if (StringUtils.isEmpty(globalId)) {
                     throw new RuntimeException("the chart global id is null, sync error!");
                 }
-                Chart chart = chartService.findByGlobalId(globalId);
+                ChartVO chart = chartService.findByGlobalId(globalId);
                 if (null != chart) {
                     chartIdList.add(chart.getId());
                 } else {
@@ -45,7 +46,7 @@ public class SyncUtil {
         return null;
     }
 
-    public static List<Long> syncNodes(List<Node> nodes, String updateBy, NodeService nodeService, ETraceUser user) {
+    public static List<Long> syncNodes(List<Node> nodes, String updateBy, NodeService nodeService) {
         if (nodes != null && !CollectionUtils.isEmpty(nodes)) {
             List<String> nodeGlobalIdList = new ArrayList<>();
             List<Long> nodeIdList = new ArrayList<>();
@@ -54,7 +55,7 @@ public class SyncUtil {
                 node.setUpdatedBy(updateBy);
                 node.setCreatedBy(updateBy);
                 try {
-                    nodeService.syncMetricConfig(node, user);
+                    nodeService.syncMetricConfig(node, null);
                 } catch (UserForbiddenException e) {
                     throw new RuntimeException(e.getMessage());
                 }

@@ -1,0 +1,50 @@
+.ant-list-item {
+  .ant-card-meta-title,
+  .ant-card-meta-title a {
+    color: @dark-color-text;
+    &:hover {
+      color: @dark-color-text-light;
+    }
+  }
+  .ant-card-actions {
+    border-top: 1px solid @dark-color-border;
+    background: #262627;
+
+    li {
+      &:not(:last-child) {
+        border-right: 1px solid @dark-color-border;
+      }
+
+      // 删除图标
+      .anticon.anticon-delete {
+        color: #eb3f2f;
+      }
+      // 浏览量图标
+      .anticon.anticon-eye {
+        color: #237ab2;
+      }
+      // 收藏图标
+      .anticon.anticon-star,
+      .anticon.anticon-star-o {
+        color: #ffdd00;
+      }
+      .anticon.anticon-edit {
+        color: rgb(211, 146, 0) !important;
+      }
+    }
+  }
+}
+
+.ant-list {
+  &.ant-list-split {
+    .ant-list-item {
+      border-color: @dark-color-border !important;
+    }
+  }
+  &.ant-list-bordered {
+    border-color: @dark-color-border !important;
+    .ant-list-header {
+      border-color: @dark-color-border-gray !important;
+    }
+  }
+}

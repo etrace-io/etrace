@@ -1,0 +1,78 @@
+.emonitor-header {
+  --background: linear-gradient(to right, #1278f6, #00b4aa);
+}
+
+.emonitor-header {
+  height: @header-height;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  padding: 0 10px !important;
+  display: flex;
+  line-height: unset;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--background);
+
+  .emonitor-logo {
+    margin: 0 10px;
+  }
+
+  &.no-bg {
+    background: unset !important;
+    border-color: transparent !important;
+  }
+
+  .emonitor-header__menu {
+    border-bottom: none;
+    height: @header-height;
+    flex: 1;
+    white-space: normal !important;
+    background: transparent;
+
+    li {
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      margin: 0 !important;
+      padding: 0 !important;
+      color: #d0eae9 !important;
+      top: 0 !important;
+
+      & > * {
+        padding: 0 20px !important;
+      }
+
+      a {
+        color: #d0eae9 !important;
+      }
+
+      .ant-menu-submenu-title {
+        line-height: @header-height;
+        width: 100%;
+      }
+    }
+  }
+
+  .emonitor-header__functions {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  // Header Menu Item 下方 Border
+  .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-submenu:hover,
+  .ant-menu-horizontal > .ant-menu-item-active, .ant-menu-horizontal > .ant-menu-submenu-active,
+  .ant-menu-horizontal > .ant-menu-item-open, .ant-menu-horizontal > .ant-menu-submenu-open,
+  .ant-menu-horizontal > .ant-menu-item-selected, .ant-menu-horizontal > .ant-menu-submenu-selected {
+    border-bottom: 3px solid #fff;
+    color: #fff;
+  }
+
+  // Header Menu hover 和 Menu Selected
+  .ant-menu-horizontal > .ant-menu-item-selected > a,
+  .ant-menu-item-selected > a:hover,
+  .ant-menu-horizontal > .ant-menu-item > a:hover,
+  .ant-menu-horizontal > .ant-menu-submenu > a:hover {
+    color: #fff !important;
+  }
+}

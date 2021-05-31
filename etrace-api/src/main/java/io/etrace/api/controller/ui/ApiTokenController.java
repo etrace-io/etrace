@@ -1,9 +1,9 @@
 package io.etrace.api.controller.ui;
 
-import io.etrace.api.consts.ApplyTokenAuditStatus;
-import io.etrace.api.consts.TokenStatus;
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
+import io.etrace.api.model.ApplyTokenAuditStatus;
+import io.etrace.api.model.TokenStatus;
 import io.etrace.api.model.po.ui.ApiToken;
 import io.etrace.api.model.po.ui.ApplyTokenLog;
 import io.etrace.api.model.po.user.ETraceUser;

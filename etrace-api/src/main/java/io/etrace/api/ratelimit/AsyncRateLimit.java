@@ -51,7 +51,6 @@ public class AsyncRateLimit extends AbstractRateLimit {
             LOGGER.error("the config size is not zero:{}", configList);
             return null;
         }
-
         String config = configList.get(0).getValue();
         if (Strings.isNullOrEmpty(config)) {
             LOGGER.error("the config value is empty:{}", configList);

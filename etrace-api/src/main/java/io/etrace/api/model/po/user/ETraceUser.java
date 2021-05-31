@@ -17,24 +17,22 @@
 package io.etrace.api.model.po.user;
 
 import io.etrace.api.consts.RoleType;
-import io.etrace.api.model.po.BasePersistentObject;
+import io.etrace.api.model.po.BaseObject;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-@Entity(name = "user")
-//@EqualsAndHashCode(callSuper = true)
-public class ETraceUser extends BasePersistentObject implements Cloneable, UserDetails {
+public class ETraceUser extends BaseObject implements Cloneable, UserDetails {
 
     /**
      * 可重复（不过应尽量避免）
@@ -49,13 +47,24 @@ public class ETraceUser extends BasePersistentObject implements Cloneable, UserD
     private Set<String> roles;
 
     @Transient
-    private UserConfig userConfig;
-
+    private UserConfigPO userConfig;
     /**
      * 默认是非api访问
      */
     @Transient
     private Boolean isApiUser = Boolean.FALSE;
+
+    public static ETraceUser toVO(ETraceUserPO po) {
+        ETraceUser vo = new ETraceUser();
+        BeanUtils.copyProperties(po, vo);
+        return vo;
+    }
+
+    public ETraceUserPO toPO() {
+        ETraceUserPO po = new ETraceUserPO();
+        BeanUtils.copyProperties(this, po);
+        return po;
+    }
 
     @Override
     public ETraceUser clone() {
@@ -66,7 +75,6 @@ public class ETraceUser extends BasePersistentObject implements Cloneable, UserD
         clone.email = email;
         clone.roles = roles;
         clone.userConfig = userConfig;
-        clone.isApiUser = isApiUser;
         return clone;
     }
 

@@ -1,0 +1,20 @@
+.ant-tree {
+  li {
+    .ant-tree-node-content-wrapper {
+      &.ant-tree-node-selected,
+      &:hover {
+        background-color: @dark-color-item-hover-bg-dark;
+      }
+    }
+    .ant-tree-child-tree {
+      li {
+        .ant-tree-node-content-wrapper {
+          &.ant-tree-node-selected,
+          &:hover {
+            background-color: @dark-color-item-hover-bg-dark;
+          }
+        }
+      }
+    }
+  }
+}

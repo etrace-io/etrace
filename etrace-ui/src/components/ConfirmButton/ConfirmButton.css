@@ -1,0 +1,67 @@
+.btn-confirm-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: rgba(24,144,255,0.8);
+    transition-property: width;
+    transition-duration: 1500ms;
+}
+.ant-btn-primary .btn-confirm-mask {
+    background-color: rgba(0,0,0,0.4);
+}
+.ant-btn-danger .btn-confirm-mask {
+    background-color: #f70014;
+}
+.btn-confirm-mask.loading {
+    width: 100%;
+}
+.confirm-btn {
+    overflow: hidden;
+}
+.confirm-btn span {
+    position: relative;
+    transition: opacity 0.25s;
+}
+.confirm-btn:hover span {
+    opacity: 0;
+}
+.confirm-hover-tip{
+    background-color: #fff;
+}
+.ant-btn-primary .confirm-hover-tip{
+    background-color: rgba(0,0,0,0.4);
+}
+.ant-btn-danger .confirm-hover-tip{
+    background-color: #f70014;
+    color: #fff;
+}
+.confirm-btn:hover .confirm-hover-tip {
+    opacity: 1;
+}
+.confirm-btn:active span,
+.confirm-btn:focus span,
+.confirm-btn:hover:focus .confirm-hover-tip,
+.confirm-btn:hover:active span,
+.confirm-btn:hover:active:focus span {
+    opacity: 1;
+}
+.confirm-btn:active .confirm-hover-tip,
+.confirm-btn:focus .confirm-hover-tip,
+.confirm-btn:hover:focus span,
+.confirm-btn:hover:active .confirm-hover-tip,
+.confirm-btn:hover:active:focus .confirm-hover-tip {
+    opacity: 0;
+}
+.confirm-btn .confirm-hover-tip {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+}

@@ -1,0 +1,37 @@
+.callstack-header,
+.callstack-table-header,
+.transaction-detail-wrapper,
+.transaction-detail-wrapper .transaction-detail-card {
+  border-color: @dark-color-border;
+}
+.callstack-table-one-line {
+  border-color: @dark-color-border;
+  padding: 5px 0;
+
+  & > div {
+    vertical-align: middle;
+  }
+
+  .callstack-table-col-duration-container {
+    border-color: #666 !important;
+    .callstack-table-col-duration {
+      background-color: #86bd10;
+    }
+  }
+  .callstack-table-col-description {
+    padding: 0 5px;
+    .anticon {
+      color: @dark-color-text !important;
+    }
+    .callstack-table-col-description-content {
+      color: #f7c229;
+      box-sizing: border-box;
+      b {
+        color: #ee7800;
+      }
+      a {
+        padding-left: 0.3em;
+      }
+    }
+  }
+}

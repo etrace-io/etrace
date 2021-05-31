@@ -19,7 +19,9 @@ package io.etrace.common.pipeline;
 import io.etrace.common.pipeline.impl.DefaultSyncTask;
 import io.etrace.common.pipeline.impl.Task;
 import io.etrace.common.sharding.ShardingStrategy;
+import io.etrace.common.sharding.impl.HashingStrategy;
 import io.etrace.common.sharding.impl.RoundRobinStrategy;
+import lombok.Getter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -32,10 +34,13 @@ import java.util.Optional;
 @org.springframework.stereotype.Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TaskPool implements BeanFactoryAware {
+    @Getter
     private int taskSize = 1;
-    private Task[] tasks;
-    private ShardingStrategy shardingStrategy;
+    @Getter
+    private ShardingStrategy shardingStrategy = new HashingStrategy();
+
     private BeanFactory beanFactory;
+    private Task[] tasks;
 
     public TaskPool() {
     }
@@ -58,7 +63,6 @@ public class TaskPool implements BeanFactoryAware {
         } else {
             tasks = new Task[taskSize];
             for (int i = 0; i < taskSize; i++) {
-                // todo: HDFSProcessor.java:69 居然依赖这里的naming pattern
                 String taskName = String.format("%s-%s-%d-%d", component.getPipeline(), component.getName(), i,
                     taskSize);
 

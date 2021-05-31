@@ -1,0 +1,39 @@
+.e-monitor-content-list {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  .e-monitor-content-list-item {
+    margin: 0 var(--space-between) var(--space-between) 0 !important;
+
+    .e-monitor-content-list-item-meta {
+      //padding: 0 10px;
+      height: 56px;
+
+      .ant-card-meta-title {
+        font-size: 14px;
+        margin-top: 6px;
+
+        .e-monitor-content-list-item-title {
+        }
+      }
+
+      .e-monitor-content-list-item-desc {
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        font-size: 12px;
+        /* autoprefixer: off */
+        -webkit-box-orient: vertical;
+        /* autoprefixer: on */
+      }
+    }
+
+    .ant-card-actions > li {
+      margin: 5px 0;
+      & > * {
+        width: 100%;
+      }
+    }
+  }
+}

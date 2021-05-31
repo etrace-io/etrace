@@ -1,0 +1,74 @@
+.loading-container {
+    width: 100%;
+    min-height: 100%;
+    background: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg') no-repeat center;
+    /*#f0f2f5*/
+    background-size: 100%;
+    position: relative;
+}
+.loading-container .loading-container-spin {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.anticon.iconfont.prefer-iconfont:before {
+    font-family: "iconfont" !important;
+}
+
+.anticon.iconfont.prefer-anticon:before {
+    font-family: "anticon" !important;
+}
+
+.ant-menu-vertical .ant-menu-item:not(:last-child) {
+    margin-bottom: 0 !important;
+}
+.ant-layout-sider-children > .ant-menu {
+    padding-bottom: 48px;
+}
+
+.child-has-space {
+    margin: -2px;
+}
+
+.table-background {
+    background-color: #fff;
+}
+
+.jvm_table_head {
+    width: auto;
+    float: left;
+    font-weight: lighter;
+}
+
+.child-has-space .child-has-space {
+    margin: 0;
+    padding: 0;
+}
+
+.child-has-space > div {
+    padding: 2px;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c9cacd;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}

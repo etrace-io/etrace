@@ -36,6 +36,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SimpleWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public static final String MOCK_PASSWORD = "123456";
+
     public static final String[] AUTH_WHITELIST = {
         "/actuator",
         // -- swagger ui

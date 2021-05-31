@@ -12,17 +12,26 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-@ConfigurationProperties(prefix = "collector")
+@ConfigurationProperties(prefix = "etrace.collector")
 @Data
 public class CollectorProperties {
     private ClusterConfig cluster;
     private Map<String, ShardingConfig> sharding;
     private List<Resource> resources;
+    private QueueProperties queue;
+
+    @Data
+    public static class QueueProperties {
+        private String path;
+        private int memoryCapacity;
+        private int maxFileSize;
+    }
 
     @Data
     public static class ClusterConfig {
         private String name;
         private String defaultCluster;
+        private String zkPath;
         private Register register;
         private Set<Mapping> mapping;
     }

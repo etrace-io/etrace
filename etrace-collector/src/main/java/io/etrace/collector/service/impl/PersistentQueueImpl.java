@@ -1,6 +1,6 @@
 package io.etrace.collector.service.impl;
 
-import io.etrace.collector.config.Config;
+import io.etrace.collector.config.CollectorProperties;
 import io.etrace.collector.model.BinaryPairCodec;
 import io.etrace.collector.service.PersistentQueueProvider;
 import io.etrace.common.message.trace.MessageHeader;
@@ -17,14 +17,13 @@ public class PersistentQueueImpl implements PersistentQueueProvider<Pair<Message
     public static final String INCOMING_QUEUE = "incoming_queue";
 
     @Autowired
-    private Config config;
-
+    private CollectorProperties collectorProperties;
     @Override
     public PersistentQueue<Pair<MessageHeader, byte[]>> getPersistentQueue(String name, int idx) {
         QueueConfig queueConfig = new QueueConfig();
-        queueConfig.setMemoryCapacity(config.getQueue().getMemoryCapacity());
-        queueConfig.setMaxFileSize(config.getQueue().getMaxFileSize() * 1024);
-        queueConfig.setRootPath(config.getQueue().getPath());
+        queueConfig.setMemoryCapacity(collectorProperties.getQueue().getMemoryCapacity());
+        queueConfig.setMaxFileSize(collectorProperties.getQueue().getMaxFileSize() * 1024);
+        queueConfig.setRootPath(collectorProperties.getQueue().getPath());
         queueConfig.setName(name);
         queueConfig.setIdx(idx);
         PersistentQueue persistentQueue = new MappedFileQueue<>(INCOMING_QUEUE, queueConfig);

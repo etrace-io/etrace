@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static io.etrace.consumer.metrics.MetricName.*;
@@ -31,20 +32,32 @@ import static io.etrace.consumer.metrics.MetricName.*;
 @Service
 public class MetricsService {
 
-    private Cache<String, Counter> invalidCache;
-    private Map<String, Timer> hBaseWriteTimer;
-    private Map<String, Counter> hBaseWriteCounter;
-    private Counter hbaseWriteErrorCounter;
+    private final Cache<String, Counter> invalidCache;
+    private final Cache<String, Counter> SamplingCountCache;
+    private final Map<String, Timer> hBaseWriteTimer;
+    private final Map<String, Counter> hBaseWriteCounter;
+    private final Counter hbaseWriteErrorCounter;
 
     public MetricsService() {
         invalidCache = CacheBuilder.newBuilder().maximumSize(512).expireAfterAccess(5, TimeUnit.MINUTES).build();
+        SamplingCountCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
         hBaseWriteCounter = new HashMap<>();
         hBaseWriteTimer = new HashMap<>();
 
         hbaseWriteErrorCounter = Metrics.counter(HBASE_FAIL, Tags.empty());
     }
 
+    public void samplingCount(String metricName) {
+        Counter counter = SamplingCountCache.getIfPresent(metricName);
+        if (null == counter) {
+            counter = Metrics.counter(METRIC_SAMPLING_COUNT, Tags.of(Tag.of("metricName", metricName)));
+            SamplingCountCache.put(metricName, counter);
+        }
+        counter.increment();
+    }
+
     public void invalidCallStack(String type, String appId) {
+        appId = Optional.ofNullable(appId).orElse("nullAppId");
         Counter counter = invalidCache.getIfPresent(type.concat("#").concat(appId));
         if (null == counter) {
             counter = Metrics.counter(CALLSTACK_CHECK_INVALID, Tags.of(Tag.of("type", type), Tag.of("agent", appId)));

@@ -1,0 +1,74 @@
+.ant-tag {
+  // 默认样式
+  &:not(.ant-tag-checkable) {
+
+    border-color: lighten(@dark-color-light-background, 10%);
+    background-color: @dark-color-light-background;
+  }
+
+  // 可 check 的 tag
+  &.ant-tag-checkable {
+
+    &.ant-tag-checkable-checked {
+      background: lighten(@dark-color-item-select-bg, 15%);
+      border-color: transparent;
+      color: @dark-color-text-light;
+      &:hover {
+        color: @dark-color-text-light;
+      }
+    }
+    &:hover {
+      color: @dark-color-major;
+    }
+    &:active {
+      background: @dark-color-item-hover-bg;
+    }
+  }
+
+  color: darken(@dark-color-text-gray, 15%);
+
+  @colors: pink, magenta, red, volcano, orange, yellow, gold, cyan, lime, green, blue, geekblue, purple;
+
+  @dark-tag-pink: fade(#e9546b, 50%);
+  @dark-tag-magenta: fade(#da003d, 50%);
+  @dark-tag-red: fade(#ad002d, 65%);
+  @dark-tag-volcano: fade(#ea5506, 50%);
+  @dark-tag-orange: fade(#ee7800, 65%);
+  @dark-tag-yellow: fade(#ffd900, 50%);
+  @dark-tag-gold: fade(#f7c229, 55%);
+  @dark-tag-cyan: fade(#5bad92, 65%);
+  @dark-tag-lime: fade(#ccde68, 70%);
+  @dark-tag-green: fade(#6cbb5a, 60%);
+  @dark-tag-blue: fade(#0095d9, 60%);
+  @dark-tag-geekblue: fade(#005baa, 60%);
+  @dark-tag-purple: fade(#772f6d, 50%);
+
+  .make-color-classes(@i: length(@colors)) when (@i > 0) {
+    .make-color-classes(@i - 1);
+
+    @color: extract(@colors, @i);
+    @backgroundColor: "dark-tag-@{color}";
+
+    &-@{color} {
+      border-color: transparent !important;
+      color: lighten(fade(@@backgroundColor, 100%), 10%);
+      background: @@backgroundColor !important;
+    }
+  }
+
+  .make-color-classes();
+
+  // 报警、变更事件按钮
+  &.change-event {
+    border-color: @colorblind-color-success !important;
+    background-color: #6cbb5a !important;
+  }
+  &.alert-event {
+    border-color: @colorblind-color-error !important;
+    background-color: #da003d !important;
+  }
+  &.change-event-uncheck,
+  &.alert-event-uncheck {
+    border-color: @dark-color-border !important;
+  }
+}

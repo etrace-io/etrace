@@ -1,0 +1,30 @@
+.emonitor-page {
+  height: 100%;
+  transform: translate(0);
+}
+
+.emonitor-sider {
+  height: 100%;
+  overflow: hidden;
+
+  .ant-layout-sider-children {
+    overflow: auto;
+
+    .ant-menu {
+      height: 100%;
+
+      .ant-menu-item {
+        margin: 0;
+      }
+    }
+  }
+  .ant-layout-sider-trigger {
+    border-top: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+    bottom: 1px;
+  }
+}
+
+.emonitor-content {
+  flex: 1;
+}

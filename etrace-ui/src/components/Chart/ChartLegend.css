@@ -1,0 +1,240 @@
+.emonitor-chart-wrapper {
+    height: 280px;
+    /*text-align: center;*/
+    display: flex;
+    flex-direction: column;
+    /*align-items: center;*/
+    position: relative;
+}
+
+.emonitor-chart-wrapper-height-280 {
+    height: 280px;
+}
+
+.emonitor-chart-wrapper-height-480 {
+    height: 480px;
+}
+
+.emonitor-chart-wrapper > div[data-highcharts-chart] {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Legend 于右侧样式 */
+.emonitor-chart-wrapper.legend-to-right {
+    flex-direction: row;
+}
+
+.emonitor-chart-wrapper.legend-to-right > div[data-highcharts-chart] {
+    flex: 1;
+    width: auto;
+    height: 100%;
+}
+
+.emonitor-chart-wrapper.legend-to-right > .emonitor-chart-legend-wrapper {
+    align-self: flex-start;
+    min-height: 100%;
+    /*flex: 1;*/
+    flex-shrink: 1;
+    /*max-width: 40%;*/
+}
+
+.emonitor-chart-wrapper.legend-to-right .emonitor-chart-legend-series {
+    display: block;
+    text-align: left;
+}
+
+/*.emonitor-chart-wrapper.legend-to-right .emonitor-chart-legend {*/
+/*height: 100%;*/
+/*display: block;*/
+/*text-align: left;*/
+/*!*max-width: 300px;*!*/
+/*}*/
+/*.emonitor-chart-wrapper.legend-to-right .emonitor-chart-legend {*/
+/*width: 100%;*/
+/*}*/
+
+/* Legend 于下方样式 */
+.emonitor-chart-legend-wrapper {
+    display: inline-block;
+    overflow: auto;
+    flex-shrink: 0;
+    user-select: none;
+    font-size: 0;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c9cacd;
+    border-radius: 3px;
+}
+
+.emonitor-chart-legend {
+    display: inline-block;
+}
+
+/* asTable 时表头相关 */
+.emonitor-chart-legend-table-header {
+    display: table-row;
+}
+
+.emonitor-chart-legend-th-content {
+    display: table-cell;
+    text-align: right;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 6px;
+    color: #1890ff;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.emonitor-chart-legend-th-content.order::after {
+    display: inline-block;
+    padding: 0 0 0 4px;
+    content: "▲";
+    /*transition: all 0.2s;*/
+    transform: rotateX(0);
+}
+
+.emonitor-chart-legend-th-content.order.desc::after {
+    /*padding: 0 4px 0 0;*/
+    transform: rotateX(180deg);
+}
+
+.emonitor-chart-legend-th-content.no-pointer {
+    cursor: default;
+    text-align: left;
+}
+
+/* 各 Series 对应的 Legend */
+.emonitor-chart-legend-series {
+    display: inline-block;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0 5px;
+    opacity: 0.35;
+    transition: opacity 0.25s;
+}
+
+.emonitor-chart-legend-series.selected {
+    opacity: 1;
+}
+
+.emonitor-chart-legend-series.hidden {
+    visibility: collapse;
+}
+
+/* Legend icon 标识 */
+.emonitor-chart-legend-icon-wrapper {
+    display: inline-block;
+    text-align: center;
+    padding-right: 4px;
+}
+
+.emonitor-chart-legend-icon-wrapper .emonitor-chart-legend-icon {
+    display: inline-block;
+    height: 3px;
+    width: 15px;
+    vertical-align: middle;
+    transform: translateY(-1px);
+    position: relative;
+}
+
+.emonitor-chart-legend-icon-wrapper .emonitor-chart-legend-icon.round {
+    height: 10px;
+    width: 10px;
+    border-radius: 5px;
+}
+
+.emonitor-chart-legend-icon-wrapper .emonitor-chart-legend-icon.point {
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+}
+
+.tooltip-point {
+    display: inline-block;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+}
+
+.emonitor-chart-legend-icon-wrapper .emonitor-chart-legend-icon.point::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /*top: 3px;*/
+    transform: translate(-50%, -50%);
+    background-color: inherit;
+    border-radius: 50%;
+}
+
+/* Legend Alias */
+.emonitor-chart-legend-alias {
+    padding: 0 5px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* Legend 内显示的 value */
+.emonitor-chart-legend-value {
+    display: inline-block;
+    padding: 0 6px;
+}
+
+/* 垂直样式 */
+.emonitor-chart-legend-wrapper.layout-vertical .emonitor-chart-legend-series {
+    display: block;
+    text-align: left;
+}
+
+/* 表格样式 */
+.emonitor-chart-legend-wrapper.as-table {
+    max-height: 100px;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend {
+    display: table;
+    padding: 0 4px;
+    width: 100%;
+    margin: 0;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-series {
+    display: table-row;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-series:nth-child(even) {
+    /*background-color: #f0f2f5;*/
+}
+
+/*.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-icon-wrapper,*/
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-alias,
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-value {
+    display: table-cell;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-value {
+    text-align: right;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-alias {
+    text-align: left;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-value-label {
+    display: none;
+}
+
+.emonitor-chart-legend-wrapper.as-table .emonitor-chart-legend .emonitor-chart-legend-search {
+    width: 100%;
+}

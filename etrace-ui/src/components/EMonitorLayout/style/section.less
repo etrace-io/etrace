@@ -1,0 +1,121 @@
+@import "../../../styles/index";
+
+@section-prefix-cls: ~'@{emonitor-prefix}-section';
+
+.@{section-prefix-cls} {
+  padding: var(--space-between) 0 0 var(--space-between);
+  display: flex;
+  background: var(--component-background);
+
+  &-fullscreen {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &-vertical {
+    flex-direction: column;
+  }
+
+  &-scroll {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+  }
+
+  & > & {
+    padding: 0;
+  }
+}
+
+.@{section-prefix-cls}-item {
+  margin: 0 var(--space-between) var(--space-between) 0;
+
+  &-fullscreen {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &-scroll {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+  }
+
+  // Item 嵌套 Section 问题
+  & > .@{section-prefix-cls} {
+    padding: 0;
+  }
+
+  & & {
+    margin-right: 0;
+  }
+}
+// Card Section
+.@{section-prefix-cls}-card {
+  margin: 0 var(--space-between) var(--space-between) 0;
+
+  & > .ant-card-body {
+    padding: var(--space-between) 0 0 var(--space-between);
+    display: flex;
+    width: 100%;
+  }
+
+  &.@{section-prefix-cls}-vertical {
+    flex-direction: unset;
+
+    & > .ant-card-body {
+      flex-direction: column;
+    }
+  }
+}
+
+// Card Section Item
+.@{section-prefix-cls}-item {
+  & > .ant-card-body {
+    padding: var(--space-between);
+  }
+}
+
+// Tab Section Item 样式处理
+.@{section-prefix-cls}-item-tabs {
+  & > .ant-card-body {
+    padding: 0;
+  }
+
+  .ant-tabs-nav {
+    margin-bottom: 0;
+    padding: 0 15px 0;
+  }
+
+  .ant-tabs-content {
+    padding: var(--space-between);
+  }
+
+  &.@{section-prefix-cls}-item-fullscreen {
+    & > .ant-card-body, .ant-tabs {
+      height: 100%;
+    }
+
+    .ant-tabs-content-holder {
+      overflow: hidden;
+    }
+
+    .ant-tabs-content {
+      height: 100%;
+      overflow: hidden;
+    }
+  }
+
+  &.@{section-prefix-cls}-item-scroll {
+    overflow: hidden;
+
+    .ant-tabs-content-holder {
+      overflow: auto;
+    }
+
+    .ant-tabs-content {
+      height: auto;
+      overflow: unset;
+    }
+  }
+}

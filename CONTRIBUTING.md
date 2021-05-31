@@ -52,6 +52,17 @@ gpg --keyserver hkp://pool.sks-keyservers.net --send-keys YOUR_KEY_ID
 ```
 
 ---
+# Follow the git commit message rule with *Conventional Commits*
+
+## What is *Conventional Commits*
+
+Go to read its [explanation](https://www.conventionalcommits.org/en/v1.0.0/), which contributes to the changes among codes.
+
+## Any tools to help?
+
+Sure. IDE families of JetBrains provides a excellent plugin [Git Commit Template](https://plugins.jetbrains.com/plugin/9861-git-commit-template).
+
+---
 
 # Continues Integration
 

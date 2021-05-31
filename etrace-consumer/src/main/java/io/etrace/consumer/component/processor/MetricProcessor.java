@@ -7,6 +7,7 @@ import io.etrace.common.pipeline.Component;
 import io.etrace.common.pipeline.Processor;
 import io.etrace.common.pipeline.impl.DefaultAsyncTask;
 import io.etrace.common.util.Pair;
+import io.etrace.consumer.metrics.MetricsService;
 import io.etrace.consumer.service.HBaseBuildService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
@@ -31,6 +32,8 @@ public class MetricProcessor extends DefaultAsyncTask implements Processor {
     private FramedMetricMessageCodec codec;
     @Autowired
     private HBaseBuildService hBaseBuildService;
+    @Autowired
+    private MetricsService metricsService;
     private Counter noSamplingCounter;
 
     public MetricProcessor(String name, Component component, Map<String, Object> params) {
@@ -60,6 +63,8 @@ public class MetricProcessor extends DefaultAsyncTask implements Processor {
                         if (null == pair) {
                             noSamplingCounter.increment();
                         } else {
+                            metricsService.samplingCount(metric.getMetricName());
+
                             component.dispatchAll(pair.getKey(), pair.getValue());
                         }
                     } catch (Exception e) {

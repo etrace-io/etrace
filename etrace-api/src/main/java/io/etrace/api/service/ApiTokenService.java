@@ -1,9 +1,9 @@
 package io.etrace.api.service;
 
 import io.etrace.api.consts.ApiAccessStatus;
-import io.etrace.api.consts.ApplyTokenAuditStatus;
-import io.etrace.api.consts.TokenStatus;
 import io.etrace.api.exception.UnauthorizedException;
+import io.etrace.api.model.ApplyTokenAuditStatus;
+import io.etrace.api.model.TokenStatus;
 import io.etrace.api.model.po.ui.ApiToken;
 import io.etrace.api.model.po.ui.ApplyTokenLog;
 import io.etrace.api.model.po.user.ETraceUser;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 
@@ -54,6 +55,7 @@ public class ApiTokenService {
         return apiTokenMapper.findAll();
     }
 
+    @Transactional
     public ApiToken create(ApiToken apiToken) throws Exception {
         if (null == apiToken || StringUtils.isEmpty(apiToken.getUserEmail())) {
             throw new IllegalArgumentException("illegal param");
@@ -74,11 +76,8 @@ public class ApiTokenService {
         return apiTokenMapper.save(apiToken);
     }
 
-    //protected void update(ApiToken apiToken) {
-    //
-    //    apiTokenMapper.save(apiToken);
-    //}
 
+    @Transactional
     public void updateApiTokenStatus(Long id, TokenStatus status, String updatedBy) {
         Optional<ApiToken> token = apiTokenMapper.findById(id);
         token.ifPresent(t -> {

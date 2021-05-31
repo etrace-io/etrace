@@ -1,0 +1,19 @@
+.meta-info-list-card .ant-card-head-title {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 8px;
+}
+.meta-info-list-card .ant-card-body {
+    display: flex;
+    flex-direction: column;
+}
+.meta-info-list-table {
+    /*font-size: 18px;*/
+    /*font-weight: bold;*/
+    margin-top: 8px;
+    flex: 1;
+}
+
+.meta-info-list-table {
+
+}

@@ -2,12 +2,14 @@ package io.etrace.api.ratelimit;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Set;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class RateLimitConfig {
 
     /**

@@ -32,12 +32,12 @@ import static io.etrace.common.pipeline.PipelineRepository.PIPELINE_PATH;
 public class EPTask extends DefaultAsyncTask implements Processor {
     private final static Logger LOGGER = LoggerFactory.getLogger(EPTask.class);
     private static final long CHECK_FLUSH_INTERVAL = 5000;
-    private EPEngine epEngine;
+    private final EPEngine epEngine;
     private String[] epls;
     private ScheduledExecutorService scheduledExecutorService;
 
     @Value("${etrace.stream.outputDetailEpl:false}")
-    private boolean outputDetailEpl = false;
+    private final boolean outputDetailEpl = false;
 
     public EPTask(String name, Component component, Map<String, Object> params) {
         super(name, component, params);

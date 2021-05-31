@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,20 +43,26 @@ public class EPEngine {
     private final static int DEFAULT_TIME_WINDOW = 5;
     EPAdministrator epAdmin;
     boolean outputDetailEpl;
-    private long flushSize;
-    private int flushInterval;
+    /*
+    进行聚合计算的数量。增大可减少输出的metrics数量，但会需要更多内存
+     */
+    private int flushSize = 30000;
+    /*
+    固定的flush间隔
+     */
+    private int flushInterval = 5000;
     private long timestamp = System.currentTimeMillis();
-    private EPEngineStat stat;
-    private Component component;
+    private final EPEngineStat stat;
+    private final Component component;
     private EPServiceProvider epServiceProvider;
     private EPRuntime epRuntime;
     private StatementAwareUpdateListener listener;
-    private String name;
-    private Configuration configuration;
-    private EPAnnotationProcessorManager epAnnotationProcessorManager;
-    private AtomicBoolean initialised;
-    private Map<String, Object> params;
-    private Map<Class, String> eventTypeCache;
+    private final String name;
+    private final Configuration configuration;
+    private final EPAnnotationProcessorManager epAnnotationProcessorManager;
+    private final AtomicBoolean initialised;
+    private final Map<String, Object> params;
+    private final Map<Class, String> eventTypeCache;
 
     EPEngine(String name, boolean outputDetailEpl, Component component, Map<String, Object> params) {
         this.name = name;
@@ -65,8 +70,12 @@ public class EPEngine {
         this.component = component;
         this.configuration = EPConfigurationFactory.createEPConfiguration();
         this.epAnnotationProcessorManager = new EPAnnotationProcessorManager();
-        this.flushSize = (long)Optional.ofNullable(params.get("flush.size")).orElse(300L);
-        this.flushInterval = (int)Optional.ofNullable(params.get("flush.interval")).orElse(1000);
+        if (params.containsKey("flush.size")) {
+            this.flushSize = Integer.parseInt(params.get("flush.size").toString());
+        }
+        if (params.containsKey("flush.interval")) {
+            this.flushInterval = Integer.parseInt(params.get("flush.interval").toString());
+        }
 
         this.eventTypeCache = new ConcurrentHashMap<>();
         this.stat = new EPEngineStat(name, component);

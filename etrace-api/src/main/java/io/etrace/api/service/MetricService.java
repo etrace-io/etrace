@@ -3,12 +3,9 @@ package io.etrace.api.service;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.etrace.agent.Trace;
-import io.etrace.api.consts.LimitQueryType;
 import io.etrace.api.exception.BadRequestException;
-import io.etrace.api.model.po.misc.LimitSql;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.common.constant.Constants;
-import io.etrace.common.constant.Status;
 import io.etrace.common.datasource.MetricBean;
 import io.etrace.common.datasource.MetricDatasourceService;
 import io.etrace.common.datasource.MetricQLBean;
@@ -26,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class MetricService {
@@ -37,8 +33,6 @@ public class MetricService {
     private MetricAsyncQueryService metricAsyncQueryService;
     @Autowired
     private MetricDatasourceService metricDatasourceService;
-    @Autowired
-    private LimitSqlService limitSqlService;
     private Set<String> blackQlMap = new HashSet<>(1000);
 
     private Set<String> blackMeasurementSet = new HashSet<>(100);
@@ -139,27 +133,12 @@ public class MetricService {
             .once();
     }
 
+    /**
+     * update  blackQlMap and blackMeasurementSet based on sql blacklist
+     */
     @Scheduled(initialDelayString = "PT10S", fixedRateString = "PT5M")
     public synchronized void findLimitSql() {
         LOGGER.info("begin to reload limit sql");
-        List<LimitSql> limitSqlList = Lists.newArrayList(limitSqlService.findAll());
-        blackQlMap =
-            limitSqlList.stream().
-                filter(limitSql -> LimitQueryType.SQL.equals(limitSql.getLimitQueryType()) && Status.Active.name()
-                    .equals(limitSql.getStatus())).
-                map(limitSql -> limitSql.getSql()).
-                limit(1000).
-                collect(Collectors.toSet());
-
-        blackMeasurementSet =
-            limitSqlList.stream().
-                filter((LimitSql limitSql) -> LimitQueryType.MEASUREMENT.equals(limitSql.getLimitQueryType())
-                    && Status.Active.name().equals(limitSql.getStatus())).
-                map(limitSql -> limitSql.getMeasurement()).
-                limit(100).
-                collect(Collectors.toSet());
-
-        //
     }
 
     public List<MetricResultSet> queryDataWithMetricBean(List<MetricBean> metricBeanList, ETraceUser user)

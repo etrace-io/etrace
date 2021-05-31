@@ -3,9 +3,9 @@ package io.etrace.api.controller.ui;
 import io.etrace.api.controller.CurrentUser;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.exception.UserForbiddenException;
-import io.etrace.api.model.po.ui.Chart;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.vo.SearchResult;
+import io.etrace.api.model.vo.ui.ChartVO;
 import io.etrace.api.service.ChartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +30,7 @@ public class ChartController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("创建指标")
-    public ResponseEntity save(@RequestBody Chart chart, @CurrentUser ETraceUser user) throws Exception {
+    public ResponseEntity save(@RequestBody ChartVO chart, @CurrentUser ETraceUser user) throws Exception {
         try {
             chart.setUpdatedBy(user.getUsername());
             chart.setCreatedBy(user.getUsername());
@@ -43,7 +43,7 @@ public class ChartController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("更新指标")
-    public void update(@RequestBody Chart chart, @CurrentUser ETraceUser user) throws Exception {
+    public void update(@RequestBody ChartVO chart, @CurrentUser ETraceUser user) throws Exception {
         chartsService.update(chart, user);
     }
 
@@ -59,7 +59,7 @@ public class ChartController {
                                  @RequestParam(value = "status", defaultValue = "Active") String status)
         throws Exception {
         try {
-            SearchResult<Chart> charts = chartsService.search(title, globalId, departmentId, productLineId, user,
+            SearchResult<ChartVO> charts = chartsService.search(title, globalId, departmentId, productLineId, user,
                 pageNum, pageSize, status);
             return ResponseEntity.ok().body(charts);
         } catch (Exception e) {
@@ -71,9 +71,9 @@ public class ChartController {
     @ApiOperation("获取某个指标的详细信息")
     public ResponseEntity findChartById(@PathVariable("id") Long id) throws Exception {
         try {
-            Optional<Chart> chartOp = chartsService.findChartById(id);
-            if (chartOp.isPresent()) {
-                return ResponseEntity.ok().body(chartOp.get());
+            ChartVO chartOp = chartsService.findChartById(id);
+            if (chartOp != null) {
+                return ResponseEntity.ok().body(chartOp);
             }
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class ChartController {
     public void delete(@PathVariable("id") Long id,
                        @RequestParam(value = "status", defaultValue = "Inactive") String status,
                        @CurrentUser ETraceUser user) {
-        Chart chart = new Chart();
+        ChartVO chart = new ChartVO();
         chart.setId(id);
         chart.setUpdatedBy(user.getUsername());
         chart.setStatus(status);
@@ -99,7 +99,7 @@ public class ChartController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "/sync")
     @ApiOperation("同步指标")
-    public void syncChart(@RequestBody Chart chart, @CurrentUser ETraceUser user) throws Exception {
+    public void syncChart(@RequestBody ChartVO chart, @CurrentUser ETraceUser user) throws Exception {
         chartsService.syncMetricConfig(chart, user);
     }
 
@@ -107,7 +107,7 @@ public class ChartController {
     @ApiOperation("校验globalId是否可用")
     public ResponseEntity chechGlobalIsValid(@RequestParam("globalId") String globalId) throws Exception {
         try {
-            Chart chart = chartsService.findByGlobalId(globalId);
+            ChartVO chart = chartsService.findByGlobalId(globalId);
             if (null == chart) {
                 return ResponseEntity.ok(true);
             } else {

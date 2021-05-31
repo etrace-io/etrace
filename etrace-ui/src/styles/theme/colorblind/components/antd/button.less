@@ -1,0 +1,54 @@
+// 按钮组
+.ant-btn-group {
+  .ant-btn {
+    border-color: @dark-color-border !important;
+
+    &[disable] {
+      background-color: @dark-color-disable-background !important;
+      border-color: @dark-color-border;
+    }
+  }
+}
+
+.ant-btn {
+  color: @dark-color-text;
+  border-color: @dark-color-border !important;
+
+  &[disabled] {
+    background-color: @dark-color-disable-background !important;
+    color: @dark-color-disable-text !important;
+    border-color: @dark-color-border;
+  }
+
+  @dark-btn-color-danger: @colorblind-color-error;
+  @dark-btn-color-success: @colorblind-color-success;
+
+  &-danger {
+    background: @dark-btn-color-danger;
+    color: #fff;
+
+    &:hover {
+      background: lighten(@dark-btn-color-danger, 5%);
+    }
+  }
+
+  &.change-event {
+    color: #fff !important;
+    background-color: fade(@dark-btn-color-success, 80%) !important;
+  }
+
+  &.change-event-uncheck {
+    color: @dark-btn-color-success !important;
+  }
+
+  &.alert-event {
+    margin-left: 5px;
+    color: #fff !important;
+    background-color: fade(@dark-btn-color-danger, 80%) !important;
+  }
+
+  &.alert-event-uncheck {
+    margin-left: 5px;
+    color: @dark-btn-color-danger !important;
+  }
+}

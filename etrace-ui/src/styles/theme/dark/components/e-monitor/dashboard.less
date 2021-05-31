@@ -1,0 +1,41 @@
+.dashboard-selector {
+  .dashboard-selector__list {
+    .dashboard-selector__list-item__drag-wrapper {
+      border-bottom-color: @dark-color-gray;
+    }
+  }
+}
+
+.e-monitor-dashboard-graph-editor {
+  .graph-editor__toolbar {
+    span[data-command] {
+      .anticon {
+        color: #bfbfbf;
+
+        &.disable {
+          color: #666;
+        }
+      }
+    }
+  }
+
+  .graph-editor-panels-container {
+    .graph-editor__panel {
+      &.detail-panel {
+        background: #242424;
+      }
+      &.node-selector {
+        background: #242424;
+      }
+      .ant-card-head {
+        background: unset;
+      }
+    }
+  }
+}
+
+.e-monitor-dashboard-graph-view__container {
+  .g6-grid {
+    opacity: 0.2;
+  }
+}

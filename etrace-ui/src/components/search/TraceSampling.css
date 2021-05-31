@@ -1,0 +1,40 @@
+.request-table,
+.order-ship-table {
+    margin-bottom: 40px;
+}
+
+.request-table table {
+    padding: 0 !important;
+}
+
+.request-table .ant-table-row,
+.order-ship-table .ant-table-row {
+    /*background-color: #fff;*/
+}
+
+.order-ship-table table {
+    padding: 0 !important;
+}
+
+.request-table .request-table-duration {
+    min-width: 120px;
+    width: 99%;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 1.5em;
+    border-radius: 0;
+    border: 1px solid #666;
+    position: relative;
+    overflow: hidden;
+}
+
+.request-table .request-table-duration .request-table-duration-background {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: #b7eb8f;
+}
+
+.request-table .request-table-duration span {
+    position: relative;
+}

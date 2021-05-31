@@ -1,0 +1,153 @@
+@tooltip-border-color: #e1e1e1;
+@tooltip-shadow: 0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08), 0 9px 28px 8px rgba(0,0,0,.05);
+//@tooltip-border-color: #c0c2c8;
+
+.emonitor-chart-tooltip {
+  box-shadow: @tooltip-shadow;
+  border: 1px solid @tooltip-border-color;
+  //border: 1px solid #c0c2c8;
+  color: #3f3f3f;
+  border-radius: 2px;
+  line-height: 1em;
+  font-size: 12px;
+  min-height: 50px;
+  transition: opacity .2s ease-in;
+  position: absolute;
+  z-index: 9999;
+  //max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+
+  &.fixed {
+    position: fixed;
+  }
+
+  &.hide {
+    display: none;
+  }
+
+  &.in-chart {
+    transform: translateY(-50%);
+  }
+
+  .tooltip-top-kick {
+    background-color: #fff;
+    box-shadow: @tooltip-shadow;
+    border: 1px solid @tooltip-border-color;
+    height: 20px;
+    left: 18px;
+    position: absolute;
+    transform: rotate(45deg) skew(10deg, 10deg) translate(-70%, 16%);
+    width: 20px;
+    z-index: 1;
+  }
+
+  .tooltip-title {
+    border-bottom: 1px solid @tooltip-border-color;
+    position: relative;
+    background: #fff;
+    z-index: 2;
+    padding: 0.5em 0.5em;
+    white-space: nowrap;
+    color: #3f3f3f;
+    font-family: monospace;
+    display: flex;
+    /*justify-content: space-between;*/
+    align-items: center;
+    flex-shrink: 0;
+    //overflow: hidden;
+
+    time {
+      flex: 1 0 auto;
+      text-align: center;
+    }
+  }
+}
+
+.tooltip-toolbar {
+  width: 100%;
+  .toolbar-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .tooltip-curr-time {
+      //vertical-align: middle;
+    }
+    .tooltip-btn-group {
+      //float: right;
+      //margin-left: auto;
+    }
+  }
+  //width: 100%;
+  .tooltip-toolbar-btn > .anticon {
+    vertical-align: text-top;
+  }
+
+  .tooltip-toolbar__search-input {
+    margin-top: 0.5em;
+    display: block;
+    max-width: 100%;
+  }
+}
+
+.tooltip-content-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0.6em;
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  color: #5c5e62;
+  width: 100%;
+  flex: 1;
+
+  .tooltip-list {
+    width: 100%;
+    display: table;
+  }
+
+  .tooltip-empty-tip {
+    padding: 0.8em 0;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.25);
+    font-size: 14px;
+  }
+}
+
+.tooltip-content-list-item {
+  display: table-row;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+
+  &.selected {
+    opacity: 1;
+  }
+
+  .tooltip-series-key {
+    display: table-cell;
+    padding: 5px 0 5px 10px;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+
+    .tooltip-series-icon {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .tooltip-series-label {
+      padding: 0 0.6em;
+    }
+  }
+
+  .tooltip-series-value {
+    display: table-cell;
+    padding: 0 10px;
+    text-align: right;
+    font-family: monospace;
+  }
+}

@@ -1,0 +1,42 @@
+.ant-transfer {
+  &-list {
+    border-color: @dark-color-border;
+
+    .ant-transfer-list-header {
+      border-color: @dark-color-border;
+      color: @dark-color-disable-text-light;
+    }
+
+    .ant-transfer-list-body {
+      .ant-transfer-list-body-search-wrapper {
+        .ant-transfer-list-search-action {
+          .anticon {
+            color: @dark-color-input-placeholder;
+          }
+        }
+      }
+
+      ul.ant-transfer-list-content {
+
+        @keyframes transferHighlightIn {
+          0% {
+            background: @dark-color-light-background;
+          }
+          100% {
+            background: transparent;
+          }
+        }
+
+        .ant-transfer-list-content-item {
+          &:hover {
+            background: @dark-color-item-hover-bg;
+          }
+        }
+      }
+
+      .ant-transfer-list-body-not-found {
+        color: @dark-color-disable-text-light;
+      }
+    }
+  }
+}

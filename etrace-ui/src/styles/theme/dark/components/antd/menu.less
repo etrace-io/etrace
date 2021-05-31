@@ -1,0 +1,40 @@
+.ant-menu {
+  color: @dark-color-text;
+  background: unset;
+
+  .ant-menu-item {
+    a {
+      color: @dark-color-text;
+    }
+    a:hover {
+      color: @dark-color-text-light !important;
+    }
+  }
+}
+
+.ant-menu-submenu {
+  background: unset !important;
+
+  .ant-menu {
+    overflow: hidden;
+
+    .ant-menu-item {
+      &.ant-menu-item-selected {
+        background-color: @dark-color-item-select-bg !important;
+      }
+      &.ant-menu-item-active {
+        background-color: @dark-color-item-active-bg !important;
+      }
+
+      &.ant-menu-item-disabled {
+        color: @dark-color-disable-text !important;
+        &:active {
+          background-color: transparent !important;
+        }
+        a {
+          color: @dark-color-disable-text !important;
+        }
+      }
+    }
+  }
+}

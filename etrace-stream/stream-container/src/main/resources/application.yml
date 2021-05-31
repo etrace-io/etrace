@@ -1,27 +1,43 @@
-cluster: application
+server:
+  port: 8080
 
-metric:
-  report:
-    cluster: application_datasource
-    database: opensource-stream
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
-resources:
-  - name: kafka_to_consumer
-    type: KAFKA
-    props:
-      zookeeper.connect: zookeeper:2181
-      fetch.message.max.bytes: "20971520"
-      max.request.size: "10485760"
-      zookeeper.session.timeout.ms: "20000"
+etrace:
+  appId: "etrace.consumer"
+  backendAddress: "collector:2890"
 
-  - name: kafka_to_produce
-    type: KAFKA
-    props:
-      bootstrap.servers: kafka:9092
-      metadata.fetch.timeout.ms: 5000
+  stream:
+    #    cluster: application
 
-  - name: application_datasource
-    type: PROMETHEUS
-    props:
-      servers: "pushgateway:9091"
+    #    metric:
+    #      report:
+    #        cluster: application_datasource
+    #        database: opensource-stream
+    #
+    resources:
+      - name: kafka_to_consumer
+        type: KAFKA
+        props:
+          zookeeper.connect: zookeeper:2181
+          fetch.message.max.bytes: "20971520"
+          max.request.size: "10485760"
+          zookeeper.session.timeout.ms: "20000"
+
+      - name: kafka_to_produce
+        type: KAFKA
+        props:
+          bootstrap.servers: kafka:9092
+          metadata.fetch.timeout.ms: 5000
+
+      - name: application_datasource
+        type: PROMETHEUS
+        props:
+          servers: "pushgateway:9091"
+
+    outputDetailEpl: false
 

@@ -1,0 +1,48 @@
+@import "../../../styles/index";
+@import "../../Feedback/Feedback";
+
+@footer-prefix-cls: ~'@{emonitor-prefix}-footer';
+
+.@{footer-prefix-cls} {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  padding: 0 !important;
+
+  .ant-card {
+    border-bottom: none !important;
+    border-right: none !important;
+    border-left: none !important;
+  }
+
+  .ant-card-body {
+    line-height: @footer-height;
+    padding: 0;
+    position: relative;
+    text-align: center;
+
+    .@{footer-prefix-cls}-content {
+      opacity: 0.8;
+    }
+
+    .@{feedback-prefix-cls} {
+      position: absolute;
+      right: 5px;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+    }
+  }
+
+  &.no-bg {
+    background: none !important;
+    .ant-card {
+      background: none !important;
+    }
+    .@{footer-prefix-cls}-content {
+      opacity: 0.65;
+    }
+  }
+}

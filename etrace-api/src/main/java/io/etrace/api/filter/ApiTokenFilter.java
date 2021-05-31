@@ -2,7 +2,6 @@ package io.etrace.api.filter;
 
 import com.google.common.collect.Sets;
 import io.etrace.agent.Trace;
-import io.etrace.api.consts.UserContext;
 import io.etrace.api.exception.UnauthorizedException;
 import io.etrace.api.model.RateLimitRequest;
 import io.etrace.api.model.po.ui.ApiToken;
@@ -46,9 +45,6 @@ public class ApiTokenFilter extends GenericFilterBean {
     private final UserService userService;
     private final BaseRateLimitService baseRateLimitService;
 
-    //    private static Integer MAXQPS = 1000;
-
-    //    private static Integer RATE = 5;
 
     public ApiTokenFilter(ApiTokenService apiTokenService, UserService userService,
                           BaseRateLimitService baseRateLimitService) {
@@ -73,15 +69,14 @@ public class ApiTokenFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-        throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest)req;
-        HttpServletResponse response = (HttpServletResponse)res;
+            throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
         //if request is white list, do next chain
         //check 是否是api用户
         try {
             ETraceUser ETraceUser = getQueryUser(request);
             ETraceUser.setIsApiUser(Boolean.TRUE);
-            UserContext.setUser(ETraceUser);
             if (!checkAccess(ETraceUser.getEmail())) {
                 sendErrorResponse(res, "request too often", 429);
                 return;
@@ -90,8 +85,8 @@ public class ApiTokenFilter extends GenericFilterBean {
             String path = getRequestURI(request.getRequestURI());
             logRequestPayload(path, ETraceUser.getUsername());
             Trace.logEvent("Open-Api", ETraceUser.getUsername(), Constants.SUCCESS,
-                String.format("%s %s %s", request.getMethod(), request.getRequestURL().toString(),
-                    request.getQueryString()), null
+                    String.format("%s %s %s", request.getMethod(), request.getRequestURL().toString(),
+                            request.getQueryString()), null
             );
         } catch (Exception e) {
             String responseReason;
@@ -111,16 +106,16 @@ public class ApiTokenFilter extends GenericFilterBean {
 
     private void logCounterWithUserInfo(String path, ETraceUser ETraceUser) {
         Trace.newCounter("api_request")
-            .addTag("request_type", "OK")
-            .addTag("psnname", ETraceUser.getUsername())
-            .once();
+                .addTag("request_type", "OK")
+                .addTag("psnname", ETraceUser.getUsername())
+                .once();
     }
 
     private void logCounterWithException(String path) {
         Trace.newCounter("api_request")
-            //                .addTag("path", path)
-            .addTag("request_type", "Exception")
-            .once();
+                //                .addTag("path", path)
+                .addTag("request_type", "Exception")
+                .once();
     }
 
     private ETraceUser getQueryUser(HttpServletRequest request) throws UnauthorizedException {
@@ -155,14 +150,14 @@ public class ApiTokenFilter extends GenericFilterBean {
         ETraceUser ETraceUser = userService.findByUserEmail(apiToken.getUserEmail());
         if (ETraceUser == null) {
             throw new UnauthorizedException(
-                "can't find the user info for User Email [" + apiToken.getUserEmail() + "]");
+                    "can't find the user info for User Email [" + apiToken.getUserEmail() + "]");
         }
         return ETraceUser;
 
     }
 
     private void sendErrorResponse(ServletResponse res, String reason, int httpStatus) throws IOException {
-        HttpServletResponse response = (HttpServletResponse)res;
+        HttpServletResponse response = (HttpServletResponse) res;
         // don't continue the chain
         response.setStatus(httpStatus);
         response.getWriter().print("error reason: " + reason);
@@ -200,8 +195,6 @@ public class ApiTokenFilter extends GenericFilterBean {
         RateLimitRequest rateLimitrequest = new RateLimitRequest();
         rateLimitrequest.setAcquireNum(1);
         rateLimitrequest.setKey(user);
-        //        rateLimitrequest.setMaxToken(MAXQPS);
-        //        rateLimitrequest.setRate(RATE);
         Transaction transaction = Trace.newTransaction("RateLimit", "OpenApi");
         boolean allowed = baseRateLimitService.isAllowed(rateLimitrequest);
         transaction.setStatus(allowed ? Constants.SUCCESS : Constants.FAILURE);

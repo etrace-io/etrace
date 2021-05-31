@@ -13,7 +13,7 @@ import java.util.Map;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CallStackTask extends AbstractSnappyDecodeTask {
     private final static String DECODE_CLASS = "decode";
-    private CallStackDecode decode;
+    private final CallStackDecode decode;
 
     @SuppressWarnings("unchecked")
     public CallStackTask(String name, Component component, Map<String, Object> params) {
@@ -39,7 +39,7 @@ public class CallStackTask extends AbstractSnappyDecodeTask {
         if (events != null) {
             for (Event event : events) {
                 if (isTsValid(event.getTimestamp())) {
-                    component.dispatchAll(event.shardingKey(), event);
+                    component.dispatchWithFilter(event.shardingKey(), event, event);
                 }
             }
         }

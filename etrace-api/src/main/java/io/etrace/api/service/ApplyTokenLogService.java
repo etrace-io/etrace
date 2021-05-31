@@ -1,8 +1,8 @@
 package io.etrace.api.service;
 
 import io.etrace.agent.Trace;
-import io.etrace.api.consts.ApplyTokenAuditStatus;
-import io.etrace.api.consts.TokenStatus;
+import io.etrace.api.model.ApplyTokenAuditStatus;
+import io.etrace.api.model.TokenStatus;
 import io.etrace.api.model.po.ui.ApiToken;
 import io.etrace.api.model.po.ui.ApplyTokenLog;
 import io.etrace.api.model.po.user.ETraceUser;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class ApplyTokenLogService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public Long create(ApplyTokenLog applyTokenLog, ETraceUser user) {
         applyTokenLogMapper.save(applyTokenLog);
         try {
@@ -44,6 +46,7 @@ public class ApplyTokenLogService {
         return applyTokenLog.getId();
     }
 
+    @Transactional
     public void auditApply(ApplyTokenAuditStatus applyTokenAuditStatus, String auditOpinion, String auditUser, Long id)
         throws Exception {
         Optional<ApplyTokenLog> applyTokenLogOp = applyTokenLogMapper.findById(id);
@@ -79,6 +82,7 @@ public class ApplyTokenLogService {
             Pageable.unpaged());
     }
 
+    @Transactional
     public void delete(Long id) {
         applyTokenLogMapper.deleteById(id);
     }

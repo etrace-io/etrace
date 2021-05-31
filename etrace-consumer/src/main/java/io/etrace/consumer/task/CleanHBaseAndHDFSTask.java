@@ -24,6 +24,7 @@ import io.etrace.common.util.ThreadUtil;
 import io.etrace.common.util.TimeHelper;
 import io.etrace.consumer.config.ConsumerProperties;
 import io.etrace.consumer.storage.hadoop.FileSystemManager;
+import io.etrace.consumer.storage.hadoop.HDFSBucket;
 import io.etrace.consumer.storage.hbase.IHBaseClientFactory;
 import io.etrace.consumer.storage.hbase.IHBaseTableNameFactory;
 import io.etrace.consumer.storage.hbase.impl.MetricImpl;
@@ -40,7 +41,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +71,7 @@ public class CleanHBaseAndHDFSTask {
     private static void deleteByPath(FileSystem fs, Path path) throws IOException {
         LOGGER.info("{} will be deleted", path);
         fs.delete(path, true);
+        Trace.logEvent("Delete-HDFS", "File", Constants.SUCCESS, path.toString(), null);
     }
 
     public void registerTableToDelete(String logicHBaseTableName, int daysToClean) {
@@ -83,17 +84,19 @@ public class CleanHBaseAndHDFSTask {
     }
 
     private void deleteHBaseTable(String logicHBaseTableName, int daysToClean) {
+        Transaction transaction = Trace.newTransaction("DELETE-HBASE", logicHBaseTableName);
+
         long current = System.currentTimeMillis();
         Set<Integer> retainedTables = newHashSet();
 
         try {
             //retain last x day
-            for (int i = 0; i < daysToClean + 1; i++) {
+            for (int i = 0; i < daysToClean; i++) {
                 retainedTables.add(TimeHelper.getDay(current - i * TimeHelper.ONE_DAY));
             }
 
-            //retain future 2 day
-            for (int i = 1; i < 3; i++) {
+            //retain future 1 day
+            for (int i = 1; i < 2; i++) {
                 retainedTables.add(TimeHelper.getDay(current + i * TimeHelper.ONE_DAY));
             }
             LOGGER.info("going to retain hbase table {}, other days will be deleted.", retainedTables);
@@ -106,8 +109,13 @@ public class CleanHBaseAndHDFSTask {
                         day);
                     tryDeleteTable(tableName);
                 });
+            transaction.setStatus(Constants.SUCCESS);
         } catch (Throwable e) {
             LOGGER.error("==deleteHBaseTable==", e);
+            Trace.logError(e);
+            transaction.setStatus(e);
+        } finally {
+            transaction.complete();
         }
     }
 
@@ -117,6 +125,7 @@ public class CleanHBaseAndHDFSTask {
             try {
                 iHBaseClientFactory.deleteTable(tableName);
                 LOGGER.info("Delete hbase table {} success.", tableName);
+                Trace.logEvent("DELETE-HBASE", tableName, Constants.SUCCESS);
                 break;
             } catch (Exception e) {
                 LOGGER.error("Delete history table error:", e);
@@ -125,15 +134,15 @@ public class CleanHBaseAndHDFSTask {
         }
     }
 
-    @Scheduled(initialDelay = 10 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 24 * 60 * 60 * 1000)
     public void deleteHDFSFiles() {
         int doKeeper = consumerProperties.getKeeper();
         String remotePath = consumerProperties.getHdfs().getPath();
 
         List<String> deleteFiles = newArrayList();
-        Transaction transaction = Trace.newTransaction("DELETE_HDFS", "keeper:" + doKeeper);
+        Transaction transaction = Trace.newTransaction("DELETE-HDFS", "keeper:" + doKeeper);
         try {
-            Path stackPath = new Path(remotePath + File.separator + "stack");
+            Path stackPath = new Path(remotePath + File.separator + HDFSBucket.MESSAGE_TRACE_PATH);
             List<Path> deletePaths = newArrayList();
             FileSystem fs = FileSystemManager.getFileSystem();
             FileStatus[] files = fs.listStatus(stackPath);
@@ -152,7 +161,7 @@ public class CleanHBaseAndHDFSTask {
                 deleteByPath(fs, path);
             }
             transaction.setStatus(Constants.SUCCESS);
-        } catch (IllegalArgumentException | IOException | ParseException e) {
+        } catch (Exception e) {
             LOGGER.error("delete hdfs error:", e);
             transaction.setStatus(e);
         } finally {

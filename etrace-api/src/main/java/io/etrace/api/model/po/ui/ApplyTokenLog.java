@@ -16,8 +16,8 @@
 
 package io.etrace.api.model.po.ui;
 
-import io.etrace.api.consts.ApplyTokenAuditStatus;
-import io.etrace.api.consts.TokenStatus;
+import io.etrace.api.model.ApplyTokenAuditStatus;
+import io.etrace.api.model.TokenStatus;
 import io.etrace.api.model.po.BasePersistentObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

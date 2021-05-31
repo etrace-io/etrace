@@ -1,0 +1,38 @@
+@import "../../styles/index";
+
+@duration-prefix-cls: ~'@{emonitor-prefix}-duration';
+
+.@{duration-prefix-cls} {
+  width: 120px;
+  position: relative;
+  border: 1px @emonitor-border-color solid;
+  border-radius: 2px;
+  isolation: isolate;
+  text-align: center;
+  overflow: hidden;
+
+  &-timeline {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: @color-info;
+    z-index: -1;
+  }
+
+  &-content {
+    &.contrast {
+      background: #000;
+      background-image: url("data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAACACwAAAAAAQABAAACAkwBADs=");
+      background-repeat: no-repeat;
+      //background-position: 25% 0%;
+      //background-size: 45% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-fill-color: transparent;
+      color: transparent;
+    }
+  }
+}

@@ -1,0 +1,48 @@
+@import "../../../styles/index";
+
+.board-panel {
+  .board-view__chart-collapse {
+    border-color: @emonitor-border-color-light;
+
+    .chart-collapse-panel__title {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .chart-collapse-panel__summary {
+      opacity: 0.4;
+      font-size: 0.9em;
+    }
+
+    .ant-collapse-content,
+    .board-view__chart-collapse-panel {
+      border-color: @emonitor-border-color-light;
+
+      .ant-collapse-header {
+        padding-top: 6px;
+        padding-bottom: 6px;
+
+        .ant-collapse-arrow {
+          top: 12px;
+          padding: 0;
+        }
+      }
+    }
+
+    .board-view__chart-collapse-panel {
+      // 不显示 title
+      &.no-title {
+        .ant-collapse-header {
+          display: none;
+        }
+        .ant-collapse-content {
+          border: none;
+        }
+      }
+    }
+
+    .ant-collapse-content-box {
+      padding: var(--space-between);
+    }
+  }
+}

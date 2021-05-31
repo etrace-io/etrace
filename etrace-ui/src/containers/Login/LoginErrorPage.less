@@ -1,0 +1,65 @@
+.emonitor-login-error-page {
+  .error-page-container {
+    width: 600px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+
+  .login-error__image {
+    display: block;
+    height: 250px;
+    margin: 20px auto;
+    opacity: 0.8;
+  }
+
+  .login-error__content-item {
+    .content-item__title {
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 30px;
+      display: flex;
+      margin: 25px 0 10px;
+      align-items: center;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 30px;
+        background: #009be3;
+        border-radius: 1px;
+        margin-right: 10px;
+      }
+
+      .anticon {
+        margin-left: 10px;
+        margin-top: 2px;
+      }
+    }
+    .content-item__body {
+      font-family: Nunito;
+      margin: 15px 17px;
+      word-break: break-all;
+
+      &.code {
+        padding: 0.8em 1.2em;
+        background: #f0f0f0;
+        //color: rgb(68, 68, 68);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        word-break: break-word;
+        line-height: 1.7em;
+        border-radius: 5px;
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  .error-tips-container {
+    text-align: center;
+    //padding-bottom: 30px;
+
+    .error-tips-content {
+      padding: 20px 0;
+    }
+  }
+}

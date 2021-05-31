@@ -1,0 +1,99 @@
+.e-monitor-yellow-pages,
+.e-monitor-yellow-pages-list,
+.e-monitor-yellow-pages-record,
+.e-monitor-yellow-pages-search-result {
+  --marjorColor: @dark-color-major;
+
+  background: var(--bgColor) !important;
+
+  .e-monitor-header.yellow-pages {
+    border-bottom: unset;
+  }
+
+  .e-monitor-yellow-pages__search-box {
+    .ant-select-selection {
+      border-radius: 100px;
+    }
+  }
+}
+
+/* Record List */
+.list-records-container {
+  --marjorColor: @dark-color-major;
+}
+
+.e-monitor-yellow-pages,
+.yellow-pages__history-list,
+.e-monitor-yellow-pages-search-box__result,
+.e-monitor-yellow-pages__record-container,
+.e-monitor-yellow-pages__record-chooser,
+.global-add-btn__overlay,
+.yellow-pages__history-list,
+.e-monitor-yellow-pages__title {
+  --bgColor: #141414;
+  --cardBgColor: @dark-color-light-background;
+  --borderColor: @dark-color-border;
+  --gradientFrom: @dark-color-major;
+  --gradientTo: @dark-color-major-light;
+  --hoverBg: @dark-color-gray-background;
+
+  .ant-select-selection {
+    border-radius: 10px;
+  }
+}
+
+.transfer-record-item-container.ant-checkbox-wrapper-disabled {
+  .transfer-record-item {
+    color: @dark-color-text-dark;
+  }
+  .ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner:after {
+    border-color: @dark-color-text-gray;
+  }
+}
+
+.e-monitor-yellow-pages__add-record-to-list-modal,
+.e-monitor-yellow-pages__add-record-modal,
+.e-monitor-yellow-pages__add-list-modal {
+  --majorColor: @dark-color-text;
+  --borderColor: @dark-color-border;
+  //--gradientFrom: @dark-color-major;
+  //--gradientTo: @dark-color-major-light;
+  //--textColor: @dark-color-major-dark-text;
+}
+
+.e-monitor-yellow-pages-search-box__result {
+  .ant-menu {
+    border-color: var(--borderColor);
+  }
+}
+
+.e-monitor-yellow-pages__record-info {
+  --gradientFrom: @dark-color-major;
+  --gradientTo: @dark-color-major-light;
+  --bgColor: @dark-color-light-background;
+  --textColor: @dark-color-major-dark-text;
+
+  .record-info__item {
+    .record-info__item-content {
+      .anticon-dingding {
+        background: #008cee;
+        color: #fff;
+        padding: 4px;
+        margin-right: 5px;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+/* Result Page */
+.e-monitor-yellow-pages-search-result {
+  --secondaryColor: @dark-color-major-light;
+  --hoverColor: @dark-color-light-background;
+  --bgColor: @dark-color-gray-background;
+  --btnGradientFrom: @dark-color-text-dark;
+  --btnGradientTo: @dark-color-text-dark;
+  --btnTextColor: #fff;
+  --inkBarGradientFrom: #72b5f8;
+  --inkBarGradientTo: #77d9f6;
+}

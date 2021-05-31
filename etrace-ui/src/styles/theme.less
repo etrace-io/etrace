@@ -1,0 +1,185 @@
+/* Black Theme Colors */
+//@dark-color-major: #d4bc88;
+//@dark-color-major-light: #e8d8b2;
+@dark-color-major: #daac7d;
+@dark-color-major-light: #fde5ac;
+@dark-color-major-text: #e6b188;
+@dark-color-major-dark-text: #4c3b1e;
+@dark-color-major-text-selection-bg: #e6b188;
+@dark-color-major-text-hover: #e8d8b2;
+@dark-color-major-gradient-background-vertical: linear-gradient(to bottom, @dark-color-major, @dark-color-major-light);
+@dark-color-major-gradient-background-horizon: linear-gradient(to right, @dark-color-major, @dark-color-major-light);
+
+@dark-color-default: #262626;
+@dark-color-gray: #444444;
+@dark-color-white: #f5f5f5;
+@dark-color-success: #00ab69;
+@dark-color-error: #ff4d4f; // #c70024
+@dark-color-warning: #ffc857;
+@dark-color-info: #409EFF; // 084c61
+
+//@dark-color-background: #1b1c1f;
+@dark-color-background: #000;
+//@dark-color-gray-background: #181819;
+@dark-color-gray-background: #1c1c1d;
+
+@dark-color-linear-gradient-background: linear-gradient(130deg, lighten(@dark-color-gray, 15%), darken(@dark-color-gray, 8%));
+@dark-color-light-background: #272728;
+
+@dark-color-border: @dark-color-gray;
+@dark-color-border-gray: #676767;
+@dark-color-border-light: #d9d9d9;
+
+@dark-color-text: #e3e3e3;
+@dark-color-text-dark: #4b4b4b;
+@dark-color-text-gray: darken(@dark-color-text, 5%);
+@dark-color-text-light: #fffffe;
+
+@dark-color-disable-background: #151515;
+@dark-color-disable-text: #666;
+@dark-color-disable-text-light: #999;
+
+@dark-color-item-hover-bg: #5f5f5e;
+@dark-color-item-hover-bg-dark: darken(@dark-color-item-hover-bg, 5%);
+@dark-color-item-active-bg: @dark-color-gray;
+@dark-color-item-select-bg: @dark-color-item-active-bg;
+
+@dark-color-input-placeholder: #737373;
+
+@dark-color-link: #00a5bf;
+@dark-color-link-2: #107090;
+
+@dark-shadow-input-focus: 0 0 0 2px rgba(255, 255, 255, 0.2);
+
+/* size */
+@header-height: 50px;
+@footer-height: 38px;
+
+@colorblind-color-success: #39ff47;
+@colorblind-color-error: #ff0e0b;
+@colorblind-color-warning: #fff511;
+@colorblind-color-info: #007bff;
+
+// more info about nunito: https://google-webfonts-helper.herokuapp.com/fonts/nunito?subsets=latin
+@font-face {
+  font-family: Nunito;
+  src: local("Nunito Bold"), local("Nunito-Bold"), url('../../public/fonts/nunito-v16-latin-regular.woff2')format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2212, U+2215;
+}
+
+.e-monitor-theme {
+  // 通用
+  @import "theme/common.less";
+  //@import "theme/layout.less";
+
+  &.error-page {
+    overflow: auto;
+    background: #fff;
+  }
+
+  /* 默认主题 */
+  &.theme-light {
+    //@import "./theme/primary/theme-light.less";
+    @import "./theme/primary/index.less";
+
+    &.ant-layout, .ant-layout {
+      background: #fff;
+    }
+    .ant-menu-submenu-title {
+      color: unset;
+    }
+    .loading-container {
+      background-color: #f0f2f5;
+    }
+
+    #board_view_method,
+    #e-monitor-chart-single-view {
+      background: #fff;
+    }
+  }
+
+  /* 黑色主题 */
+  &.theme-dark {
+    //@import "./theme/dark/theme-dark.less";
+    @import "./theme/dark/index.less";
+
+    color: @dark-color-text;
+
+    &,
+    .ant-layout {
+      background: @dark-color-background;
+    }
+
+    .meta-info-part-item {
+      border-color: @dark-color-border;
+    }
+
+    #board_view_method,
+    #e-monitor-chart-single-view {
+      background: @dark-color-background;
+    }
+  }
+  /* 色弱主题 */
+  &.theme-colorblind {
+    //@import "./theme/colorblind/theme-colorblind.less";
+    @import "./theme/colorblind/index.less";
+
+    color: @dark-color-text;
+
+    &,
+    .ant-layout {
+      background: @dark-color-background !important;
+    }
+
+    .ant-spin-blur-opacity {
+      .ant-spin-blur {
+        opacity: 1;
+      }
+    }
+
+    .meta-info-part-item {
+      border-color: @dark-color-border;
+    }
+
+    #board_view_method,
+    #e-monitor-chart-single-view {
+      background: @dark-color-background;
+    }
+  }
+}
+
+// Mixin
+.no-wrap(@line) when (@line = 1) {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.no-wrap(@line) when (@line > 1) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: @line;
+  -webkit-box-orient: vertical;
+  line-height: 1.5em;
+  max-height: 1.5em * @line;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+.no-wrap-with-mask(@line, @bgColor) {
+  position: relative;
+  .no-wrap(@line);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 1.5em * (@line - 1);
+    right: 0;
+    background: linear-gradient(to right, transparent, @bgColor 50%);
+    height: 1.5em;
+    width: 4em;
+    text-align: right;
+    padding-right: 0.2em;
+  }
+}

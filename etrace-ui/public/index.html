@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <title>E-Monitor 4.0</title>
+    <meta name="description" content="ETrace UI" />
+    <script>
+        <%if (process.env.NODE_ENV === 'development') {%>
+            window.CONFIG = {
+                ENV: 'prod',
+            }
+        <% } else {%>
+            window.CONFIG = {
+                ENV: '{{_ .ENV }}',
+                MONITOR: '{{_ .MONITOR }}',
+                DOG: '{{_ .DOG }}',
+                ROOT: '{{_ .ROOT }}',
+                ESM: '{{_ .ESM }}',
+                TRACEMONITOR: '{{_ .TRACEMONITOR }}',
+                PATHNAME: '{{_ .PATHNAME }}',
+                URL_PROD: '{{_ .URL_PROD }}',
+                URL_DAILY: '{{_ .URL_DAILY }}',
+                URL_LEGACY: '{{_ .URL_LEGACY }}',
+                URL_LEGACY_DAILY: '{{_ .URL_LEGACY_DAILY }}'
+            };
+        <% } %>
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        .page-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            z-index: 2;
+            background: #fff;
+        }
+
+        .page-loader.dark {
+            background: #141414;
+        }
+
+        .loader {
+            position: relative;
+            display: grid;
+            grid-template-columns: 33% 33% 33%;
+            grid-gap: 2px;
+            width: 100px;
+            height: 100px;
+        }
+
+        .loader > div {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            background: tomato;
+            transform: scale(0);
+            transform-origin: center center;
+            animation: loader 2s infinite linear;
+        }
+
+        .loader > div:nth-of-type(1), .loader > div:nth-of-type(5), .loader > div:nth-of-type(9) {
+            animation-delay: 0.4s;
+        }
+
+        .loader > div:nth-of-type(4), .loader > div:nth-of-type(8) {
+            animation-delay: 0.2s;
+        }
+
+        .loader > div:nth-of-type(2), .loader > div:nth-of-type(6) {
+            animation-delay: 0.6s;
+        }
+
+        .loader > div:nth-of-type(3) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes loader {
+            0% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+            80% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(0);
+            }
+        }
+    </style>
+</head>
+<body class="e-monitor-theme">
+
+<!-- Loader -->
+<div id="PageLoading" class="page-loader">
+    <div class="loader">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<div id="main"></div>
+<script>
+    const {search} = window.location;
+    const params = new URLSearchParams(search);
+    const urlTheme = params.get("theme");
+
+    if (urlTheme) {
+      if (urlTheme === "Dark") {
+        document.getElementById("PageLoading").classList.add("dark");
+      }
+    } else if (localStorage.getItem("THEME") === "Dark") {
+      document.getElementById("PageLoading").classList.add("dark");
+    }
+</script>
+</body>
+</html>

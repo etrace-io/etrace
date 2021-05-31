@@ -1,0 +1,104 @@
+.ant-select {
+  color: @dark-color-text;
+
+  &:not(.ant-select-disabled) {
+    .ant-select-selection:hover {
+      border-color: @dark-color-border-light;
+    }
+  }
+
+  .ant-select-selection {
+    background: @dark-color-gray;
+    border-color: @dark-color-border;
+
+    .ant-select-arrow {
+      color: @dark-color-text !important;
+    }
+
+    .ant-select-selection__clear {
+      background: @dark-color-gray;
+      color: #000;
+
+      &:hover {
+        color: @dark-color-text;
+      }
+    }
+
+    .ant-select-selection__choice {
+      color: @dark-color-text;
+      border-radius: 5px;
+      border-color: @dark-color-gray-background;
+      background-color: @dark-color-gray-background;
+    }
+    .ant-select-selection__placeholder {
+      color: @dark-color-input-placeholder !important;
+    }
+  }
+
+  &.ant-select-focused {
+    .ant-select-selection {
+      border-color: @dark-color-border-light !important;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.ant-select-disabled {
+    .ant-select-selection {
+      background-color: @dark-color-disable-background !important;
+      color: @dark-color-disable-text !important;
+    }
+    input[disabled] {
+      cursor: not-allowed;
+    }
+  }
+
+  &.ant-select-auto-complete {
+    input {
+      border-color: @dark-color-border !important;
+
+      &:hover {
+        border-color: @dark-color-border-light !important;
+      }
+      &:focus {
+        border-color: @dark-color-border-light !important;
+        box-shadow: @dark-shadow-input-focus !important;
+      }
+    }
+  }
+}
+
+.ant-select-dropdown {
+  //box-shadow: ; // rgba(0, 0, 0, .15);
+  overflow: hidden;
+
+  &.ant-select-dropdown--multiple {
+
+    .ant-select-dropdown-menu-item {
+      padding: 5px 36px 5px 12px;
+    }
+  }
+
+  .ant-select-dropdown-menu-item {
+    color: @dark-color-text;
+
+    &.ant-select-dropdown-menu-item-selected {
+      background-color: @dark-color-item-select-bg;
+
+      &:after {
+        color: @dark-color-white !important;
+      }
+    }
+
+    &.ant-select-dropdown-menu-item-active {
+      background-color: @dark-color-item-active-bg;
+    }
+
+    &.ant-select-dropdown-menu-item-disabled {
+      color: @dark-color-disable-text;
+    }
+
+    &:hover {
+      background-color: @dark-color-item-hover-bg !important;
+    }
+  }
+}

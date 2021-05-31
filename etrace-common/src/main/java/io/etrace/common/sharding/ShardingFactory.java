@@ -13,8 +13,8 @@ public class ShardingFactory {
         shardingType = shardingType.toUpperCase();
         if (shardingType.equals(ShardingType.ROUND_ROBIN.name())) {
             return newInstance(ShardingType.ROUND_ROBIN);
-        } else if (shardingType.equals(ShardingType.HASHING.name())) {
-            return newInstance(ShardingType.HASHING);
+        } else if (shardingType.equals(ShardingType.HASH.name())) {
+            return newInstance(ShardingType.HASH);
         }
         return null;
     }
@@ -23,7 +23,7 @@ public class ShardingFactory {
         switch (shardingType) {
             case ROUND_ROBIN:
                 return new RoundRobinStrategy();
-            case HASHING:
+            case HASH:
                 return new HashingStrategy();
             default:
                 break;
@@ -33,6 +33,6 @@ public class ShardingFactory {
 
     public enum ShardingType {
         ROUND_ROBIN,
-        HASHING
+        HASH
     }
 }
