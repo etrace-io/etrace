@@ -5,6 +5,7 @@ import io.etrace.api.consts.HistoryLogTypeEnum;
 import io.etrace.api.exception.BadRequestException;
 import io.etrace.api.exception.UserForbiddenException;
 import io.etrace.api.model.po.ui.DashboardAppPO;
+import io.etrace.api.model.po.ui.DashboardPO;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;

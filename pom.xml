@@ -561,18 +561,4 @@
             </distributionManagement>
         </profile>
     </profiles>
-
-
-    <!--    // alibaba-->
-<!--    todo: remove this-->
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <url>http://repo.alibaba-inc.com/nexus/content/repositories/subreleases-eleme/</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <url>http://repo.alibaba-inc.com/nexus/content/repositories/subsnapshots-eleme/</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

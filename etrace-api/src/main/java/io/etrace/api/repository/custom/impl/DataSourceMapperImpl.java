@@ -32,12 +32,14 @@ public class DataSourceMapperImpl implements DataSourceMapperCustom {
     public List<DataSource> search(String type, String name, String status, int start, int pageSize) {
         List<Predicate> predicateList = buildQueryCondition(type, name, status);
         QMetricDataSourcePO qMetricDataSourcePO = QMetricDataSourcePO.metricDataSourcePO;
-        return jpaQueryFactory
-            .select(qMetricDataSourcePO)
-            .from(qMetricDataSourcePO)
-            .where(predicateList.toArray(predicateList.toArray(new Predicate[0])))
-            .offset(start)
-            .limit(pageSize);
+        // todo: implement this!
+        throw new RuntimeException("==search== not implemented yet!");
+        //return jpaQueryFactory
+        //    .select(qMetricDataSourcePO)
+        //    .from(qMetricDataSourcePO)
+        //    .where(predicateList.toArray(predicateList.toArray(new Predicate[0])))
+        //    .offset(start)
+        //    .limit(pageSize);
     }
 
     private List<Predicate> buildQueryCondition(String type, String name, String status) {

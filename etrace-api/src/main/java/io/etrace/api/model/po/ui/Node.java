@@ -25,7 +25,7 @@ public class Node extends BaseItem {
     @Convert(converter = JpaConverterJson.class)
     private List<Long> chartIds;
     @Convert(converter = JpaConverterJson.class)
-    private List<ChartVO> charts;
+    private List<ChartPO> charts;
     private Object layout;
     private Object config;
 

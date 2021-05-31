@@ -7,8 +7,8 @@ import io.etrace.api.model.po.ui.Node;
 import io.etrace.api.model.po.user.ETraceUser;
 import io.etrace.api.model.po.user.UserAction;
 import io.etrace.api.model.vo.SearchResult;
-import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.model.vo.ui.DashboardAppVO;
+import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.repository.UserActionMapper;
 import io.etrace.api.service.base.BaseService;
 import io.etrace.api.service.base.FavoriteAndViewInterface;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserActionService {
@@ -246,14 +247,14 @@ public class UserActionService {
     }
 
     private <VO extends BaseItem, T extends BaseItem> SearchResult<VO> doSearchFavoriteByPageSize(ETraceUser user,
-                                                                            Integer pageSize,
-                                                                            Integer current,
-                                                                            String title,
-                                                                            Long department,
-                                                                            Long productLine,
-                                                                            Callback callback,
-                                                                            BaseService<VO, T> baseService,
-                                                                            boolean view) {
+                                                                                                  Integer pageSize,
+                                                                                                  Integer current,
+                                                                                                  String title,
+                                                                                                  Long department,
+                                                                                                  Long productLine,
+                                                                                                  Callback callback,
+                                                                                                  BaseService<VO, T> baseService,
+                                                                                                  boolean view) {
         SearchResult<VO> searchResult = new SearchResult<>();
         searchResult.setTotal(0);
         UserAction userAction = userActionMapper.findByUserEmail(user.getEmail());
@@ -309,12 +310,13 @@ public class UserActionService {
             if (userAction.getViewBoardIds() != null && !userAction.getViewBoardIds().isEmpty()) {
                 List<DashboardVO> viewDashboards = dashboardService.findByIds(null, null, null,
                     userAction.getViewBoardIds());
-                userAction.setViewBoards(viewDashboards);
+                userAction.setViewBoards(viewDashboards.stream().map(DashboardVO::toPO).collect(Collectors.toList()));
             }
             if (userAction.getFavoriteBoardIds() != null && !userAction.getFavoriteBoardIds().isEmpty()) {
                 List<DashboardVO> favoriteDashboards = dashboardService.findByIds(null, null, null,
                     userAction.getFavoriteBoardIds());
-                userAction.setFavoriteBoards(favoriteDashboards);
+                userAction.setFavoriteBoards(
+                    favoriteDashboards.stream().map(DashboardVO::toPO).collect(Collectors.toList()));
             }
         }
         return userAction;

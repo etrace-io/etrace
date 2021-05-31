@@ -2,6 +2,7 @@ package io.etrace.api.repository.custom.impl;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.etrace.api.model.po.ui.QDashboardPO;
 import io.etrace.api.model.vo.ui.DashboardVO;
 import io.etrace.api.repository.custom.DashboardMapperCustom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,12 +76,12 @@ public class DashboardMapperImpl implements DashboardMapperCustom {
         if (!StringUtils.isEmpty(globalId)) {
             predicateList.add(qDashboardPO.globalId.eq(globalId));
         }
-        if (null != departmentId) {
-            predicateList.add(qDashboardPO.departmentId.eq(departmentId));
-        }
-        if (null != productLineId) {
-            predicateList.add(qDashboardPO.productLineId.eq(productLineId));
-        }
+        //if (null != departmentId) {
+        //    predicateList.add(qDashboardPO.departmentId.eq(departmentId));
+        //}
+        //if (null != productLineId) {
+        //    predicateList.add(qDashboardPO.productLineId.eq(productLineId));
+        //}
         if (!StringUtils.isEmpty(user)) {
             predicateList.add(qDashboardPO.createdBy.eq(user).or(qDashboardPO.updatedBy.eq(user)));
         }
