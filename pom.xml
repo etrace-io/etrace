@@ -62,7 +62,7 @@
 
     <properties>
         <guice.version>4.1.0</guice.version>
-        <yaml.config.version>1.25</yaml.config.version>
+        <yaml.config.version>1.32</yaml.config.version>
         <disruptor.version>3.4.2</disruptor.version>
         <curator.version>2.13.0</curator.version>
         <metrics.version>4.1.0</metrics.version>
